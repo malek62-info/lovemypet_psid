@@ -21,11 +21,14 @@ jobs:
       with:
         python-version: '3.8'
 
+    - name: Navigate to backend directory
+      run: cd backend
+
     - name: Install dependencies
       run: |
         python -m venv venv
         source venv/bin/activate
-        pip install -r backend/requirements.txt  # Utilisation du chemin correct pour requirements.txt
+        pip install -r requirements.txt  # Utilisation du chemin correct pour requirements.txt
 
     - name: Run FastAPI application
       run: |
