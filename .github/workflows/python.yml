@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.8'
 
     - name: Install dependencies
       run: |
@@ -27,8 +27,27 @@ jobs:
         source venv/bin/activate
         pip install -r backend/requirements.txt  # Mettre à jour pour pointer vers le fichier requirements.txt du backend
 
-    - name: Run FastAPI application
+    - name: Run FastAPI application in the background
       run: |
         cd backend  # Assurez-vous que l'application FastAPI est dans ce dossier
         source ../venv/bin/activate
-        uvicorn main:app --reload --host 0.0.0.0 --port 8000  # Lancer l'API FastAPI
+        nohup uvicorn main:app --reload --host 0.0.0.0 --port 8000 &  # Lancer l'API en arrière-plan
+
+    - name: Wait for the FastAPI server to start
+      run: |
+        echo "Waiting for the FastAPI application to start..."
+        sleep 15  # Attendre un peu pour que le serveur démarre
+
+    - name: Stop the FastAPI server
+      run: |
+        echo "Stopping FastAPI application..."
+        pkill -f "uvicorn"  # Arrêter le serveur uvicorn proprement
+
+    - name: Confirm server stopped
+      run: |
+        if pgrep -f "uvicorn"; then
+          echo "FastAPI server is still running."
+          exit 1
+        else
+          echo "FastAPI server stopped successfully."
+        fi
