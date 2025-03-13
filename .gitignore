@@ -1,0 +1,25 @@
+# Ignorer les dépendances de Node.js dans frontend
+/frontend/node_modules
+/frontend/.pnp
+/frontend.yarn/*
+!/frontend.yarn/patches
+!/frontend.yarn/plugins
+!/frontend.yarn/releases
+!/frontend.yarn/versions
+
+# Ignorer le dossier de l'environnement virtuel de FastAPI
+/backend/venv/
+
+# Ignorer les fichiers générés par Next.js (builds, output, etc.)
+/frontend/.next/
+/frontend/out/
+
+# Ignorer les fichiers de logs, de configuration, etc.
+*.log
+.DS_Store
+*.pem
+.env*
+
+# Ignorer le dossier de build, de couverture, etc.
+/build
+/coverage
