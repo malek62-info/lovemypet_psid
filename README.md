@@ -1,4 +1,4 @@
-[![Code Quality](https://img.shields.io/badge/Code%20Quality-A-brightgreen)](https://app.codacy.com/gh/malek62-info/lovemypet_psid/dashboard) [![Dernière Release](https://img.shields.io/github/v/release/malek62-info/LoveMyPet?style=flat-square)](https://github.com/malek62-info/lovemypet_psid/releases) [![GitHub commits](https://img.shields.io/github/last-commit/malek62-info/LoveMyPet/main)](https://github.com/malek62-info/lovemypet_psid/commits/main) [![Python CI with pip](https://github.com/malek62-info/lovemypet_psid/actions/workflows/python.yml/badge.svg)](https://github.com/malek62-info/lovemypet_psid/actions/runs)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-A-brightgreen)](https://app.codacy.com/gh/malek62-info/lovemypet_psid/dashboard) [![Dernière Release](https://img.shields.io/github/v/release/malek62-info/LoveMyPet?style=flat-square)](https://github.com/malek62-info/lovemypet_psid/releases) [![GitHub commits](https://img.shields.io/github/last-commit/malek62-info/LoveMyPet/main)](https://github.com/malek62-info/lovemypet_psid/commits/main) [![Python CI with pip](https://github.com/malek62-info/lovemypet_psid/actions/workflows/python.yml/badge.svg)](https://github.com/malek62-info/lovemypet_psid/actions/workflows/python.yml)
 
 
 # Instructions pour démarrer le projet
@@ -65,7 +65,7 @@
 
 4. Installez les dépendances :
     ```bash
-    pip install -r requirements.txt
+    pip install -r .github\\workflows\\requirements.txt
     ```
 
 5. Lancez l'application backend avec Uvicorn :
@@ -77,3 +77,10 @@
 
 ---
 
+
+6. Génération du fichier `requirements.txt`
+
+Exécutez la commande suivante pour générer le fichier `requirements.txt` dans le dossier `.github/workflows/` :
+
+```bash
+pip freeze > .github/workflows/requirements.txt
