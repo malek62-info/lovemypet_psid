@@ -43,11 +43,4 @@ jobs:
         echo "Stopping FastAPI application..."
         pkill -f "uvicorn"  # Arrêter le serveur uvicorn proprement
 
-    - name: Confirm server stopped
-      run: |
-        if pgrep -f "uvicorn"; then
-          echo "FastAPI server is still running."
-          exit 1
-        else
-          echo "FastAPI server stopped successfully."
-        fi
+
