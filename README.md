@@ -14,7 +14,7 @@
 
 ---
 
-## 1. Frontend (Next.js)
+## 1. Frontend (Raact js via Vite)
 
 ### Étapes pour démarrer le frontend :
 
@@ -29,15 +29,12 @@
     npm install
     ```
 
-  npm install
-  npm run dev
-
 3. Lancez l'application :
     ```bash
     npm run dev
     ```
 
-   L'application sera accessible à l'adresse suivante : `http://localhost:3000`.
+   L'application sera accessible à l'adresse suivante : `http://localhost:5173`.
 
 ---
 
