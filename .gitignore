@@ -7,12 +7,11 @@
 !/frontend.yarn/releases
 !/frontend.yarn/versions
 
-# Ignorer le dossier de l'environnement virtuel de FastAPI
-/backend/venv/
+# Ignorer les fichiers générés par Vite (builds, output, etc.)
+/frontend/dist
 
-# Ignorer les fichiers générés par Next.js (builds, output, etc.)
-/frontend/.next/
-/frontend/out/
+# Ignorer les fichiers générés par Vite SSR (si utilisé)
+/frontend/dist-ssr/
 
 # Ignorer les fichiers de logs, de configuration, etc.
 *.log
@@ -23,3 +22,6 @@
 # Ignorer le dossier de build, de couverture, etc.
 /build
 /coverage
+
+# Ignorer le dossier de l'environnement virtuel de FastAPI (backend)
+backend/venv/

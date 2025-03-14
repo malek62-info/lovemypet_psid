@@ -5,7 +5,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js default port
+    allow_origins=["http://localhost:5173/"],  # Next.js default port
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -13,4 +13,4 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, FastAPI!"}
+    return {"message": "Hello, faizdevdefef!"}
