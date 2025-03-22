@@ -1,104 +1,123 @@
 import { useEffect, useState } from "react";
-import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  Tooltip
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from "recharts";
 
 const App = () => {
-  const [radarData, setRadarData] = useState([]);
-  const [selectedAnimal, setSelectedAnimal] = useState(1); // 1 = Chien, 2 = Chat
+  const [stackedData, setStackedData] = useState([]);
+  const [selectedAnimal, setSelectedAnimal] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  // Fetch pour le RadarChart
-  const fetchRadarData = async (animal) => {
+  const fetchStackedBarData = async (animal) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/data/${animal}`);
+      const response = await fetch(`http://localhost:8000/stacked-bar/${animal}`);
       const result = await response.json();
-      if (result.data) {
-        const formattedData = result.data.map((item) => ({
-          attribute: item.attribute,
-          value: item.value * 50,  // Multiplier les valeurs par 10
-        }));
-        setRadarData(formattedData);
+      if (result.stacked_data) {
+        // Mapping des catégories pour inclure les significations
+        const categoryMapping = {
+          // Taille à maturité
+          "MaturitySize_1": "Taille à maturité - Petite (1)",
+          "MaturitySize_2": "Taille à maturité - Moyenne (2)",
+          "MaturitySize_3": "Taille à maturité - Grande (3)",
+          // Âge (catégorisé comme Jeune, Adulte, Senior)
+          "Jeune": "Âge - Jeune",
+          "Adulte": "Âge - Adulte",
+          "Senior": "Âge - Senior",
+          // Sexe
+          "Gender_1": "Sexe - Mâle (1)",
+          "Gender_2": "Sexe - Femelle (2)",
+          "Gender_3": "Sexe - Mixte (3)",
+          // Longueur de la fourrure
+          "FurLength_1": "Longueur de la fourrure - Court (1)",
+          "FurLength_2": "Longueur de la fourrure - Moyen (2)",
+          "FurLength_3": "Longueur de la fourrure - Long (3)",
+          // Vacciné
+          "Vaccinated_1": "Vacciné - Oui (1)",
+          "Vaccinated_2": "Vacciné - Non (2)",
+          // Vermifugé
+          "Dewormed_1": "Vermifugé - Oui (1)",
+          "Dewormed_2": "Vermifugé - Non (2)",
+          // Stérilisé
+          "Sterilized_1": "Stérilisé - Oui (1)",
+          "Sterilized_2": "Stérilisé - Non (2)",
+          // Santé
+          "Health_1": "Santé - En bonne santé (1)",
+          "Health_2": "Santé - Blessure mineure (2)",
+          // Vitesse d'adoption
+          "Adopté jour même": "Vitesse d'adoption - Adopté jour même",
+          "1-7 jours": "Vitesse d'adoption - 1 à 7 jours",
+        };
+
+        // Transformer les données pour renommer les clés et les étiquettes des catégories
+        const filteredData = result.stacked_data.map((entry) => {
+          return {
+            ...entry,
+            category: categoryMapping[entry.category] || entry.category, // Renomme la catégorie avec sa signification
+            AdoptedSameDay: entry.speed_0,  // Renommé de "speed_0" à "AdoptedSameDay"
+            AdoptedWithin7Days: entry.speed_1,  // Renommé de "speed_1" à "AdoptedWithin7Days"
+          };
+        });
+        setStackedData(filteredData);
       }
     } catch (error) {
-      console.error("Erreur API Radar :", error);
+      console.error("Erreur API Stacked Bar :", error);
     }
     setLoading(false);
   };
 
-  // Charger les données au démarrage et à chaque changement
   useEffect(() => {
-    fetchRadarData(selectedAnimal);
+    fetchStackedBarData(selectedAnimal);
   }, [selectedAnimal]);
 
-  return (
-    <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        📊 Analyse des animaux
-      </h1>
+  // Function to render labels
+  const renderLabel = (value) => {
+    return value;
+  };
 
-      {/* Boutons pour Chien & Chat */}
-      <div className="mb-6 flex space-x-4">
+  return (
+    <div className="flex flex-col items-center p-6 bg-white min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">📊 Analyse des Animaux</h1>
+
+      <div className="mb-6 flex space-x-6">
         <button
-          className={`px-6 py-2 rounded-lg font-medium shadow-md transition-all duration-300 ${
-            selectedAnimal === 1 ? "bg-blue-600 text-white scale-105" : "bg-gray-300 hover:bg-gray-400"
-          }`}
+          className={`px-4 py-2 rounded-lg font-medium ${selectedAnimal === 1 ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
           onClick={() => setSelectedAnimal(1)}
         >
           🐶 Chien
         </button>
         <button
-          className={`px-6 py-2 rounded-lg font-medium shadow-md transition-all duration-300 ${
-            selectedAnimal === 2 ? "bg-blue-600 text-white scale-105" : "bg-gray-300 hover:bg-gray-400"
-          }`}
+          className={`px-4 py-2 rounded-lg font-medium ${selectedAnimal === 2 ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
           onClick={() => setSelectedAnimal(2)}
         >
           🐱 Chat
         </button>
       </div>
 
-      {/* Affichage du chargement ou des graphiques */}
       {loading ? (
         <p className="text-lg font-semibold text-gray-600">Chargement...</p>
       ) : (
-        <div className="flex flex-col space-y-10">
-          {/* Premier graphique : RadarChart */}
-          {radarData.length > 0 ? (
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">Caractéristiques générales</h2>
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" width={500} height={400} data={radarData}>
-                <PolarGrid stroke="#ddd" />
-                <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 14, fill: "#4A5568" }} />
-                <PolarRadiusAxis angle={30} domain={[0, 10]} /> {/* Domaine de l'axe radiale ajusté pour les nouvelles valeurs */}
+        <div className="w-full bg-white p-6 rounded-xl shadow-sm overflow-x-auto">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Nombre d'Animaux Adoptés par Variable et Catégorie
+          </h2>
+          <div style={{ width: `${stackedData.length * 50}px`, minWidth: "100%", maxWidth: "1200px" }}>
+            <ResponsiveContainer height={900}>
+              <BarChart data={stackedData} margin={{ top: 20, right: 30, left: 20, bottom: 120 }}>
+                <CartesianGrid stroke="#d1d5db" strokeDasharray="3 3" />
+                <XAxis dataKey="category" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend />
 
-                {/* Affichage des données dans le Radar */}
-                <Radar
-                  name="Facteurs"
-                  dataKey="value"
-                  stroke="#4F46E5"
-                  fill="#4F46E5"
-                  fillOpacity={0.6}
-                />
-
-                <Tooltip content={({ payload }) => {
-                  if (payload && payload.length) {
-                    const { name, value } = payload[0];
-                    return (
-                      <div>
-                        <p><strong>{name}</strong></p>
-                        <p>{`Corrélation: ${value.toFixed(2)}`}</p> {/* Affichage avec 2 décimales */}
-                      </div>
-                    );
-                  }
-                  return null;
-                }} />
-              </RadarChart>
-            </div>
-          ) : (
-            <p className="text-lg text-red-600">Aucune donnée disponible</p>
-          )}
+                {/* Barres avec labels */}
+                <Bar dataKey="AdoptedSameDay" stackId="a" fill="#1f77b4" name="Adopté le jour même">
+                  <LabelList dataKey="AdoptedSameDay" position="center" fill="white" fontSize={16} fontWeight="bold" formatter={renderLabel} />
+                </Bar>
+                <Bar dataKey="AdoptedWithin7Days" stackId="a" fill="#ff7f0e" name="Adopté sous 1 à 7 jours">
+                  <LabelList dataKey="AdoptedWithin7Days" position="center" fill="white" fontSize={16} fontWeight="bold" formatter={renderLabel} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
     </div>
