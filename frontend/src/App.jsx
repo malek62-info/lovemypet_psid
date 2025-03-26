@@ -3,20 +3,32 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Plot from 'react-plotly.js';
 
 const App = () => {
-  const [stackedDataDog, setStackedDataDog] = useState([]); // Données pour les chiens (vitesse d'adoption)
-  const [stackedDataCat, setStackedDataCat] = useState([]); // Données pour les chats (vitesse d'adoption)
-  const [sterilizationDataDog, setSterilizationDataDog] = useState([]); // Données pour les chiens (nombre par sexe)
-  const [sterilizationDataCat, setSterilizationDataCat] = useState([]); // Données pour les chats (nombre par sexe)
-  const [sterilizationPercentDataDog, setSterilizationPercentDataDog] = useState([]); // Données pour les chiens (pourcentage par âge)
-  const [sterilizationPercentDataCat, setSterilizationPercentDataCat] = useState([]); // Données pour les chats (pourcentage par âge)
+  const [stackedDataDog, setStackedDataDog] = useState([]);
+  const [stackedDataCat, setStackedDataCat] = useState([]);
+  const [sterilizationDataDog, setSterilizationDataDog] = useState([]);
+  const [sterilizationDataCat, setSterilizationDataCat] = useState([]);
+  const [sterilizationPercentDataDog, setSterilizationPercentDataDog] = useState([]);
+  const [sterilizationPercentDataCat, setSterilizationPercentDataCat] = useState([]);
+  const [adoptionSpeedDataDog, setAdoptionSpeedDataDog] = useState([]);
+  const [adoptionSpeedDataCat, setAdoptionSpeedDataCat] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showNonSterilized, setShowNonSterilized] = useState(true); // Filtre interactif pour le Graphique 2
-  const [showMales, setShowMales] = useState(true); // Filtre interactif pour afficher les mâles (Graphique 3)
-  const [showFemales, setShowFemales] = useState(true); // Filtre interactif pour afficher les femelles (Graphique 3)
-  const [view, setView] = useState('dog'); // État pour basculer entre chiens et chats ('dog' ou 'cat')
-  const [sterilizationAnimal, setSterilizationAnimal] = useState('dog'); // État pour choisir l'animal des Graphiques 2 et 3 ('dog' ou 'cat')
+  const [showNonSterilized, setShowNonSterilized] = useState(true);
+  const [showMalesSterilization, setShowMalesSterilization] = useState(true);
+  const [showFemalesSterilization, setShowFemalesSterilization] = useState(true);
+  const [view, setView] = useState('dog');
+  const [sterilizationAnimal, setSterilizationAnimal] = useState('dog');
+  const [adoptionSpeedAnimal, setAdoptionSpeedAnimal] = useState('dog');
+  const [showMalesAdoption, setShowMalesAdoption] = useState(true);
+  const [showFemalesAdoption, setShowFemalesAdoption] = useState(true);
 
-  // Fonction pour récupérer les données de vitesse d'adoption
+  const adoptionSpeedLabels = {
+    0: "Adopté le jour même",
+    1: "Adopté en 1-7 jours",
+    2: "Adopté en 8-30 jours",
+    3: "Adopté en 31-90 jours",
+    4: "Non adopté après 100 jours",
+  };
+
   const fetchStackedBarData = async (animal, setData) => {
     try {
       const response = await fetch(`http://localhost:8000/stacked-bar/${animal}`);
@@ -26,9 +38,6 @@ const App = () => {
           "MaturitySize_1": "Taille à maturité - Petite (1)",
           "MaturitySize_2": "Taille à maturité - Moyenne (2)",
           "MaturitySize_3": "Taille à maturité - Grande (3)",
-          "Jeune": "Âge - Jeune",
-          "Adulte": "Âge - Adulte",
-          "Senior": "Âge - Senior",
           "Gender_1": "Sexe - Mâle (1)",
           "Gender_2": "Sexe - Femelle (2)",
           "Gender_3": "Sexe - Mixte (3)",
@@ -43,18 +52,13 @@ const App = () => {
           "Sterilized_2": "Stérilisé - Non (2)",
           "Health_1": "Santé - En bonne santé (1)",
           "Health_2": "Santé - Blessure mineure (2)",
-          "Adopté jour même": "Vitesse d'adoption - Adopté jour même",
-          "1-7 jours": "Vitesse d'adoption - 1 à 7 jours",
         };
-
-        const filteredData = result.stacked_data.map((entry) => {
-          return {
-            ...entry,
-            category: categoryMapping[entry.category] || entry.category,
-            AdoptedSameDay: entry.speed_0,
-            AdoptedWithin7Days: entry.speed_1,
-          };
-        });
+        const filteredData = result.stacked_data.map((entry) => ({
+          ...entry,
+          category: categoryMapping[entry.category] || entry.category,
+          AdoptedSameDay: entry.speed_0,
+          AdoptedWithin7Days: entry.speed_1,
+        }));
         setData(filteredData);
       }
     } catch (error) {
@@ -62,7 +66,6 @@ const App = () => {
     }
   };
 
-  // Fonction pour récupérer le nombre total d'animaux stérilisés par sexe
   const fetchSterilizationData = async (animal, setData) => {
     try {
       const response = await fetch(`http://localhost:8000/sterilization-by-gender/${animal}`);
@@ -73,12 +76,9 @@ const App = () => {
           "Gender_2": "Sexe - Femelle (2)",
           "Gender_3": "Sexe - Mixte (3)",
         };
-
         const transformedData = result.data.map((entry) => ({
           ...entry,
           Gender: categoryMapping[entry.Gender] || entry.Gender,
-          Sterilized_Yes: entry.Sterilized_Yes,
-          Sterilized_No: entry.Sterilized_No,
         }));
         setData(transformedData);
       }
@@ -87,7 +87,6 @@ const App = () => {
     }
   };
 
-  // Fonction pour récupérer le pourcentage d'animaux stérilisés par âge et sexe
   const fetchSterilizationPercentData = async (animal, setData) => {
     try {
       const response = await fetch(`http://localhost:8000/sterilization-percent-by-age/${animal}`);
@@ -100,42 +99,49 @@ const App = () => {
     }
   };
 
-  // Charger les données au démarrage
+  const fetchAdoptionSpeedByAge = async (animal, setData) => {
+    try {
+      const response = await fetch(`http://localhost:8000/adoption-speed-by-age/${animal}`);
+      const result = await response.json();
+      if (result.boxplot_data) {
+        setData(result.boxplot_data);
+      }
+    } catch (error) {
+      console.error("Erreur API Adoption Speed by Age :", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       await Promise.all([
-        fetchStackedBarData(1, setStackedDataDog), // Données pour les chiens (vitesse d'adoption)
-        fetchStackedBarData(2, setStackedDataCat), // Données pour les chats (vitesse d'adoption)
-        fetchSterilizationData(1, setSterilizationDataDog), // Données pour les chiens (nombre par sexe)
-        fetchSterilizationData(2, setSterilizationDataCat), // Données pour les chats (nombre par sexe)
-        fetchSterilizationPercentData(1, setSterilizationPercentDataDog), // Données pour les chiens (pourcentage par âge)
-        fetchSterilizationPercentData(2, setSterilizationPercentDataCat), // Données pour les chats (pourcentage par âge)
+        fetchStackedBarData(1, setStackedDataDog),
+        fetchStackedBarData(2, setStackedDataCat),
+        fetchSterilizationData(1, setSterilizationDataDog),
+        fetchSterilizationData(2, setSterilizationDataCat),
+        fetchSterilizationPercentData(1, setSterilizationPercentDataDog),
+        fetchSterilizationPercentData(2, setSterilizationPercentDataCat),
+        fetchAdoptionSpeedByAge(1, setAdoptionSpeedDataDog),
+        fetchAdoptionSpeedByAge(2, setAdoptionSpeedDataCat),
       ]);
       setLoading(false);
     };
     loadData();
   }, []);
 
-  const renderLabel = (value) => {
-    return value;
-  };
+  const renderLabel = (value) => value;
 
-  // Données à afficher pour le Graphique 1 (chiens ou chats, selon la vue)
   const stackedData = view === 'dog' ? stackedDataDog : stackedDataCat;
-
-  // Données à afficher pour le Graphique 2 (stérilisation par sexe)
   const sterilizationData = sterilizationAnimal === 'dog' ? sterilizationDataDog : sterilizationDataCat;
-  const sterilizationTitle = sterilizationAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱';
-
-  // Données à afficher pour le Graphique 3 (pourcentage de stérilisation par âge)
   const sterilizationPercentData = sterilizationAnimal === 'dog' ? sterilizationPercentDataDog : sterilizationPercentDataCat;
+  const adoptionSpeedData = adoptionSpeedAnimal === 'dog' ? adoptionSpeedDataDog : adoptionSpeedDataCat;
+  const adoptionSpeedTitle = adoptionSpeedAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱';
 
   return (
     <div className="flex flex-col items-center p-6 bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">📊 Analyse des Animaux</h1>
 
-      {/* Boutons pour le 1er graphique (Vitesse d'adoption) */}
+      {/* Graphique 1 : Vitesse d'adoption par variable */}
       <div className="mb-6 flex space-x-6">
         <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer le graphique de vitesse d'adoption :</h3>
         <button
@@ -156,7 +162,6 @@ const App = () => {
         <p className="text-lg font-semibold text-gray-600">Chargement...</p>
       ) : (
         <>
-          {/* Graphique 1 : Vitesse d'adoption par variable et catégorie (un seul graphique) */}
           <div className="w-full mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Analyse de la Vitesse d'Adoption {view === 'dog' ? 'des Chiens 🐶' : 'des Chats 🐱'}
@@ -185,7 +190,7 @@ const App = () => {
             </div>
           </div>
 
-          {/* Boutons partagés pour les Graphiques 2 et 3 */}
+          {/* Graphiques 2 et 3 : Stérilisation */}
           <div className="mb-6 flex space-x-6">
             <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer les graphiques de stérilisation :</h3>
             <button
@@ -202,16 +207,14 @@ const App = () => {
             </button>
           </div>
 
-          {/* Section pour les Graphiques 2 et 3 (côte à côte) */}
           <div className="w-full mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Stérilisation des {sterilizationTitle}</h2>
-
-            {/* Grille pour afficher les Graphiques 2 et 3 côte à côte */}
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Stérilisation des {sterilizationAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱'}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Graphique 2 : Nombre total d'animaux stérilisés par sexe */}
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  Nombre Total d'Animaux Stérilisés par Sexe ({sterilizationTitle})
+                  Nombre Total d'Animaux Stérilisés par Sexe
                 </h3>
                 <div className="mb-4">
                   <label className="flex items-center">
@@ -234,21 +237,18 @@ const App = () => {
                       marker: { color: '#2ca02c' },
                     },
                     ...(showNonSterilized
-                      ? [
-                          {
-                            x: sterilizationData.map((d) => d.Gender),
-                            y: sterilizationData.map((d) => d.Sterilized_No),
-                            type: 'bar',
-                            name: 'Stérilisé - Non (2)',
-                            marker: { color: '#d62728' },
-                          },
-                        ]
+                      ? [{
+                          x: sterilizationData.map((d) => d.Gender),
+                          y: sterilizationData.map((d) => d.Sterilized_No),
+                          type: 'bar',
+                          name: 'Stérilisé - Non (2)',
+                          marker: { color: '#d62728' },
+                        }]
                       : []),
                   ]}
                   layout={{
                     width: 500,
                     height: 400,
-                    title: '',
                     xaxis: { title: 'Sexe' },
                     yaxis: { title: 'Nombre d’animaux' },
                     barmode: 'group',
@@ -261,18 +261,16 @@ const App = () => {
                   }}
                 />
               </div>
-
-              {/* Graphique 3 : Pourcentage d'animaux stérilisés par âge et sexe */}
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  Pourcentage d'Animaux Stérilisés par Âge et Sexe ({sterilizationTitle})
+                  Pourcentage d'Animaux Stérilisés par Âge et Sexe
                 </h3>
                 <div className="mb-4 flex space-x-6">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={showMales}
-                      onChange={() => setShowMales(!showMales)}
+                      checked={showMalesSterilization}
+                      onChange={() => setShowMalesSterilization(!showMalesSterilization)}
                       className="mr-2"
                     />
                     Afficher les mâles
@@ -280,8 +278,8 @@ const App = () => {
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={showFemales}
-                      onChange={() => setShowFemales(!showFemales)}
+                      checked={showFemalesSterilization}
+                      onChange={() => setShowFemalesSterilization(!showFemalesSterilization)}
                       className="mr-2"
                     />
                     Afficher les femelles
@@ -289,37 +287,32 @@ const App = () => {
                 </div>
                 <Plot
                   data={[
-                    ...(showMales
-                      ? [
-                          {
-                            x: sterilizationPercentData.map((d) => d.Age),
-                            y: sterilizationPercentData.map((d) => d.Male_Sterilization_Percent),
-                            type: 'scatter',
-                            mode: 'lines+markers',
-                            name: 'Sexe - Mâle (1)',
-                            line: { color: '#1f77b4' },
-                            marker: { size: 8 },
-                          },
-                        ]
+                    ...(showMalesSterilization
+                      ? [{
+                          x: sterilizationPercentData.map((d) => d.Age),
+                          y: sterilizationPercentData.map((d) => d.Male_Sterilization_Percent),
+                          type: 'scatter',
+                          mode: 'lines+markers',
+                          name: 'Sexe - Mâle (1)',
+                          line: { color: '#1f77b4' },
+                          marker: { size: 8 },
+                        }]
                       : []),
-                    ...(showFemales
-                      ? [
-                          {
-                            x: sterilizationPercentData.map((d) => d.Age),
-                            y: sterilizationPercentData.map((d) => d.Female_Sterilization_Percent),
-                            type: 'scatter',
-                            mode: 'lines+markers',
-                            name: 'Sexe - Femelle (2)',
-                            line: { color: '#ff7f0e' },
-                            marker: { size: 8 },
-                          },
-                        ]
+                    ...(showFemalesSterilization
+                      ? [{
+                          x: sterilizationPercentData.map((d) => d.Age),
+                          y: sterilizationPercentData.map((d) => d.Female_Sterilization_Percent),
+                          type: 'scatter',
+                          mode: 'lines+markers',
+                          name: 'Sexe - Femelle (2)',
+                          line: { color: '#ff7f0e' },
+                          marker: { size: 8 },
+                        }]
                       : []),
                   ]}
                   layout={{
                     width: 500,
                     height: 400,
-                    title: '',
                     xaxis: { title: 'Âge' },
                     yaxis: { title: 'Pourcentage de stérilisation (%)', range: [0, 100] },
                     showlegend: true,
@@ -332,69 +325,96 @@ const App = () => {
                 />
               </div>
             </div>
+          </div>
 
-            {/* Explication après les graphiques */}
-            <div className="mt-8 bg-white p-6 rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Analyse de la stérilisation des animaux selon le sexe et l'âge</h3>
-              <p className="text-gray-600 mb-4">
-                Les graphiques présentent des données sur la stérilisation des animaux (chiens et chats), différenciées selon le sexe et l'âge. L'objectif est de comprendre les tendances générales de stérilisation et d'identifier d'éventuelles différences entre les groupes.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">1. Stérilisation chez les chiens</h4>
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Distribution générale</h5>
-              <p className="text-gray-600 mb-2">
-                Le premier graphique montre le nombre total d'animaux stérilisés ou non, selon le sexe.
-              </p>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>On observe une prédominance des animaux non stérilisés (barres rouges) par rapport aux animaux stérilisés (barres vertes).</li>
-                <li>Les femelles semblent plus nombreuses que les mâles, et le groupe mixte est minoritaire.</li>
-              </ul>
-
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Tendance selon l'âge</h5>
-              <p className="text-gray-600 mb-2">
-                Le deuxième graphique illustre le pourcentage de stérilisation par âge et par sexe.
-              </p>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>On constate une augmentation du taux de stérilisation avec l'âge : les jeunes sont rarement stérilisés, alors que le taux augmente de manière significative chez les adultes et les seniors.</li>
-                <li>La tendance est plus marquée chez les femelles que chez les mâles, ce qui pourrait refléter une plus forte incitation à la stérilisation des femelles pour éviter les portées non désirées.</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">2. Stérilisation chez les chats</h4>
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Distribution générale</h5>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>Comme chez les chiens, les animaux non stérilisés sont plus nombreux que ceux stérilisés.</li>
-                <li>La différence entre mâles et femelles est moins marquée que chez les chiens, ce qui pourrait indiquer une approche plus équilibrée en matière de stérilisation chez les chats.</li>
-              </ul>
-
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Tendance selon l'âge</h5>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>Le pourcentage de stérilisation augmente avec l'âge, suivant une tendance similaire à celle observée chez les chiens.</li>
-                <li>Contrairement aux chiens, l'écart entre mâles et femelles est plus réduit chez les chats seniors, suggérant une politique de stérilisation plus uniforme entre les sexes.</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Comparaison entre chiens et chats</h4>
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Fréquence de stérilisation</h5>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>Les chats semblent globalement plus souvent stérilisés que les chiens, ce qui pourrait s'expliquer par la forte reproduction des chats errants et la nécessité de contrôle des populations.</li>
-                <li>Chez les chiens, la décision de stérilisation semble plus influencer par le sexe, avec une priorité donnée aux femelles.</li>
-              </ul>
-
-              <h5 className="text-md font-semibold text-gray-700 mb-1">Évolution avec l'âge</h5>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>Dans les deux cas, les jeunes sont rarement stérilisés, mais le taux augmente chez les adultes et les seniors.</li>
-                <li>L'augmentation est plus progressive chez les chiens, alors que chez les chats, le taux atteint rapidement un niveau élevé dès l'âge adulte.</li>
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Interprétation et recommandations</h4>
-              <ul className="list-disc list-inside text-gray-600 mb-4">
-                <li>Ces données révèlent que la stérilisation est souvent réalisée tardivement, notamment chez les chiens. Une sensibilisation à une stérilisation plus précoce pourrait être bénéfique pour limiter la reproduction incontrôlée.</li>
-                <li>La différence de taux entre les sexes indique que la stérilisation des femelles est plus prioritaire. Or, pour un contrôle efficace des populations, la stérilisation des mâles est tout aussi importante.</li>
-                <li>Chez les chats, l'équilibre entre mâles et femelles indique une meilleure prise de conscience de l'importance de la stérilisation pour tous les individus.</li>
-              </ul>
-
-              <p className="text-gray-600">
-                En conclusion, ces graphiques mettent en lumière des tendances et des écarts qui pourraient être optimisés par des campagnes de sensibilisation et des politiques de stérilisation adaptées à chaque espèce et à chaque groupe d'âge.
-              </p>
+          {/* Graphique Boxplot : Vitesse d'adoption par âge */}
+          <div className="w-full mb-12">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Vitesse d'Adoption en Fonction de l'Âge des {adoptionSpeedTitle}
+            </h2>
+            <div className="mb-6 flex flex-col space-y-4">
+              <div className="flex space-x-6">
+                <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer par type :</h3>
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${adoptionSpeedAnimal === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                  onClick={() => setAdoptionSpeedAnimal('dog')}
+                >
+                  🐶 Chiens
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${adoptionSpeedAnimal === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                  onClick={() => setAdoptionSpeedAnimal('cat')}
+                >
+                  🐱 Chats
+                </button>
+              </div>
+              <div className="flex space-x-6">
+                <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer par sexe :</h3>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={showMalesAdoption}
+                    onChange={() => setShowMalesAdoption(!showMalesAdoption)}
+                    className="mr-2"
+                  />
+                  Mâles
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={showFemalesAdoption}
+                    onChange={() => setShowFemalesAdoption(!showFemalesAdoption)}
+                    className="mr-2"
+                  />
+                  Femelles
+                </label>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Distribution de l'Âge par Vitesse d'Adoption et Sexe ({adoptionSpeedTitle})
+              </h3>
+              <Plot
+                data={adoptionSpeedData
+                  .filter((group) =>
+                    (showMalesAdoption && group.Gender === 'Gender_1') ||
+                    (showFemalesAdoption && group.Gender === 'Gender_2')
+                  )
+                  .map((group) => ({
+                    y: group.Ages,
+                    x: Array(group.Ages.length).fill(
+                      `${adoptionSpeedLabels[group.AdoptionSpeed]} (${group.Gender === 'Gender_1' ? 'Mâle' : 'Femelle'})`
+                    ),
+                    type: 'box',
+                    name: `${adoptionSpeedLabels[group.AdoptionSpeed]} (${group.Gender === 'Gender_1' ? 'Mâle' : 'Femelle'})`,
+                    boxpoints: 'outliers',
+                    jitter: 0.3,
+                    marker: { color: group.Gender === 'Gender_1' ? '#1f77b4' : '#ff7f0e' },
+                    width: 0.7,
+                    boxmean: true,
+                    whiskerwidth: 0.7,
+                  }))}
+                layout={{
+                  width: 1500,
+                  height: 800,
+                  xaxis: {
+                    title: 'Vitesse d\'adoption',
+                    tickangle: -45,
+                    automargin: true,
+                  },
+                  yaxis: {
+                    title: 'Âge (mois)',
+                    range: [0, 150],
+                  },
+                  boxmode: 'group',
+                  showlegend: true,
+                  margin: { t: 20, b: 150, l: 50, r: 50 },
+                }}
+                config={{
+                  displayModeBar: true,
+                  displaylogo: false,
+                }}
+              />
             </div>
           </div>
         </>
