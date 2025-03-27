@@ -141,31 +141,30 @@ const App = () => {
     <div className="flex flex-col items-center p-6 bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">📊 Analyse des Animaux</h1>
 
-      {/* Graphique 1 : Vitesse d'adoption par variable */}
-      <div className="mb-6 flex space-x-6">
-        <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer le graphique de vitesse d'adoption :</h3>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium ${view === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-          onClick={() => setView('dog')}
-        >
-          🐶 Chiens
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium ${view === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-          onClick={() => setView('cat')}
-        >
-          🐱 Chats
-        </button>
-      </div>
-
       {loading ? (
         <p className="text-lg font-semibold text-gray-600">Chargement...</p>
       ) : (
         <>
+          {/* Graphique 1 : Vitesse d'adoption par variable */}
           <div className="w-full mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Analyse de la Vitesse d'Adoption {view === 'dog' ? 'des Chiens 🐶' : 'des Chats 🐱'}
             </h2>
+            <div className="mb-6 flex space-x-6">
+              <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer le graphique :</h3>
+              <button
+                className={`px-4 py-2 rounded-lg font-medium ${view === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                onClick={() => setView('dog')}
+              >
+                🐶 Chiens
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg font-medium ${view === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                onClick={() => setView('cat')}
+              >
+                🐱 Chats
+              </button>
+            </div>
             <div className="w-full bg-white p-6 rounded-xl shadow-sm overflow-x-auto mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
                 Nombre d'Animaux Adoptés par Variable et Catégorie ({view === 'dog' ? 'Chiens' : 'Chats'})
@@ -190,27 +189,26 @@ const App = () => {
             </div>
           </div>
 
-          {/* Graphiques 2 et 3 : Stérilisation */}
-          <div className="mb-6 flex space-x-6">
-            <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer les graphiques de stérilisation :</h3>
-            <button
-              className={`px-4 py-2 rounded-lg font-medium ${sterilizationAnimal === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-              onClick={() => setSterilizationAnimal('dog')}
-            >
-              🐶 Chiens
-            </button>
-            <button
-              className={`px-4 py-2 rounded-lg font-medium ${sterilizationAnimal === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-              onClick={() => setSterilizationAnimal('cat')}
-            >
-              🐱 Chats
-            </button>
-          </div>
-
+          {/* Graphique 2 : Stérilisation */}
           <div className="w-full mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Stérilisation des {sterilizationAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱'}
             </h2>
+            <div className="mb-6 flex space-x-6">
+              <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer les graphiques :</h3>
+              <button
+                className={`px-4 py-2 rounded-lg font-medium ${sterilizationAnimal === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                onClick={() => setSterilizationAnimal('dog')}
+              >
+                🐶 Chiens
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg font-medium ${sterilizationAnimal === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
+                onClick={() => setSterilizationAnimal('cat')}
+              >
+                🐱 Chats
+              </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -327,7 +325,63 @@ const App = () => {
             </div>
           </div>
 
-          {/* Graphique Boxplot : Vitesse d'adoption par âge */}
+          {/* Texte d'analyse inséré après le 2e graphique */}
+          <div className="mt-8 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Analyse de la stérilisation des animaux selon le sexe et l'âge</h3>
+            <p className="text-gray-600 mb-4">
+              Les graphiques présentent des données sur la stérilisation des animaux (chiens et chats), différenciées selon le sexe et l'âge. L'objectif est de comprendre les tendances générales de stérilisation et d'identifier d'éventuelles différences entre les groupes.
+            </p>
+            <h4 className="text-lg font-semibold text-gray-800 mb-2">1. Stérilisation chez les chiens</h4>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Distribution générale</h5>
+            <p className="text-gray-600 mb-2">
+              Le premier graphique montre le nombre total d'animaux stérilisés ou non, selon le sexe.
+            </p>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>On observe une prédominance des animaux non stérilisés (barres rouges) par rapport aux animaux stérilisés (barres vertes).</li>
+              <li>Les femelles semblent plus nombreuses que les mâles, et le groupe mixte est minoritaire.</li>
+            </ul>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Tendance selon l'âge</h5>
+            <p className="text-gray-600 mb-2">
+              Le deuxième graphique illustre le pourcentage de stérilisation par âge et par sexe.
+            </p>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>On constate une augmentation du taux de stérilisation avec l'âge : les jeunes sont rarement stérilisés, alors que le taux augmente de manière significative chez les adultes et les seniors.</li>
+              <li>La tendance est plus marquée chez les femelles que chez les mâles, ce qui pourrait refléter une plus forte incitation à la stérilisation des femelles pour éviter les portées non désirées.</li>
+            </ul>
+            <h4 className="text-lg font-semibold text-gray-800 mb-2">2. Stérilisation chez les chats</h4>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Distribution générale</h5>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>Comme chez les chiens, les animaux non stérilisés sont plus nombreux que ceux stérilisés.</li>
+              <li>La différence entre mâles et femelles est moins marquée que chez les chiens, ce qui pourrait indiquer une approche plus équilibrée en matière de stérilisation chez les chats.</li>
+            </ul>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Tendance selon l'âge</h5>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>Le pourcentage de stérilisation augmente avec l'âge, suivant une tendance similaire à celle observée chez les chiens.</li>
+              <li>Contrairement aux chiens, l'écart entre mâles et femelles est plus réduit chez les chats seniors, suggérant une politique de stérilisation plus uniforme entre les sexes.</li>
+            </ul>
+            <h4 className="text-lg font-semibold text-gray-800 mb-2">Comparaison entre chiens et chats</h4>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Fréquence de stérilisation</h5>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>Les chats semblent globalement plus souvent stérilisés que les chiens, ce qui pourrait s'expliquer par la forte reproduction des chats errants et la nécessité de contrôle des populations.</li>
+              <li>Chez les chiens, la décision de stérilisation semble plus influencée par le sexe, avec une priorité donnée aux femelles.</li>
+            </ul>
+            <h5 className="text-md font-semibold text-gray-700 mb-1">Évolution avec l'âge</h5>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>Dans les deux cas, les jeunes sont rarement stérilisés, mais le taux augmente chez les adultes et les seniors.</li>
+              <li>L'augmentation est plus progressive chez les chiens, alors que chez les chats, le taux atteint rapidement un niveau élevé dès l'âge adulte.</li>
+            </ul>
+            <h4 className="text-lg font-semibold text-gray-800 mb-2">Interprétation et recommandations</h4>
+            <ul className="list-disc list-inside text-gray-600 mb-4">
+              <li>Ces données révèlent que la stérilisation est souvent réalisée tardivement, notamment chez les chiens. Une sensibilisation à une stérilisation plus précoce pourrait être bénéfique pour limiter la reproduction incontrôlée.</li>
+              <li>La différence de taux entre les sexes indique que la stérilisation des femelles est plus prioritaire. Or, pour un contrôle efficace des populations, la stérilisation des mâles est tout aussi importante.</li>
+              <li>Chez les chats, l'équilibre entre mâles et femelles indique une meilleure prise de conscience de l'importance de la stérilisation pour tous les individus.</li>
+            </ul>
+            <p className="text-gray-600">
+              En conclusion, ces graphiques mettent en lumière des tendances et des écarts qui pourraient être optimisés par des campagnes de sensibilisation et des politiques de stérilisation adaptées à chaque espèce et à chaque groupe d'âge.
+            </p>
+          </div>
+
+          {/* Graphique 3 : Vitesse d'adoption par âge */}
           <div className="w-full mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Vitesse d'Adoption en Fonction de l'Âge des {adoptionSpeedTitle}
