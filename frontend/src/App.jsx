@@ -1,12 +1,18 @@
-import Wrapper from './components/Wrapper';
-import Annalyse1 from './components/Annalyse1';
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Ml from "./pages/ml";
+import Dashboard from "./pages/dashboard";
+import Home from "./pages";
 
 function App() {
-
   return (
-    <Wrapper >
-   <Annalyse1/>
-    </Wrapper>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/ml" element={<Ml />} />
+      </Routes>
+    </Router>
   );
 }
 

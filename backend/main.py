@@ -21,7 +21,7 @@ def load_data():
     df = pd.read_csv(DATA_PATH)
     return df
 
-@app.get("/")
+@app.get("/photos")
 async def get_photo_adoption_counts():
     df = load_data()
 
@@ -42,3 +42,35 @@ async def get_photo_adoption_counts():
     adoption_counts_dict = adoption_counts.to_dict(orient='index')
 
     return adoption_counts_dict
+
+
+
+@app.get("/adoption-speed-gender")
+async def get_adoption_speed_gender():
+    df = load_data()
+
+    # 🎯 Sélection des colonnes utiles
+    columns = ["PetID", "Gender", "MaturitySize", "Fee", "AdoptionSpeed"]
+    df = df[columns].dropna()  # Supprime les valeurs nulles
+
+    # 🔄 Mapping des valeurs pour Gender
+    gender_map = {1: "Mâle", 2: "Femelle"}
+    df = df[df["Gender"].isin(gender_map.keys())]  # Supprime Mixed (3)
+    df["Gender"] = df["Gender"].map(gender_map)
+
+    # 🔄 Mapping des valeurs pour AdoptionSpeed
+    adoption_speed_map = {
+        0: "Le jour même",
+        1: "1-7 jours",
+        2: "8-30 jours",
+        3: "31-90 jours",
+        4: "Non adopté",
+    }
+
+    df["AdoptionSpeed"] = df["AdoptionSpeed"].map(adoption_speed_map)
+
+    # 🚀 Conversion des types
+    df["MaturitySize"] = df["MaturitySize"].astype(int)
+    df["Fee"] = df["Fee"].astype(int)
+
+    return df.to_dict(orient="records")
