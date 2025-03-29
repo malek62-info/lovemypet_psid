@@ -8,7 +8,7 @@ import Contexte from "./Contexte";
 const AdoptionSpeedChart = () => {
   const [data, setData] = useState([]);
   const [sizeFilter, setSizeFilter] = useState("all");
-  const [feeRange, setFeeRange] = useState([0, 500]);
+  const [feeRange, setFeeRange] = useState([0, 800]);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/adoption-speed-gender")
@@ -65,7 +65,7 @@ const AdoptionSpeedChart = () => {
             className="range range-primary"
             type="range"
             min="0"
-            max="500"
+            max="800"
             step="10"
             value={feeRange[1]}
             onChange={(e) => setFeeRange([0, parseInt(e.target.value)])}
@@ -127,7 +127,7 @@ const AdoptionSpeedChart = () => {
       <Explication
         title="Analyse des tendances d'adoption en fonction des frais et de la taille des animaux"
         points={[
-          "Les frais d'adoption compris entre 0 et 500 euros montrent une faible adoption le premier jour (203 femelles, 160 mâles). Cependant, entre le 2ᵉ et le 90ᵉ jour, les adoptions augmentent significativement (au moins 1361 femelles et 1 280 mâles adoptés).",
+          "Les frais d'adoption compris entre 0 et 800 euros montrent une faible adoption le premier jour (203 femelles, 160 mâles). Cependant, entre le 2ᵉ et le 90ᵉ jour, les adoptions augmentent significativement (au moins 1361 femelles et 1 280 mâles adoptés).",
           "Les femelles sont généralement adoptées en plus grand nombre que les mâles pour toutes les tailles, sauf pour les animaux de grande taille où les mâles sont plus adoptés et dominent également parmi les non-adoptés. Pour les très grandes tailles, bien que les adoptions soient initialement égales, les mâles surpassent ensuite les femelles.",
           "Les frais d'adoption n'ont pas d'impact significatif sur la rapidité des adoptions, bien qu'une légère baisse soit observée lorsque les frais augmentent.",
         ]}

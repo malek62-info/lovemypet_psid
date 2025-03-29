@@ -4,7 +4,7 @@ import React from 'react';
 const Title = ({ text, number }) => {
   return (
     <h1 className="text-3xl font-bold  my-8 underline">
-     <span className=" text-blue-500 ">{number})</span>  {text} 
+     <span className=" text-primary">{number})</span>  {text} 
     </h1>
   );
 };
