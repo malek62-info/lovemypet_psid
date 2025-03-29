@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from scipy.stats import gaussian_kde  # Importation corrigée
 import pandas as pd
 import os
+import numpy as np  # Ajout de l'importation de numpy
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -172,35 +174,45 @@ def get_sterilization_percent_by_age(animal_type: int):
 
     return {"data": sterilization_data}
 
-@app.get("/adoption-speed-by-age/{animal_type}")
-def get_adoption_speed_by_age(animal_type: int):
-    """
-    Retourne les données pour des boxplots de l'âge en fonction de la vitesse d'adoption,
-    filtrées par type d'animal et sexe (mâle/femelle uniquement).
-    """
+
+
+@app.get("/adoption-speed-density/{animal_type}")
+def get_adoption_speed_density(animal_type: int):
     if not os.path.exists(DATA_PATH):
         logger.error(f"Fichier introuvable : {DATA_PATH}")
         return {"error": "Fichier de données introuvable"}
-
+    
     df = pd.read_csv(DATA_PATH)
-    if "Type" not in df.columns or "Age" not in df.columns or "AdoptionSpeed" not in df.columns or "Gender" not in df.columns:
-        return {"error": "Colonnes nécessaires manquantes dans le fichier"}
 
+    if "Type" not in df.columns:
+        return {"error": "Colonne 'Type' manquante dans le fichier"}
+    
+    # Filtrer par type d'animal (1 pour chiens, 2 pour chats)
     df = df[df["Type"] == animal_type]
-    if df.empty:
-        return {"error": "Aucune donnée trouvée pour ce type d'animal"}
-
-    df = df[df["Gender"].isin([1, 2])]
-
-    boxplot_data = []
-    for speed in range(5):
-        for gender in [1, 2]:
-            group = df[(df["AdoptionSpeed"] == speed) & (df["Gender"] == gender)]["Age"].dropna()
-            if not group.empty:
-                boxplot_data.append({
-                    "AdoptionSpeed": speed,
-                    "Gender": f"Gender_{gender}",
-                    "Ages": group.tolist()
-                })
-
-    return {"boxplot_data": boxplot_data}
+    # Exclure le genre mixte (3)
+    df = df[df["Gender"] != 3]
+    
+    # Définir les intervalles d'âge (en mois)
+    bins = [0, 6, 12, 24, 36, 60, 120, float('inf')]  # 0-6 mois, 6-12 mois, 1-2 ans, 2-3 ans, 3-5 ans, 5-10 ans, 10+ ans
+    labels = ["0-6 mois", "6-12 mois", "1-2 ans", "2-3 ans", "3-5 ans", "5-10 ans", "10+ ans"]
+    df["AgeCategory"] = pd.cut(df["Age"], bins=bins, labels=labels, right=False)
+    
+    # Grouper par catégorie d'âge, sexe et vitesse d'adoption
+    grouped = df.groupby(["AgeCategory", "Gender", "AdoptionSpeed"]).size().unstack(fill_value=0).reset_index()
+    
+    # Structure des données pour le frontend
+    line_data = {"male": {}, "female": {}}
+    
+    for gender, label in [(1, "male"), (2, "female")]:
+        df_gender = grouped[grouped["Gender"] == gender]
+        if not df_gender.empty:
+            for speed in range(5):
+                if speed in df_gender.columns:
+                    line_data[label][str(speed)] = {
+                        "x": df_gender["AgeCategory"].tolist(),
+                        "y": df_gender[speed].tolist()
+                    }
+                else:
+                    line_data[label][str(speed)] = {"x": [], "y": []}
+    
+    return {"line_data": line_data}
