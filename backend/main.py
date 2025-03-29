@@ -22,10 +22,7 @@ DATA_PATH = os.path.join(BASE_DIR, "data", "data_clean.csv")
 
 @app.get("/stacked-bar/{animal_type}")
 def get_stacked_bar_data(animal_type: int):
-    """
-    Retourne les données agrégées pour toutes les variables dans un diagramme en barres empilées.
-    Exclut 'Pas sûr' (3) pour Vaccinated, Dewormed, Sterilized, 'Grave' (3) pour Health, et 'Très grand' (4) pour MaturitySize.
-    """
+    
     if not os.path.exists(DATA_PATH):
         logger.error(f"Fichier introuvable : {DATA_PATH}")
         return {"error": "Fichier de données introuvable"}
@@ -34,6 +31,9 @@ def get_stacked_bar_data(animal_type: int):
 
     if "Type" not in df.columns:
         return {"error": "Colonne 'Type' manquante dans le fichier"}
+    """
+    ici on filtre les donnée on garde uniquement le type de l'nimale qui nou interesse 
+    """
 
     df = df[df["Type"] == animal_type]
 
@@ -51,6 +51,10 @@ def get_stacked_bar_data(animal_type: int):
     ]
 
     stacked_data = []
+
+    """
+    on compte les occurrences par vitesse d'adoption (AdoptionSpeed)
+    """
 
     for variable in variables:
         if variable not in df.columns:
