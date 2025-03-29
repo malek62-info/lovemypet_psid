@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Ml from "./pages/ml";
 import Dashboard from "./pages/dashboard";
@@ -15,5 +14,5 @@ function App() {
     </Router>
   );
 }
-
 export default App;
+
