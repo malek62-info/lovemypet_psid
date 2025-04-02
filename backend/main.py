@@ -176,43 +176,58 @@ def get_sterilization_percent_by_age(animal_type: int):
 
 
 
-@app.get("/adoption-speed-density/{animal_type}")
-def get_adoption_speed_density(animal_type: int):
+@app.get("/top-breeds-adoption/{animal_type}")
+def get_top_breeds_adoption(animal_type: int):
+    """
+    Retourne les 10 races pures et mixtes les plus rapides à être adoptées pour un type d'animal.
+    """
     if not os.path.exists(DATA_PATH):
         logger.error(f"Fichier introuvable : {DATA_PATH}")
         return {"error": "Fichier de données introuvable"}
-    
+
+    # Charger les données
     df = pd.read_csv(DATA_PATH)
+    breed_labels = pd.read_csv(os.path.join(BASE_DIR, "data", "breed_labels.csv"))
 
     if "Type" not in df.columns:
         return {"error": "Colonne 'Type' manquante dans le fichier"}
-    
-    # Filtrer par type d'animal (1 pour chiens, 2 pour chats)
+
+    # Filtrer par type d'animal (1 = Chien, 2 = Chat)
     df = df[df["Type"] == animal_type]
-    # Exclure le genre mixte (3)
-    df = df[df["Gender"] != 3]
-    
-    # Définir les intervalles d'âge (en mois)
-    bins = [0, 6, 12, 24, 36, 60, 120, float('inf')]  # 0-6 mois, 6-12 mois, 1-2 ans, 2-3 ans, 3-5 ans, 5-10 ans, 10+ ans
-    labels = ["0-6 mois", "6-12 mois", "1-2 ans", "2-3 ans", "3-5 ans", "5-10 ans", "10+ ans"]
-    df["AgeCategory"] = pd.cut(df["Age"], bins=bins, labels=labels, right=False)
-    
-    # Grouper par catégorie d'âge, sexe et vitesse d'adoption
-    grouped = df.groupby(["AgeCategory", "Gender", "AdoptionSpeed"]).size().unstack(fill_value=0).reset_index()
-    
-    # Structure des données pour le frontend
-    line_data = {"male": {}, "female": {}}
-    
-    for gender, label in [(1, "male"), (2, "female")]:
-        df_gender = grouped[grouped["Gender"] == gender]
-        if not df_gender.empty:
-            for speed in range(5):
-                if speed in df_gender.columns:
-                    line_data[label][str(speed)] = {
-                        "x": df_gender["AgeCategory"].tolist(),
-                        "y": df_gender[speed].tolist()
-                    }
-                else:
-                    line_data[label][str(speed)] = {"x": [], "y": []}
-    
-    return {"line_data": line_data}
+
+    if df.empty:
+        return {"error": "Aucune donnée trouvée pour ce type d'animal"}
+
+    # Fusionner avec les noms des races
+    df = df.merge(breed_labels, left_on="Breed1", right_on="BreedID", how="left")
+
+    # Ajouter la colonne "Purity"
+    df["Purity"] = df["Breed2"].apply(lambda x: "Pure" if x == 0 else "Mixte")
+
+    # Calculer la vitesse moyenne par race et pureté
+    speed_by_breed_purity = df.groupby(["BreedName", "Purity"])["AdoptionSpeed"].mean().reset_index()
+
+    # Filtrer pour avoir au moins 5 observations par race pour fiabilité
+    counts = df.groupby(["BreedName", "Purity"]).size()
+    valid_breeds = counts[counts >= 5].index
+    speed_by_breed_purity = speed_by_breed_purity[speed_by_breed_purity.set_index(["BreedName", "Purity"]).index.isin(valid_breeds)]
+
+    # Top 10 races pures
+    pure_breeds = speed_by_breed_purity[speed_by_breed_purity["Purity"] == "Pure"]
+    top_10_pure = pure_breeds.sort_values("AdoptionSpeed").head(10)
+
+    # Top 10 races mixtes
+    mixte_breeds = speed_by_breed_purity[speed_by_breed_purity["Purity"] == "Mixte"]
+    top_10_mixte = mixte_breeds.sort_values("AdoptionSpeed").head(10)
+
+    # Combiner les deux tops
+    top_10_combined = pd.concat([top_10_pure, top_10_mixte])
+
+    # Préparer les données pour le frontend
+    bar_data = top_10_combined.rename(columns={
+        "BreedName": "breed",
+        "Purity": "purity",
+        "AdoptionSpeed": "speed"
+    }).to_dict(orient="records")
+
+    return {"bar_data": bar_data}

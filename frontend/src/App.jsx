@@ -10,20 +10,17 @@ const App = () => {
   const [sterilizationDataCat, setSterilizationDataCat] = useState([]);
   const [sterilizationPercentDataDog, setSterilizationPercentDataDog] = useState([]);
   const [sterilizationPercentDataCat, setSterilizationPercentDataCat] = useState([]);
-  const [adoptionSpeedDataDog, setAdoptionSpeedDataDog] = useState([]);
-  const [adoptionSpeedDataCat, setAdoptionSpeedDataCat] = useState([]);
-  const [lineDataDog, setLineDataDog] = useState({ male: {}, female: {} });
-  const [lineDataCat, setLineDataCat] = useState({ male: {}, female: {} });
   const [loading, setLoading] = useState(false);
   const [showNonSterilized, setShowNonSterilized] = useState(true);
   const [showMalesSterilization, setShowMalesSterilization] = useState(true);
   const [showFemalesSterilization, setShowFemalesSterilization] = useState(true);
   const [view, setView] = useState('dog');
   const [sterilizationAnimal, setSterilizationAnimal] = useState('dog');
-  const [adoptionSpeedAnimal, setAdoptionSpeedAnimal] = useState('dog');
-  const [showMalesAdoption, setShowMalesAdoption] = useState(true);
-  const [showFemalesAdoption, setShowFemalesAdoption] = useState(true);
-  const [lineAnimal, setLineAnimal] = useState('dog');
+
+  // Nouvel état pour les données des top races
+  const [topBreedsDataDog, setTopBreedsDataDog] = useState([]);
+  const [topBreedsDataCat, setTopBreedsDataCat] = useState([]);
+  const [topBreedsAnimal, setTopBreedsAnimal] = useState('dog');
 
   // Labels pour les vitesses d'adoption
   const adoptionSpeedLabels = {
@@ -33,22 +30,6 @@ const App = () => {
     3: "Adopté en 31-90 jours",
     4: "Non adopté après 100 jours",
   };
-
-  // Couleurs distinctes pour chaque vitesse d'adoption (mâles et femelles)
-  const maleColors = [
-    '#2ecc71', // Vert émeraude (speed 0)
-    '#3498db', // Bleu ciel (speed 1)
-    '#9b59b6', // Violet (speed 2)
-    '#e74c3c', // Rouge (speed 3)
-    '#f1c40f', // Jaune (speed 4)
-  ];
-  const femaleColors = [
-    '#e91e63', // Rose fuchsia (speed 0)
-    '#1abc9c', // Turquoise (speed 1)
-    '#8e44ad', // Violet foncé (speed 2)
-    '#d35400', // Orange citrouille (speed 3)
-    '#34495e', // Gris bleu foncé (speed 4)
-  ];
 
   // Fonction pour récupérer les données du graphique à barres empilées
   const fetchStackedBarData = async (animal, setData) => {
@@ -124,29 +105,16 @@ const App = () => {
     }
   };
 
-  // Fonction pour récupérer les données de vitesse d'adoption par âge (boxplot)
-  const fetchAdoptionSpeedByAge = async (animal, setData) => {
+  // Nouvelle fonction pour récupérer les données des top races
+  const fetchTopBreedsData = async (animal, setData) => {
     try {
-      const response = await fetch(`http://localhost:8000/adoption-speed-by-age/${animal}`);
+      const response = await fetch(`http://localhost:8000/top-breeds-adoption/${animal}`);
       const result = await response.json();
-      if (result.boxplot_data) {
-        setData(result.boxplot_data);
+      if (result.bar_data) {
+        setData(result.bar_data);
       }
     } catch (error) {
-      console.error("Erreur API Adoption Speed by Age :", error);
-    }
-  };
-
-  // Fonction pour récupérer les données du graphique en lignes (adoptions par intervalle d'âge)
-  const fetchAdoptionSpeedLine = async (animal, setData) => {
-    try {
-      const response = await fetch(`http://localhost:8000/adoption-speed-density/${animal}`);
-      const result = await response.json();
-      if (result.line_data) {
-        setData(result.line_data);
-      }
-    } catch (error) {
-      console.error("Erreur API Line Data :", error);
+      console.error("Erreur API Top Breeds :", error);
     }
   };
 
@@ -161,10 +129,8 @@ const App = () => {
         fetchSterilizationData(2, setSterilizationDataCat),
         fetchSterilizationPercentData(1, setSterilizationPercentDataDog),
         fetchSterilizationPercentData(2, setSterilizationPercentDataCat),
-        fetchAdoptionSpeedByAge(1, setAdoptionSpeedDataDog),
-        fetchAdoptionSpeedByAge(2, setAdoptionSpeedDataCat),
-        fetchAdoptionSpeedLine(1, setLineDataDog),
-        fetchAdoptionSpeedLine(2, setLineDataCat),
+        fetchTopBreedsData(1, setTopBreedsDataDog), // Ajout pour chiens
+        fetchTopBreedsData(2, setTopBreedsDataCat), // Ajout pour chats
       ]);
       setLoading(false);
     };
@@ -177,10 +143,7 @@ const App = () => {
   const stackedData = view === 'dog' ? stackedDataDog : stackedDataCat;
   const sterilizationData = sterilizationAnimal === 'dog' ? sterilizationDataDog : sterilizationDataCat;
   const sterilizationPercentData = sterilizationAnimal === 'dog' ? sterilizationPercentDataDog : sterilizationPercentDataCat;
-  const adoptionSpeedData = adoptionSpeedAnimal === 'dog' ? adoptionSpeedDataDog : adoptionSpeedDataCat;
-  const adoptionSpeedTitle = adoptionSpeedAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱';
-  const lineData = lineAnimal === 'dog' ? lineDataDog : lineDataCat;
-  const lineTitle = lineAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱';
+  const topBreedsData = topBreedsAnimal === 'dog' ? topBreedsDataDog : topBreedsDataCat;
 
   return (
     <div className="flex flex-col items-center p-6 bg-white min-h-screen">
@@ -244,7 +207,7 @@ const App = () => {
                 
                 <h4 className="font-semibold text-gray-700 mb-3">📊 Distribution Générale</h4>
                 <p className="text-gray-600 mb-4">
-                  Le graphique présente la répartition des adoptions de chiens en fonction de plusieurs critères : longueur de la fourrure, vaccination, vermifugation, stérilisation, état de santé, sexe et taille à maturité. Les adoptions sont classées en trois catégories :
+                  Le graphique présente la répartition des adoptions de chiens en fonction de plusieurs criteria : longueur de la fourrure, vaccination, vermifugation, stérilisation, état de santé, sexe et taille à maturité. Les adoptions sont classées en trois catégories :
                 </p>
                 <ul className="list-disc list-inside text-gray-600 mb-4 space-y-2">
                   <li><span className="font-medium text-blue-600">Adopté le jour même</span> (barres bleues)</li>
@@ -519,268 +482,365 @@ const App = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Analyse de la stérilisation */}
-          <div className="mt-12 bg-white p-8 rounded-xl shadow-lg">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
-              Analyse de la stérilisation des animaux selon le sexe et l'âge
-            </h3>
-            
-            <div className="space-y-8">
-              {/* Introduction */}
-              <div>
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  Les graphiques présentent des données sur la stérilisation des animaux (chiens et chats), 
-                  différenciées selon le sexe et l'âge. L'objectif est de comprendre les tendances générales 
-                  de stérilisation et d'identifier d'éventuelles différences entre les groupes.
-                </p>
-              </div>
-
-              {/* Section Chiens */}
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h4 className="text-xl font-semibold text-blue-800 mb-4">1. Stérilisation chez les chiens</h4>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h5 className="text-lg font-medium text-blue-700 mb-2">Distribution générale</h5>
-                    <p className="text-gray-700 mb-3">
-                      Le premier graphique montre le nombre total d'animaux stérilisés ou non, selon le sexe.
-                    </p>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Prédominance des non-stérilisés :</span> Les animaux non stérilisés 
-                        (barres rouges) sont plus nombreux que les stérilisés (barres vertes).
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Répartition par sexe :</span> Les femelles semblent plus nombreuses 
-                        que les mâles, et le groupe mixte est minoritaire.
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="text-lg font-medium text-blue-700 mb-2">Tendance selon l'âge</h5>
-                    <p className="text-gray-700 mb-3">
-                      Le deuxième graphique illustre le pourcentage de stérilisation par âge et par sexe.
-                    </p>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Corrélation avec l'âge :</span> Le taux de stérilisation augmente 
-                        significativement avec l'âge (jeunes rarement stérilisés vs adultes/seniors).
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Différence entre sexes :</span> La tendance est plus marquée chez 
-                        les femelles, reflétant une plus forte incitation à leur stérilisation.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section Chats */}
-              <div className="bg-orange-50 p-6 rounded-lg">
-                <h4 className="text-xl font-semibold text-orange-800 mb-4">2. Stérilisation chez les chats</h4>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h5 className="text-lg font-medium text-orange-700 mb-2">Distribution générale</h5>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Prédominance des non-stérilisés :</span> Comme chez les chiens, 
-                        les non-stérilisés sont majoritaires.
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Équilibre entre sexes :</span> La différence est moins marquée 
-                        que chez les chiens, suggérant une approche plus équilibrée.
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="text-lg font-medium text-orange-700 mb-2">Tendance selon l'âge</h5>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Progression avec l'âge :</span> Augmentation similaire à celle 
-                        observée chez les chiens, mais taux plus élevé chez les adultes.
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Écart réduit :</span> Chez les seniors, la différence entre 
-                        mâles et femelles est moins prononcée que chez les chiens.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section Comparaison */}
-              <div className="bg-purple-50 p-6 rounded-lg">
-                <h4 className="text-xl font-semibold text-purple-800 mb-4">Comparaison entre chiens et chats</h4>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h5 className="text-lg font-medium text-purple-700 mb-2">Fréquence de stérilisation</h5>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Chats plus stérilisés :</span> Probablement dû à la nécessité 
-                        de contrôler les populations de chats errants.
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Priorité aux femelles canines :</span> La stérilisation des 
-                        chiennes semble plus ciblée que celle des mâles.
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="text-lg font-medium text-purple-700 mb-2">Évolution avec l'âge</h5>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Jeunes rarement stérilisés :</span> Constat commun aux deux espèces.
-                      </li>
-                      <li className="leading-relaxed">
-                        <span className="font-medium">Progression différente :</span> Plus graduelle chez les chiens, 
-                        alors que les chats atteignent rapidement un taux élevé.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recommandations */}
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="text-xl font-semibold text-green-800 mb-4">Interprétation et recommandations</h4>
-                <ul className="list-disc list-inside space-y-3 text-gray-700 pl-4">
-                  <li className="leading-relaxed">
-                    <span className="font-medium">Stérilisation précoce :</span> Sensibiliser à une intervention 
-                    plus précoce, surtout chez les chiens, pour limiter la reproduction incontrôlée.
-                  </li>
-                  <li className="leading-relaxed">
-                    <span className="font-medium">Équilibre entre sexes :</span> Promouvoir la stérilisation des 
-                    mâles canins pour un contrôle plus efficace des populations.
-                  </li>
-                  <li className="leading-relaxed">
-                    <span className="font-medium">Modèle félin :</span> S'inspirer de l'approche équilibrée observée 
-                    chez les chats pour les chiens.
-                  </li>
-                </ul>
-              </div>
-
-              {/* Conclusion */}
-              <div className="mt-6">
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  Ces analyses mettent en lumière des tendances et des écarts qui pourraient être optimisés par 
-                  des campagnes de sensibilisation et des politiques de stérilisation adaptées à chaque espèce 
-                  et groupe d'âge.
-                </p>
-              </div>
-            </div>
-          </div>
-
-
-
-
-
-
-
-
-
-
-
-
-          {/* Graphique 4 : Lignes simples avec intervalles d'âge et couleurs différentes */}
-          <div className="w-full mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Nombre d'Adoptions par Intervalle d'Âge pour {lineTitle}
-            </h2>
-            <div className="mb-6 flex flex-col space-y-4">
-              <div className="flex space-x-6">
-                <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer par type :</h3>
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${lineAnimal === 'dog' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-                  onClick={() => setLineAnimal('dog')}
-                >
-                  🐶 Chiens
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${lineAnimal === 'cat' ? "bg-gray-200 text-gray-800" : "bg-gray-100 text-gray-600"}`}
-                  onClick={() => setLineAnimal('cat')}
-                >
-                  🐱 Chats
-                </button>
-              </div>
-              <div className="flex space-x-6">
-                <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer par sexe :</h3>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={showMalesAdoption}
-                    onChange={() => setShowMalesAdoption(!showMalesAdoption)}
-                    className="mr-2"
-                  />
-                  Mâles
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={showFemalesAdoption}
-                    onChange={() => setShowFemalesAdoption(!showFemalesAdoption)}
-                    className="mr-2"
-                  />
-                  Femelles
-                </label>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Distribution des Adoptions par Intervalle d'Âge ({lineTitle})
+            {/* Analyse de la stérilisation */}
+            <div className="mt-12 bg-white p-8 rounded-xl shadow-lg">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
+                Analyse de la stérilisation des animaux selon le sexe et l'âge
               </h3>
-              <Plot
-                data={[
-                  ...(showMalesAdoption
-                    ? Object.entries(lineData.male).map(([speed, data], index) => ({
-                        x: data.x,
-                        y: data.y,
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        name: `${adoptionSpeedLabels[speed]} (Mâle)`,
-                        line: { color: maleColors[index], width: 2 },
-                        marker: { size: 8, color: maleColors[index] },
-                      }))
-                    : []),
-                  ...(showFemalesAdoption
-                    ? Object.entries(lineData.female).map(([speed, data], index) => ({
-                        x: data.x,
-                        y: data.y,
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        name: `${adoptionSpeedLabels[speed]} (Femelle)`,
-                        line: { color: femaleColors[index], width: 2 },
-                        marker: { size: 8, color: femaleColors[index] },
-                      }))
-                    : []),
-                ]}
-                layout={{
-                  width: 1200,
-                  height: 600,
-                  xaxis: {
-                    title: "Intervalles d'âge",
-                    tickangle: -45,
-                    automargin: true,
-                  },
-                  yaxis: {
-                    title: "Nombre d'adoptions",
-                  },
-                  showlegend: true,
-                  margin: { t: 20, b: 150, l: 100, r: 50 },
-                }}
-                config={{
-                  displayModeBar: true,
-                  displaylogo: false,
-                }}
-              />
+              
+              <div className="space-y-8">
+                {/* Introduction */}
+                <div>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Les graphiques présentent des données sur la stérilisation des animaux (chiens et chats), 
+                    différenciées selon le sexe et l'âge. L'objectif est de comprendre les tendances générales 
+                    de stérilisation et d'identifier d'éventuelles différences entre les groupes.
+                  </p>
+                </div>
+
+                {/* Section Chiens */}
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-semibold text-blue-800 mb-4">1. Stérilisation chez les chiens</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="text-lg font-medium text-blue-700 mb-2">Distribution générale</h5>
+                      <p className="text-gray-700 mb-3">
+                        Le premier graphique montre le nombre total d'animaux stérilisés ou non, selon le sexe.
+                      </p>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Prédominance des non-stérilisés :</span> Les animaux non stérilisés 
+                          (barres rouges) sont plus nombreux que les stérilisés (barres vertes).
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Répartition par sexe :</span> Les femelles semblent plus nombreuses 
+                          que les mâles, et le groupe mixte est minoritaire.
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h5 className="text-lg font-medium text-blue-700 mb-2">Tendance selon l'âge</h5>
+                      <p className="text-gray-700 mb-3">
+                        Le deuxième graphique illustre le pourcentage de stérilisation par âge et par sexe.
+                      </p>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Corrélation avec l'âge :</span> Le taux de stérilisation augmente 
+                          significativement avec l'âge (jeunes rarement stérilisés vs adultes/seniors).
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Différence entre sexes :</span> La tendance est plus marquée chez 
+                          les femelles, reflétant une plus forte incitation à leur stérilisation.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Chats */}
+                <div className="bg-orange-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-semibold text-orange-800 mb-4">2. Stérilisation chez les chats</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="text-lg font-medium text-orange-700 mb-2">Distribution générale</h5>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Prédominance des non-stérilisés :</span> Comme chez les chiens, 
+                          les non-stérilisés sont majoritaires.
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Équilibre entre sexes :</span> La différence est moins marquée 
+                          que chez les chiens, suggérant une approche plus équilibrée.
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h5 className="text-lg font-medium text-orange-700 mb-2">Tendance selon l'âge</h5>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Progression avec l'âge :</span> Augmentation similaire à celle 
+                          observée chez les chiens, mais taux plus élevé chez les adultes.
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Écart réduit :</span> Chez les seniors, la différence entre 
+                          mâles et femelles est moins prononcée que chez les chiens.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Comparaison */}
+                <div className="bg-purple-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-semibold text-purple-800 mb-4">Comparaison entre chiens et chats</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="text-lg font-medium text-purple-700 mb-2">Fréquence de stérilisation</h5>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Chats plus stérilisés :</span> Probablement dû à la nécessité 
+                          de contrôler les populations de chats errants.
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Priorité aux femelles canines :</span> La stérilisation des 
+                          chiennes semble plus ciblée que celle des mâles.
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h5 className="text-lg font-medium text-purple-700 mb-2">Évolution avec l'âge</h5>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Jeunes rarement stérilisés :</span> Constat commun aux deux espèces.
+                        </li>
+                        <li className="leading-relaxed">
+                          <span className="font-medium">Progression différente :</span> Plus graduelle chez les chiens, 
+                          alors que les chats atteignent rapidement un taux élevé.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommandations */}
+                <div className="bg-green-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-semibold text-green-800 mb-4">Interprétation et recommandations</h4>
+                  <ul className="list-disc list-inside space-y-3 text-gray-700 pl-4">
+                    <li className="leading-relaxed">
+                      <span className="font-medium">Stérilisation précoce :</span> Sensibiliser à une intervention 
+                      plus précoce, surtout chez les chiens, pour limiter la reproduction incontrôlée.
+                    </li>
+                    <li className="leading-relaxed">
+                      <span className="font-medium">Équilibre entre sexes :</span> Promouvoir la stérilisation des 
+                      mâles canins pour un contrôle plus efficace des populations.
+                    </li>
+                    <li className="leading-relaxed">
+                      <span className="font-medium">Modèle félin :</span> S'inspirer de l'approche équilibrée observée 
+                      chez les chats pour les chiens.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Conclusion */}
+                <div className="mt-6">
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Ces analyses mettent en lumière des tendances et des écarts qui pourraient être optimisés par 
+                    des campagnes de sensibilisation et des politiques de stérilisation adaptées à chaque espèce 
+                    et groupe d'âge.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>         
+          </div>
+
+      {/* Nouveau Graphique 3 : Top 10 races pures vs mixtes */}
+<div className="w-full mb-12">
+  <h2 className="text-3xl font-bold text-gray-800 mb-8">
+    Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées ({topBreedsAnimal === 'dog' ? 'Chiens 🐶' : 'Chats 🐱'})
+  </h2>
+  <div className="mb-8 flex space-x-6">
+    <h3 className="text-xl font-semibold text-gray-800 mr-4">Filtrer le graphique :</h3>
+    <button
+      className={`px-6 py-3 rounded-lg font-medium text-lg ${topBreedsAnimal === 'dog' ? "bg-blue-100 text-blue-800 border-2 border-blue-300" : "bg-gray-100 text-gray-600"}`}
+      onClick={() => setTopBreedsAnimal('dog')}
+    >
+      🐶 Chiens
+    </button>
+    <button
+      className={`px-6 py-3 rounded-lg font-medium text-lg ${topBreedsAnimal === 'cat' ? "bg-orange-100 text-orange-800 border-2 border-orange-300" : "bg-gray-100 text-gray-600"}`}
+      onClick={() => setTopBreedsAnimal('cat')}
+    >
+      🐱 Chats
+    </button>
+  </div>
+  <div className="bg-white p-8 rounded-xl shadow-lg">
+    <div className="w-full h-[600px]">
+      <Plot
+        data={[
+          {
+            x: topBreedsData.map((d) => `${d.breed} (${d.purity})`),
+            y: topBreedsData.map((d) => d.speed),
+            type: 'bar',
+            marker: {
+              color: topBreedsData.map((d) => (d.purity === 'Pure' ? '#4CAF50' : '#F44336')),
+            },
+            name: 'Vitesse d’adoption',
+            text: topBreedsData.map((d) => d.speed.toFixed(2)),
+            textposition: 'auto',
+          },
+        ]}
+        layout={{
+          height: 600,
+          xaxis: {
+            title: { text: 'Races (Pure/Mixte)', font: { size: 16 } },
+            tickfont: { size: 12 },
+            tickangle: -45,
+          },
+          yaxis: {
+            title: { text: 'Vitesse d’adoption moyenne (0-4)', font: { size: 16 } },
+            tickfont: { size: 14 },
+            range: [0, 4],
+          },
+          margin: { l: 80, r: 50, t: 50, b: 150 },
+          plot_bgcolor: '#f8fafc',
+          paper_bgcolor: '#ffffff',
+          barmode: 'group',
+          showlegend: false,
+        }}
+        config={{ responsive: true, displayModeBar: true, displaylogo: false }}
+      />
+    </div>
+  </div>
+
+  {/* Analyse intégrée */}
+  <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+    <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">🔍 Analyse des Top Races par Vitesse d'Adoption</h2>
+    
+    <div className="space-y-8">
+      {/* Introduction */}
+      <div>
+        <p className="text-lg text-gray-700 leading-relaxed">
+          Les graphiques présentent les 10 races pures (barres vertes) et les 10 races mixtes (barres rouges) de chiens et de chats adoptées le plus rapidement, basées sur la vitesse d’adoption moyenne (0 = adopté le jour même, 4 = non adopté après 100 jours). L’objectif est de comprendre les préférences des adoptants et d’identifier les différences entre chiens et chats.
+        </p>
+      </div>
+
+      {/* Section Chiens */}
+      <div className="bg-blue-50 p-6 rounded-lg">
+        <h4 className="text-xl font-semibold text-blue-800 mb-4">1. Vitesse d’adoption chez les chiens</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <h5 className="text-lg font-medium text-blue-700 mb-2">Distribution générale</h5>
+            <p className="text-gray-700 mb-3">
+              Le premier graphique montre les 10 races pures et mixtes de chiens adoptées le plus rapidement.
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Races pures dominantes :</span> Le Basset Hound (1.60) est le plus rapide, suivi du Border Collie (1.69) et du Pug (1.71).
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Races mixtes compétitives :</span> Le Maltese mixte (1.30) est le plus rapide de tous, suivi du Cocker Spaniel mixte (1.50).
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Écart Pure vs Mixte :</span> Certaines races comme le Cocker Spaniel sont adoptées plus vite sous forme mixte (1.50) que pure (1.88).
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="text-lg font-medium text-blue-700 mb-2">Tendance générale</h5>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Préférence pour certaines races pures :</span> Les races pures comme le Basset Hound et le Border Collie sont très prisées.
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Attrait des mixtes :</span> Le Maltese mixte (1.30) montre une forte demande pour les croisements de petite taille.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Section Chats */}
+      <div className="bg-orange-50 p-6 rounded-lg">
+        <h4 className="text-xl font-semibold text-orange-800 mb-4">2. Vitesse d’adoption chez les chats</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <h5 className="text-lg font-medium text-orange-700 mb-2">Distribution générale</h5>
+            <p className="text-gray-700 mb-3">
+              Le deuxième graphique montre les 10 races pures et mixtes de chats adoptées le plus rapidement.
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Races mixtes en tête :</span> Le Ragdoll mixte (1.70) et le Maine Coon mixte (1.75) sont les plus rapides.
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Races pures compétitives :</span> Le Domestic Long Hair (1.70) est la race pure la plus rapide, suivi du Russian Blue (1.91).
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Écart Pure vs Mixte :</span> Des races comme le Maine Coon (1.75 mixte vs 2.00 pure) et le Siamese (1.91 mixte vs 2.12 pure) sont adoptées plus vite sous forme mixte.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="text-lg font-medium text-orange-700 mb-2">Tendance générale</h5>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Popularité des mixtes :</span> Les croisements comme le Ragdoll et le Maine Coon dominent, reflétant une préférence pour les mixtes.
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Races pures attractives :</span> Le Domestic Long Hair et le Russian Blue attirent, mais les mixtes sont souvent plus rapides.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Section Comparaison */}
+      <div className="bg-purple-50 p-6 rounded-lg">
+        <h4 className="text-xl font-semibold text-purple-800 mb-4">Comparaison entre chiens et chats</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <h5 className="text-lg font-medium text-purple-700 mb-2">Préférences pour la pureté</h5>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Chiens :</span> Les races pures comme le Basset Hound (1.60) sont souvent plus rapides que les mixtes, sauf pour le Maltese (1.30).
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Chats :</span> Les races mixtes (ex. : Ragdoll à 1.70) rivalisent avec les pures, montrant une moindre importance de la pureté.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="text-lg font-medium text-purple-700 mb-2">Popularité des races</h5>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
+              <li className="leading-relaxed">
+                <span className="font-medium">Chiens :</span> Les races pures (Border Collie, Pug) et certains mixtes (Maltese) dominent, reflétant des préférences marquées.
+              </li>
+              <li className="leading-relaxed">
+                <span className="font-medium">Chats :</span> Les mixtes (Ragdoll, Maine Coon) sont plus populaires, les adoptants étant moins attachés à la pureté.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Recommandations */}
+      <div className="bg-green-50 p-6 rounded-lg">
+        <h4 className="text-xl font-semibold text-green-800 mb-4">Interprétation et recommandations</h4>
+        <ul className="list-disc list-inside space-y-3 text-gray-700 pl-4">
+          <li className="leading-relaxed">
+            <span className="font-medium">Mise en avant des races populaires :</span> Promouvoir les races pures comme le Basset Hound pour les chiens et les mixtes comme le Ragdoll pour les chats.
+          </li>
+          <li className="leading-relaxed">
+            <span className="font-medium">Sensibilisation aux races moins populaires :</span> Encourager l’adoption de races comme le Silky Terrier (chiens, 2.34) et le Bengal (chats, 2.34).
+          </li>
+          <li className="leading-relaxed">
+            <span className="font-medium">Focus sur les mixtes pour les chats :</span> Les refuges peuvent mettre en avant les croisements de races prisées pour accélérer les adoptions.
+          </li>
+        </ul>
+      </div>
+
+      {/* Conclusion */}
+      <div className="mt-6">
+        <p className="text-lg text-gray-700 leading-relaxed">
+          Ces analyses montrent des préférences distinctes entre chiens et chats, qui peuvent guider les refuges dans leurs stratégies d’adoption.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
         </>
       )}
     </div>
