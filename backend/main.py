@@ -1,10 +1,6 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
-=======
-import pandas as pd
->>>>>>> Graphics_facteurs_adoption
 import os
 import numpy as np  # Ajout de l'importation de numpy
 import logging
@@ -16,17 +12,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-<<<<<<< HEAD
     allow_origins=["http://localhost:5173"],
-=======
-    allow_origins=["http://localhost:5173"],  # URL de ton frontend
->>>>>>> Graphics_facteurs_adoption
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-<<<<<<< HEAD
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "data_clean.csv")
 
@@ -268,10 +259,7 @@ def get_adoption_speed_density(animal_type: int):
                     line_data[label][str(speed)] = {"x": [], "y": []}
     
     return {"line_data": line_data}
-=======
-# Définir le chemin vers le fichier de données
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "data", "data_clean.csv")
+
 
 # Charger les données une fois au démarrage
 df = pd.read_csv(DATA_PATH)
@@ -332,8 +320,7 @@ def sterilization_topbreeds():
 
     return grouped.to_dict(orient="records")
 
-def load_data():
-    return pd.read_csv(DATA_PATH)
+
 
 @app.get("/api/sterilization_adoption_impact")
 def sterilization_adoption_impact():
@@ -384,5 +371,4 @@ def get_top_sterilized_breeds():
     # Regrouper par Type, Breed1 et BreedName
     grouped = df.groupby(["Type", "Breed1", "BreedName"]).size().reset_index(name="Count")
     return grouped.to_dict(orient="records")
->>>>>>> Graphics_facteurs_adoption
 
