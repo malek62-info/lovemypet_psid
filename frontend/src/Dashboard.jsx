@@ -1,7 +1,9 @@
 // frontend/src/Dashboard.jsx
 import RadarChart from "./RadarChart";
 
+import SterilizationImpactChart from "./SterilizationImpactChart";
 
+import TopSterilizedBreedsChart from "./TopSterilizedBreedsChart";
 
 export default function Dashboard() {
   return (
@@ -10,10 +12,9 @@ export default function Dashboard() {
       <p className="mb-4">
         Ce tableau de bord présente une analyse des profils des animaux non adoptés après 100 jours.
       </p>
-
       <RadarChart />
-      
-
+      <TopSterilizedBreedsChart />
+      <SterilizationImpactChart />
     </div>
   );
 }
