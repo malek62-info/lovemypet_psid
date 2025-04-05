@@ -79,6 +79,51 @@ export default function Home() {
             <li>4 : Pas adopté après 100 jours</li>
           </ul>
 
+
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold mb-4">Prétraitement des données</h2>
+
+            <p>
+              La phase de prétraitement a débuté par une série de vérifications visant à garantir la qualité et la cohérence du jeu de données.
+            </p>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Contrôle de qualité</h3>
+              <ul className="list-disc pl-6 space-y-1">
+                <li><strong>Détection des doublons</strong> : Aucun doublon n'a été détecté, ce qui élimine les risques de biais liés à des répétitions dans les données.</li>
+                <li><strong>Gestion des valeurs manquantes</strong> : L'analyse a confirmé l'absence totale de valeurs nulles, rendant inutile toute imputation ou suppression d'observations.</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Sélection et suppression des variables non pertinentes</h3>
+              <p>Pour améliorer la pertinence du modèle, certaines variables ont été écartées après évaluation :</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li><strong>VideoAmt</strong> (nombre de vidéos) : Cette variable était quasi constante et n'avait pas d'impact significatif sur l'adoption.</li>
+                <li><strong>State</strong> (état de localisation en Malaisie) : Aucune corrélation claire avec la cible (AdoptionSpeed) n'a été identifiée.</li>
+                <li><strong>Name</strong> (nom de l'animal) : Souvent manquante ou trop spécifique, cette variable n'apportait pas d'information prédictive utile.</li>
+                <li><strong>Description</strong> (texte de présentation) : Exclue en raison de sa nature non structurée, nécessitant un traitement spécifique (NLP) non prévu dans cette analyse.</li>
+                <li><strong>RescuerID</strong> (identifiant du sauveteur) : Variable catégorielle sans lien direct avec l'adoption.</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Format des données</h3>
+              <p>Les données étaient déjà numériques, avec des variables comme Color et Breed préalablement encodées. Les correspondances entre les codes et leurs significations sont disponibles dans un fichier Excel annexe.</p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Normalisation et encodage</h3>
+              <p>Aucune transformation supplémentaire (normalisation, standardisation, one-hot encoding) n'a été nécessaire, car les variables étaient déjà adaptées à la modélisation.</p>
+            </div>
+
+            <div className="space-y-2">
+            <h3 className="text-lg font-medium">Résultat : </h3>
+              <p>Un jeu de données nettoyé, optimisé et prêt pour l'analyse exploratoire et la modélisation prédictive.</p>
+            </div>
+          </section>
+
           {/* Introduction du graphe */}
           <p className="mb-4">
             Afin d’introduire visuellement les types d’animaux disponibles à l’adoption dans le jeu de données,
@@ -113,22 +158,7 @@ export default function Home() {
 
         </section>
 
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Prétraitement des données</h2>
-          <p className="mb-4">
-            Afin d’optimiser l’analyse et d’éliminer les informations non pertinentes, certaines variables ont été exclues du jeu de données après une phase de nettoyage, notamment :
-          </p>
-          <ul className="list-disc pl-6 space-y-1 mb-4">
-            <li><strong>VideoAmt</strong> (nombre de vidéos)</li>
-            <li><strong>State</strong> (état de localisation en Malaisie)</li>
-            <li><strong>Name</strong> (nom de l’animal, souvent manquant et peu pertinent)</li>
-            <li><strong>Description</strong> (texte de présentation des animaux)</li>
-            <li><strong>RescuerID</strong> (identifiant unique du sauveteur, sans impact direct sur l’adoption)</li>
-          </ul>
-          <p>
-            Ce nettoyage permet de conserver uniquement les variables les plus pertinentes pour l’analyse et la modélisation prédictive.
-          </p>
-        </section>
+
       </div>
     </Wrapper>
   );
