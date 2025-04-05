@@ -17,186 +17,148 @@ import Explication from "./Explications";
 import Contexte from "./Contexte";
 
 const Annalyse3 = () => {
-  // États pour stocker les données des différents graphiques
-  const [stackedDataDog, setStackedDataDog] = useState([]);
-  const [stackedDataCat, setStackedDataCat] = useState([]);
-  const [sterilizationDataDog, setSterilizationDataDog] = useState([]);
-  const [sterilizationDataCat, setSterilizationDataCat] = useState([]);
-  const [sterilizationPercentDataDog, setSterilizationPercentDataDog] =
-    useState([]);
-  const [sterilizationPercentDataCat, setSterilizationPercentDataCat] =
-    useState([]);
-  const [adoptionSpeedDataDog, setAdoptionSpeedDataDog] = useState([]);
-  const [adoptionSpeedDataCat, setAdoptionSpeedDataCat] = useState([]);
-  const [lineDataDog, setLineDataDog] = useState({ male: {}, female: {} });
-  const [lineDataCat, setLineDataCat] = useState({ male: {}, female: {} });
-  const [loading, setLoading] = useState(false);
-  const [showNonSterilized, setShowNonSterilized] = useState(true);
-  const [showMalesSterilization, setShowMalesSterilization] = useState(true);
-  const [showFemalesSterilization, setShowFemalesSterilization] =
-    useState(true);
-  const [view, setView] = useState("dog");
-  const [sterilizationAnimal, setSterilizationAnimal] = useState("dog");
-  const [adoptionSpeedAnimal, setAdoptionSpeedAnimal] = useState("dog");
-  const [showMalesAdoption, setShowMalesAdoption] = useState(true);
-  const [showFemalesAdoption, setShowFemalesAdoption] = useState(true);
-  const [lineAnimal, setLineAnimal] = useState("dog");
+ // États pour stocker les données des différents graphiques
+ const [stackedDataDog, setStackedDataDog] = useState([]);
+ const [stackedDataCat, setStackedDataCat] = useState([]);
+ const [sterilizationDataDog, setSterilizationDataDog] = useState([]);
+ const [sterilizationDataCat, setSterilizationDataCat] = useState([]);
+ const [sterilizationPercentDataDog, setSterilizationPercentDataDog] = useState([]);
+ const [sterilizationPercentDataCat, setSterilizationPercentDataCat] = useState([]);
+ const [loading, setLoading] = useState(false);
+ const [showNonSterilized, setShowNonSterilized] = useState(true);
+ const [showMalesSterilization, setShowMalesSterilization] = useState(true);
+ const [showFemalesSterilization, setShowFemalesSterilization] = useState(true);
+ const [view, setView] = useState('dog');
+ const [sterilizationAnimal, setSterilizationAnimal] = useState('dog');
 
-  // Labels pour les vitesses d'adoption
-  const adoptionSpeedLabels = {
-    0: "Adopté le jour même",
-    1: "Adopté en 1-7 jours",
-    2: "Adopté en 8-30 jours",
-    3: "Adopté en 31-90 jours",
-    4: "Non adopté après 100 jours",
-  };
+ // Nouvel état pour les données des top races
+ const [topBreedsDataDog, setTopBreedsDataDog] = useState([]);
+ const [topBreedsDataCat, setTopBreedsDataCat] = useState([]);
+ const [topBreedsAnimal, setTopBreedsAnimal] = useState('dog');
 
-  // Couleurs distinctes pour chaque vitesse d'adoption (mâles et femelles)
-  const maleColors = [
-    "#2ecc71", // Vert émeraude (speed 0)
-    "#3498db", // Bleu ciel (speed 1)
-    "#9b59b6", // Violet (speed 2)
-    "#e74c3c", // Rouge (speed 3)
-    "#f1c40f", // Jaune (speed 4)
-  ];
-  const femaleColors = [
-    "#e91e63", // Rose fuchsia (speed 0)
-    "#1abc9c", // Turquoise (speed 1)
-    "#8e44ad", // Violet foncé (speed 2)
-    "#d35400", // Orange citrouille (speed 3)
-    "#34495e", // Gris bleu foncé (speed 4)
-  ];
+ // Labels pour les vitesses d'adoption
+ const adoptionSpeedLabels = {
+   0: "Adopté le jour même",
+   1: "Adopté en 1-7 jours",
+   2: "Adopté en 8-30 jours",
+   3: "Adopté en 31-90 jours",
+   4: "Non adopté après 100 jours",
+ };
 
-  // Fonction pour récupérer les données du graphique à barres empilées
-  const fetchStackedBarData = async (animal, setData) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/stacked-bar/${animal}`
-      );
-      const result = await response.json();
-      if (result.stacked_data) {
-        const categoryMapping = {
-          MaturitySize_1: "Taille à maturité - Petite (1)",
-          MaturitySize_2: "Taille à maturité - Moyenne (2)",
-          MaturitySize_3: "Taille à maturité - Grande (3)",
-          Gender_1: "Sexe - Mâle (1)",
-          Gender_2: "Sexe - Femelle (2)",
-          Gender_3: "Sexe - Mixte (3)",
-          FurLength_1: "Longueur de la fourrure - Court (1)",
-          FurLength_2: "Longueur de la fourrure - Moyen (2)",
-          FurLength_3: "Longueur de la fourrure - Long (3)",
-          Vaccinated_1: "Vacciné - Oui (1)",
-          Vaccinated_2: "Vacciné - Non (2)",
-          Dewormed_1: "Vermifugé - Oui (1)",
-          Dewormed_2: "Vermifugé - Non (2)",
-          Sterilized_1: "Stérilisé - Oui (1)",
-          Sterilized_2: "Stérilisé - Non (2)",
-          Health_1: "Santé - En bonne santé (1)",
-          Health_2: "Santé - Blessure mineure (2)",
-        };
-        const filteredData = result.stacked_data.map((entry) => ({
-          ...entry,
-          category: categoryMapping[entry.category] || entry.category,
-          AdoptedSameDay: entry.speed_0,
-          AdoptedWithin7Days: entry.speed_1,
-          AdoptedWithin1Month: entry.speed_2,
-        }));
-        setData(filteredData);
-      }
-    } catch (error) {
-      console.error("Erreur API Stacked Bar :", error);
-    }
-  };
+ // Fonction pour récupérer les données du graphique à barres empilées
+ const fetchStackedBarData = async (animal, setData) => {
+   try {
+     const response = await fetch(`http://localhost:8000/stacked-bar/${animal}`);
+     const result = await response.json();
+     if (result.stacked_data) {
+       const categoryMapping = {
+         "MaturitySize_1": "Taille à maturité - Petite (1)",
+         "MaturitySize_2": "Taille à maturité - Moyenne (2)",
+         "MaturitySize_3": "Taille à maturité - Grande (3)",
+         "Gender_1": "Sexe - Mâle (1)",
+         "Gender_2": "Sexe - Femelle (2)",
+         "Gender_3": "Sexe - Mixte (3)",
+         "FurLength_1": "Longueur de la fourrure - Court (1)",
+         "FurLength_2": "Longueur de la fourrure - Moyen (2)",
+         "FurLength_3": "Longueur de la fourrure - Long (3)",
+         "Vaccinated_1": "Vacciné - Oui (1)",
+         "Vaccinated_2": "Vacciné - Non (2)",
+         "Dewormed_1": "Vermifugé - Oui (1)",
+         "Dewormed_2": "Vermifugé - Non (2)",
+         "Sterilized_1": "Stérilisé - Oui (1)",
+         "Sterilized_2": "Stérilisé - Non (2)",
+         "Health_1": "Santé - En bonne santé (1)",
+         "Health_2": "Santé - Blessure mineure (2)",
+       };
+       const filteredData = result.stacked_data.map((entry) => ({
+         ...entry,
+         category: categoryMapping[entry.category] || entry.category,
+         AdoptedSameDay: entry.speed_0,
+         AdoptedWithin7Days: entry.speed_1,
+         AdoptedWithin1Month: entry.speed_2,
+       }));
+       setData(filteredData);
+     }
+   } catch (error) {
+     console.error("Erreur API Stacked Bar :", error);
+   }
+ };
 
-  // Fonction pour récupérer les données de stérilisation par sexe
-  const fetchSterilizationData = async (animal, setData) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/sterilization-by-gender/${animal}`
-      );
-      const result = await response.json();
-      if (result.data) {
-        const categoryMapping = {
-          Gender_1: "Sexe - Mâle (1)",
-          Gender_2: "Sexe - Femelle (2)",
-          Gender_3: "Sexe - Mixte (3)",
-        };
-        const transformedData = result.data.map((entry) => ({
-          ...entry,
-          Gender: categoryMapping[entry.Gender] || entry.Gender,
-        }));
-        setData(transformedData);
-      }
-    } catch (error) {
-      console.error("Erreur API Sterilization Data :", error);
-    }
-  };
+ // Fonction pour récupérer les données de stérilisation par sexe
+ const fetchSterilizationData = async (animal, setData) => {
+   try {
+     const response = await fetch(`http://localhost:8000/sterilization-by-gender/${animal}`);
+     const result = await response.json();
+     if (result.data) {
+       const categoryMapping = {
+         "Gender_1": "Sexe - Mâle (1)",
+         "Gender_2": "Sexe - Femelle (2)",
+         "Gender_3": "Sexe - Mixte (3)",
+       };
+       const transformedData = result.data.map((entry) => ({
+         ...entry,
+         Gender: categoryMapping[entry.Gender] || entry.Gender,
+       }));
+       setData(transformedData);
+     }
+   } catch (error) {
+     console.error("Erreur API Sterilization Data :", error);
+   }
+ };
 
-  // Fonction pour récupérer les données de pourcentage de stérilisation par âge
-  const fetchSterilizationPercentData = async (animal, setData) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/sterilization-percent-by-age/${animal}`
-      );
-      const result = await response.json();
-      if (result.data) {
-        setData(result.data);
-      }
-    } catch (error) {
-      console.error("Erreur API Sterilization Percent Data :", error);
-    }
-  };
+ // Fonction pour récupérer les données de pourcentage de stérilisation par âge
+ const fetchSterilizationPercentData = async (animal, setData) => {
+   try {
+     const response = await fetch(`http://localhost:8000/sterilization-percent-by-age/${animal}`);
+     const result = await response.json();
+     if (result.data) {
+       setData(result.data);
+     }
+   } catch (error) {
+     console.error("Erreur API Sterilization Percent Data :", error);
+   }
+ };
 
-  // Fonction pour récupérer les données du graphique en lignes (adoptions par intervalle d'âge)
-  const fetchAdoptionSpeedLine = async (animal, setData) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/adoption-speed-density/${animal}`
-      );
-      const result = await response.json();
-      if (result.line_data) {
-        setData(result.line_data);
-      }
-    } catch (error) {
-      console.error("Erreur API Line Data :", error);
-    }
-  };
+ // Nouvelle fonction pour récupérer les données des top races
+ const fetchTopBreedsData = async (animal, setData) => {
+   try {
+     const response = await fetch(`http://localhost:8000/top-breeds-adoption/${animal}`);
+     const result = await response.json();
+     if (result.bar_data) {
+       setData(result.bar_data);
+     }
+   } catch (error) {
+     console.error("Erreur API Top Breeds :", error);
+   }
+ };
 
-  // Chargement des données au montage du composant
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await Promise.all([
-        fetchStackedBarData(1, setStackedDataDog),
-        fetchStackedBarData(2, setStackedDataCat),
-        fetchSterilizationData(1, setSterilizationDataDog),
-        fetchSterilizationData(2, setSterilizationDataCat),
-        fetchSterilizationPercentData(1, setSterilizationPercentDataDog),
-        fetchSterilizationPercentData(2, setSterilizationPercentDataCat),
-        fetchAdoptionSpeedLine(1, setLineDataDog),
-        fetchAdoptionSpeedLine(2, setLineDataCat),
-      ]);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+ // Chargement des données au montage du composant
+ useEffect(() => {
+   const loadData = async () => {
+     setLoading(true);
+     await Promise.all([
+       fetchStackedBarData(1, setStackedDataDog),
+       fetchStackedBarData(2, setStackedDataCat),
+       fetchSterilizationData(1, setSterilizationDataDog),
+       fetchSterilizationData(2, setSterilizationDataCat),
+       fetchSterilizationPercentData(1, setSterilizationPercentDataDog),
+       fetchSterilizationPercentData(2, setSterilizationPercentDataCat),
+       fetchTopBreedsData(1, setTopBreedsDataDog), // Ajout pour chiens
+       fetchTopBreedsData(2, setTopBreedsDataCat), // Ajout pour chats
+     ]);
+     setLoading(false);
+   };
+   loadData();
+ }, []);
 
-  const renderLabel = (value) => value;
+ const renderLabel = (value) => value;
 
-  // Sélection des données en fonction des filtres
-  const stackedData = view === "dog" ? stackedDataDog : stackedDataCat;
-  const sterilizationData =
-    sterilizationAnimal === "dog" ? sterilizationDataDog : sterilizationDataCat;
-  const sterilizationPercentData =
-    sterilizationAnimal === "dog"
-      ? sterilizationPercentDataDog
-      : sterilizationPercentDataCat;
-  const adoptionSpeedData =
-    adoptionSpeedAnimal === "dog" ? adoptionSpeedDataDog : adoptionSpeedDataCat;
-  const adoptionSpeedTitle =
-    adoptionSpeedAnimal === "dog" ? "Chiens 🐶" : "Chats 🐱";
-  const lineData = lineAnimal === "dog" ? lineDataDog : lineDataCat;
-  const lineTitle = lineAnimal === "dog" ? "Chiens 🐶" : "Chats 🐱";
+ // Sélection des données en fonction des filtres
+ const stackedData = view === 'dog' ? stackedDataDog : stackedDataCat;
+ const sterilizationData = sterilizationAnimal === 'dog' ? sterilizationDataDog : sterilizationDataCat;
+ const sterilizationPercentData = sterilizationAnimal === 'dog' ? sterilizationPercentDataDog : sterilizationPercentDataCat;
+ const topBreedsData = topBreedsAnimal === 'dog' ? topBreedsDataDog : topBreedsDataCat;
+
 
   return (
     <div className="">
@@ -213,68 +175,7 @@ const Annalyse3 = () => {
             </button>
           </div>
 
-          {/* <ResponsiveContainer height={600}>
-                <BarChart
-                  data={stackedData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
-                >
-                  <CartesianGrid stroke="#d1d5db" strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="category"
-                    tick={{ fontSize: 12 }}
-                    angle={-45}
-                    textAnchor="end"
-                  />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="AdoptedSameDay"
-                    stackId="a"
-                    fill="#1f77b4"
-                    name="Adopté le jour même"
-                  >
-                    <LabelList
-                      dataKey="AdoptedSameDay"
-                      position="center"
-                      fill="white"
-                      fontSize={16}
-                      fontWeight="bold"
-                      formatter={renderLabel}
-                    />
-                  </Bar>
-                  <Bar
-                    dataKey="AdoptedWithin7Days"
-                    stackId="a"
-                    fill="#ff7f0e"
-                    name="Adopté sous 1 à 7 jours"
-                  >
-                    <LabelList
-                      dataKey="AdoptedWithin7Days"
-                      position="center"
-                      fill="white"
-                      fontSize={16}
-                      fontWeight="bold"
-                      formatter={renderLabel}
-                    />
-                  </Bar>
-                  <Bar
-                    dataKey="AdoptedWithin1Month"
-                    stackId="a"
-                    fill="#2ca02c"
-                    name="Adopté en 8 à 30 jours"
-                  >
-                    <LabelList
-                      dataKey="AdoptedWithin1Month"
-                      position="center"
-                      fill="white"
-                      fontSize={16}
-                      fontWeight="bold"
-                      formatter={renderLabel}
-                    />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer> */}
+          
 
           <Plot
             data={[
@@ -380,7 +281,7 @@ const Annalyse3 = () => {
         <div className="">
           <Title
             text="Analyse de la stérilisation des animaux selon le sexe et l'âge"
-            number={3}
+            number={4}
           />
 
           {/* Boutons de filtre */}
@@ -458,10 +359,7 @@ const Annalyse3 = () => {
                       font: { size: 14 },
                       orientation: "h",
                       y: 1.1,
-                    },
-                    margin: { l: 80, r: 50, t: 30, b: 80 },
-                    plot_bgcolor: "#f8fafc",
-                    paper_bgcolor: "#ffffff",
+                    },              
                   }}
                   config={{
                     responsive: true,
@@ -554,9 +452,6 @@ const Annalyse3 = () => {
                       orientation: "h",
                       y: 1.1,
                     },
-                    margin: { l: 80, r: 50, t: 30, b: 80 },
-                    plot_bgcolor: "#f8fafc",
-                    paper_bgcolor: "#ffffff",
                     hovermode: "closest",
                   }}
                   config={{
@@ -621,98 +516,115 @@ const Annalyse3 = () => {
           ]}
         />
 
-        <Title text="Nombre d'Adoptions par Intervalle d'Âge " number={3} />
 
-        {/* Graphique 4 : Lignes simples avec intervalles d'âge et couleurs différentes */}
-        <div className="w-full mb-12">
-          <h2 className=" mb-4 text-xl">Pour {lineTitle}</h2>
 
-          <div className="flex justify-between">
-            <div className="flex space-x-3">
-              <button className="btn" onClick={() => setLineAnimal("dog")}>
-                🐶 Chiens
-              </button>
-              <button className="btn" onClick={() => setLineAnimal("cat")}>
-                🐱 Chats
-              </button>
-            </div>
-            <div className="flex space-x-3">
-              <div className="flex items-center text-lg">
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-primary"
-                  checked={showMalesAdoption}
-                  onChange={() => setShowMalesAdoption(!showMalesAdoption)}
-                />
+        <Title text="Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées " number={5} />
 
-                <span className="ml-2"> Mâles </span>
-              </div>
+        {/* Nouveau Graphique 3 : Top 10 races pures vs mixtes */}
+<div className="w-full mb-12">
+  <div className="flex justify-end">
+<div className="space-x-2">
+    <button
+      className={"btn"}
+      onClick={() => setTopBreedsAnimal('dog')}
+    >
+      🐶 Chiens
+    </button>
+    <button
+      className={"btn"}
+      onClick={() => setTopBreedsAnimal('cat')}
+    >
+      🐱 Chats
+    </button>
+  </div>
+  </div>
+  
+  <Plot
+        data={[
+          {
+            x: topBreedsData.map((d) => `${d.breed} (${d.purity})`),
+            y: topBreedsData.map((d) => d.speed),
+            type: 'bar',
+            marker: {
+              color: topBreedsData.map((d) => (d.purity === 'Pure' ? '#4CAF50' : '#F44336')),
+            },
+            name: 'Vitesse d’adoption',
+            text: topBreedsData.map((d) => d.speed.toFixed(2)),
+            textposition: 'auto',
+          },
+        ]}
+        layout={{
+          xaxis: {
+            title: { text: 'Races (Pure/Mixte)', font: { size: 16 } },
+            tickfont: { size: 12 },
+            tickangle: -45,
+          },
+          yaxis: {
+            title: { text: 'Vitesse d’adoption moyenne (0-4)', font: { size: 16 } },
+            tickfont: { size: 14 },
+            range: [0, 4],
+          },
+          barmode: 'group',
+          showlegend: false,
+        }}
+        config={{ responsive: true, displayModeBar: true, displaylogo: false }}
+        style={{ width: "100%", height: "600px" }}
+      />
 
-              <div className="flex items-center text-lg">
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-primary"
-                  checked={showFemalesAdoption}
-                  onChange={() => setShowFemalesAdoption(!showFemalesAdoption)}
-                />
 
-                <span className="ml-2"> Femelles </span>
-              </div>
-            </div>
-          </div>
-          <div className="">
-       
-            <Plot
-              data={[
-                ...(showMalesAdoption
-                  ? Object.entries(lineData.male).map(
-                      ([speed, data], index) => ({
-                        x: data.x,
-                        y: data.y,
-                        type: "scatter",
-                        mode: "lines+markers",
-                        name: `${adoptionSpeedLabels[speed]} (Mâle)`,
-                        line: { color: maleColors[index], width: 2 },
-                        marker: { size: 8, color: maleColors[index] },
-                      })
-                    )
-                  : []),
-                ...(showFemalesAdoption
-                  ? Object.entries(lineData.female).map(
-                      ([speed, data], index) => ({
-                        x: data.x,
-                        y: data.y,
-                        type: "scatter",
-                        mode: "lines+markers",
-                        name: `${adoptionSpeedLabels[speed]} (Femelle)`,
-                        line: { color: femaleColors[index], width: 2 },
-                        marker: { size: 8, color: femaleColors[index] },
-                      })
-                    )
-                  : []),
-              ]}
-              layout={{
-          
-                xaxis: {
-                  title: "Intervalles d'âge",
-                  tickangle: -45,
-                  automargin: true,
-                },
-                yaxis: {
-                  title: "Nombre d'adoptions",
-                },
-                showlegend: true,
-             
-              }}
-              config={{
-                displayModeBar: true,
-                displaylogo: false,
-              }}
 
-              style={{ width: "100%", height: "600px", marginBottom: "30px" }}
-            />
-          </div>
-        </div>
+  <Contexte
+            texte="   Les graphiques présentent les 10 races pures (barres vertes) et les 10 races mixtes (barres rouges)
+             de chiens et de chats adoptées le plus rapidement, basées sur la vitesse d’adoption moyenne 
+             (0 = adopté le jour même, 4 = non adopté après 100 jours). L’objectif est de comprendre les préférences des adoptants et d’identifier les différences entre chiens et chats."
+          />
+
+<Explication
+  title="Vitesse d'adoption chez les chiens"
+  points={[
+    "Adopté le jour même (barres bleues)",
+    "Le premier graphique montre les 10 races pures et mixtes de chiens adoptés le plus rapidement.",
+    "Courses pures dominantes : Le Basset Hound (1.60) est le plus rapide, suivi du Border Collie (1.69) et du Pug (1.71).",
+    "Courses mixtes compétitives : Le Maltese mixte (1.30) est le plus rapide de tous, suivi du Cocker Spaniel mixte (1.50).",
+    "Écart Pure vs Mixte : Certaines races comme le Cocker Spaniel sont adoptées plus vite sous forme mixte (1,50) que pure (1,88).",
+    "Préférence pour certaines courses pures : Les courses pures comme le Basset Hound et le Border Collie sont très prisées.",
+    "Attrait des mixtes : Le Maltais mixte (1h30) montre une forte demande pour les croisements de petite taille."
+  ]}
+/>
+
+<Explication
+  title="Vitesse d'adoption chez les chats"
+  points={[
+    "Le deuxième graphique montre les 10 races pures et mixtes de chats adoptés le plus rapidement.",
+    "Races mixtes en tête : Le Ragdoll mixte (1,70) et le Maine Coon mixte (1,75) sont les plus rapides.",
+    "Races pures compétitives : Le Domestic Long Hair (1.70) est la race pure la plus rapide, suivi du Russian Blue (1.91).",
+    "Écart Pure vs Mixte : Des races comme le Maine Coon (1,75 mixte vs 2,00 pure) et le Siamese (1,91 mixte vs 2,12 pure) sont adoptées plus vite sous forme mixte.",
+    "Popularité des mixtes : Les croisements comme le Ragdoll et le Maine Coon dominent, reflétant une préférence pour les mixtes.",
+    "Races pures attractives : Le Domestic Long Hair et le Russian Blue attirent, mais les mixtes sont souvent plus rapides."
+  ]}
+/>
+<Explication
+  title="Comparaison entre chiens et chats"
+  points={[
+    "Chiens : Les races pures comme le Basset Hound (1,60) sont souvent adoptées plus rapidement que les mixtes, sauf pour le Maltais (1,30).",
+    "Chats : Les races mixtes (ex. : Ragdoll à 1.70) rivalisent avec les pures, démontrant une moindre importance de la pureté.",
+    "Chiens : Les races pures (Border Collie, Pug) et certains mixtes (Maltais) sont dominants, reflétant des préférences marquées.",
+    "Chats : Les mixtes (Ragdoll, Maine Coon) sont plus populaires, les adoptants étant moins attachés à la pureté."
+  ]}
+/>
+
+<Conclusions
+            conclusions={[
+              "Mise en avant des races populaires : Promouvoir les races pures comme le Basset Hound pour les chiens et les mixtes comme le Ragdoll pour les chats.",
+    "Sensibilisation aux races moins populaires : Encourager l'adoption de races comme le Silky Terrier (chiens, 2.34) et le Bengal (chats, 2.34).",
+    "Focus sur les mixtes pour les chats : Les refuges peuvent mettre en avant les croisements de races prisées pour accélérer les adoptions.",
+            ]}
+          />
+
+</div>  
+
+
+        
       </>
     </div>
   );

@@ -20,7 +20,7 @@ function Annalyse1() {
 
   // Vérifier si les données sont chargées
   if (!data) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   // Première partie : graphique de la vitesse d'adoption par groupe de photos
@@ -153,7 +153,7 @@ function Annalyse1() {
   return (
     <div>
       <Title
-        text="Est-ce que le nombre de photos postées sur l'annimal augmente la
+        text="Est-ce que le nombre de photos postées sur l'animal augmente la
           vitesse d'adoption ?"
         number={1}
       />

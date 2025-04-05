@@ -5,7 +5,7 @@ import Wrapper from "../components/Wrapper";
 export default function Home() {
   return (
     <Wrapper>
-      <div className="px-6 py-10 max-w-5xl mx-auto text-gray-800">
+      <div className="">
 
         <section className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">Contexte</h2>
