@@ -163,7 +163,7 @@ const Annalyse3 = () => {
   return (
     <div className="">
       <>
-        <Title text="Titre du graphe ?" number={3} />
+        <Title text="Facteurs Influents sur la Vitesse d'Adoption des Animaux : Chiens vs Chats" number={3} />
         {/* Graphique 1 : Vitesse d'adoption par variable */}
         <div className="w-full mb-12">
           <div className="flex  justify-end space-x-2">
@@ -175,8 +175,6 @@ const Annalyse3 = () => {
             </button>
           </div>
 
-
-
           <Plot
             data={[
               {
@@ -185,6 +183,8 @@ const Annalyse3 = () => {
                 type: "bar",
                 name: "Adopté le jour même",
                 marker: { color: "#1f77b4" },
+                hoverinfo: 'x+y+text',  // Affiche les infos de l'axe x, y et texte au survol
+                // On supprime le texte des barres ici
               },
               {
                 x: stackedData.map((d) => d.category),
@@ -192,6 +192,8 @@ const Annalyse3 = () => {
                 type: "bar",
                 name: "Adopté sous 1 à 7 jours",
                 marker: { color: "#ff7f0e" },
+                hoverinfo: 'x+y+text',
+                // On supprime le texte des barres ici
               },
               {
                 x: stackedData.map((d) => d.category),
@@ -199,10 +201,26 @@ const Annalyse3 = () => {
                 type: "bar",
                 name: "Adopté en 8 à 30 jours",
                 marker: { color: "#2ca02c" },
+                hoverinfo: 'x+y+text',
+                // On supprime le texte des barres ici
               },
             ]}
             layout={{
-              barmode: "stack",
+              barmode: 'stack',
+              showlegend: true,  // Légende activée pour expliquer les couleurs
+              margin: {
+                b: 190, // 👈 Ajoute ça ! (bottom margin)
+              },
+              title: "Répartition des adoptions selon le délai",
+              xaxis: {
+                title: "Catégories",
+                tickvals: stackedData.map((d) => d.category),
+                ticktext: stackedData.map((d) => d.category), // Garder les labels de catégorie visibles
+              },
+              yaxis: {
+                title: "Nombre d'adoptions",
+              },
+              annotations: []  // On désactive les annotations sur les barres
             }}
             style={{ width: "100%", height: "600px", marginBottom: "30px" }}
           />
@@ -225,10 +243,7 @@ const Annalyse3 = () => {
           />
 
           <Contexte
-            texte=" Globalement, on constate que la majorité des chiens sont adoptés
-                dans la première semaine suivant leur mise à l'adoption (barres
-                oranges), tandis que les adoptions immédiates et celles prenant
-                plus de 8 jours sont moins fréquentes."
+            texte=" De manière générale, on observe que la majorité des chiens sont adoptés soit dans la première semaine, soit après plus de 8 jours suivant leur mise à l'adoption. En revanche, les adoptions le même jour sont moins fréquentes."
           />
 
           <Explication
@@ -243,7 +258,7 @@ const Annalyse3 = () => {
           />
 
           <Contexte
-            texte=" Comme observé chez les chiens, la majorité des adoptions de chats ont lieu dans la première semaine suivant leur mise à l'adoption (barres oranges), suivies par les adoptions plus tardives (barres vertes) et celles effectuées le jour même (barres bleues)"
+            texte=" Comme observé chez les chiens, les chats sont adoptés soit dans la première semaine, soit après plus de 8 jours suivant leur mise à l'adoption et celles effectuées le jour même (barres bleues) sont moins fréquentes "
           />
 
           <Explication
@@ -259,7 +274,6 @@ const Annalyse3 = () => {
           <Explication
             title="Analyse des Chats et Comparaison avec les Chiens"
             points={[
-              "Distribution Générale : Comme observé chez les chiens, la majorité des adoptions de chats ont lieu dans la première semaine suivant leur mise à l'adoption (barres oranges), suivies par les adoptions plus tardives (barres vertes) et celles effectuées le jour même (barres bleues).",
               "Facteurs de Santé : Les facteurs liés à la santé, tels que la vaccination, la vermifugation et l'état général de l'animal, semblent jouer un rôle déterminant dans la rapidité d'adoption, comme c'était le cas pour les chiens.",
               "État de santé et stérilisation : Les chats en bonne santé et non stérilisés sont adoptés plus rapidement. En revanche, ceux présentant des problèmes de santé ou étant déjà stérilisés ont un taux d'adoption nettement plus faible. Cela pourrait s'expliquer par une préférence pour les jeunes animaux ou par l'intention des adoptants de gérer eux-mêmes la stérilisation.",
               "Vaccination : Contrairement aux chiens, la vaccination semble jouer un rôle clé dans l'adoption des chats. Les chats vaccinés ont tendance à être adoptés plus rapidement, ce qui pourrait refléter une perception des adoptants selon laquelle un chat vacciné est plus sécurisé sur le plan sanitaire.",
