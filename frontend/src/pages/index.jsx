@@ -57,27 +57,100 @@ export default function Home() {
             Ce jeu de données contient des informations variées sur les animaux, incluant des données tabulaires, textuelles et visuelles.
             L’objectif est de comprendre les facteurs influençant la rapidité d’adoption en analysant ces différentes sources d’information.
           </p>
+          {/* Introduction du graphe */}
+          <p className="mb-4">
+            Afin d’introduire visuellement les types d’animaux disponibles à l’adoption dans le jeu de données,
+            le graphique suivant présente la répartition entre chiens 🐶 et chats 🐱 :
+          </p>
+          <section>
+
+
+            {/* Graphe interactif */}
+            <AnimalTypeChart />
+
+            {/* Interprétation */}
+            <p className="mt-6">
+              On observe que les chiens sont légèrement plus nombreux que les chats dans ce jeu de données.
+              Cette dominance peut influencer les résultats des modèles prédictifs, notamment si certains types d’animaux sont adoptés plus vite que d'autres.
+              Cette visualisation permet ainsi de poser les bases d’une analyse comparative par type d’animal.
+            </p>
+            <p className="mb-4">
+              En complément de la répartition des types d’animaux, il est également pertinent d’examiner leur âge.
+              L’âge joue un rôle crucial dans le processus d’adoption : les jeunes animaux sont généralement plus recherchés,
+              tandis que les animaux plus âgés peuvent rencontrer davantage de difficultés à trouver un foyer.
+              Le graphique suivant présente la distribution de l’âge des animaux en tranches de 3 mois, ce qui permet de mieux visualiser
+              la concentration des profils selon leur stade de vie.
+            </p>
+
+            <AgeDistributionChart />
+
+            <p className="mt-6">
+              On observe que la majorité des animaux proposés à l’adoption ont moins d’un an, avec une forte concentration dans les 6 premiers mois.
+              Cette donnée souligne que les refuges accueillent principalement des jeunes animaux, ce qui pourrait influencer les tendances
+              d’adoption observées dans le reste de l’analyse.
+            </p>
+          </section>
         </section>
 
         <section className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">Description des données</h2>
-          <ul className="list-disc pl-6 space-y-2">
-            <li><strong>Caractéristiques générales :</strong> Type d’animal (chien ou chat), âge (en mois), race principale et secondaire, sexe, taille, longueur du pelage.</li>
-            <li><strong>État de santé :</strong> Vaccination, vermifugation, stérilisation, état général.</li>
-            <li><strong>Apparence :</strong> Couleurs principales du pelage.</li>
-            <li><strong>Informations sur l’adoption :</strong> Nombre d’animaux représentés dans un profil, frais d’adoption (si applicable).</li>
-            <li><strong>Données multimédias :</strong> Nombre de photos associées à chaque profil.</li>
-          </ul>
-          <p className="mt-4">
-            L’objectif est de prédire la variable <strong>AdoptionSpeed</strong>, qui représente le délai d’adoption selon cinq catégories :
+
+          <p className="mb-4">
+            Le jeu de données utilisé dans ce projet provient de la plateforme <strong>PetFinder</strong> et contient les profils d’animaux mis en adoption en Malaisie.
+            Chaque ligne représente un animal (ou un groupe d’animaux) et décrit ses caractéristiques via des données tabulaires, textuelles et visuelles.
+            L’objectif est de prédire la variable <strong>AdoptionSpeed</strong>, représentant le délai avant adoption selon cinq catégories (0 à 4).
           </p>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>0 : Adoption le jour même</li>
-            <li>1 : Moins d’une semaine</li>
-            <li>2 : Entre 8 et 30 jours</li>
-            <li>3 : Entre 31 et 90 jours</li>
-            <li>4 : Pas adopté après 100 jours</li>
+
+          <ul className="list-disc pl-6 space-y-2">
+            <li><strong>Identifiants :</strong>
+              <span> chaque animal est identifié par un <em>PetID</em> unique. Un <em>RescuerID</em> permet de savoir qui a inscrit l’animal.</span>
+            </li>
+            <li><strong>Informations générales :</strong>
+              <span> type (chien ou chat), nom (facultatif), âge (en mois), race principale et secondaire, sexe (1 = mâle, 2 = femelle, 3 = groupe).</span>
+            </li>
+            <li><strong>Apparence physique :</strong>
+              <span> trois couleurs possibles pour décrire le pelage (Color1, Color2, Color3), taille à maturité (de petit à très grand), longueur du pelage.</span>
+            </li>
+            <li><strong>État de santé :</strong>
+              <span> statut vaccinal, vermifugation, stérilisation, et condition de santé (sain, blessure mineure ou grave).</span>
+            </li>
+            <li><strong>Conditions d’adoption :</strong>
+              <span> frais d’adoption (Fee), nombre d’animaux dans le profil (Quantity), État géographique en Malaisie (State).</span>
+            </li>
+            <li><strong>Contenu multimédia :</strong>
+              <span> nombre de photos (PhotoAmt), nombre de vidéos (VideoAmt), description textuelle du profil (en anglais, malais ou chinois).</span>
+            </li>
+            <li><strong>Données cibles :</strong>
+              <span><em>AdoptionSpeed</em>, qui prend une valeur entre 0 et 4 selon le temps mis avant l’adoption :</span>
+              <ul className="list-disc pl-6 mt-1 space-y-1">
+                <li>0 : adopté le jour même</li>
+                <li>1 : adopté en moins d’une semaine</li>
+                <li>2 : entre 8 et 30 jours</li>
+                <li>3 : entre 31 et 90 jours</li>
+                <li>4 : pas adopté après 100 jours</li>
+              </ul>
+            </li>
           </ul>
+
+          <p className="mt-6">
+            En complément, des métadonnées issues de l’<strong>API Google Vision</strong> ont été générées à partir des images (ex. : étiquettes, propriétés visuelles, détection de visages),
+            et les descriptions ont été analysées via l’<strong>API Natural Language</strong> de Google pour obtenir des mesures de sentiment et d'entités clés.
+            Bien que non exploitées dans ce projet, ces données offrent des perspectives d'analyse enrichies.
+          </p>
+
+          <p className="mt-4">
+            Enfin, un ensemble de fichiers de correspondance permet de relier les identifiants numériques aux noms de races, de couleurs et d’États :
+          </p>
+
+          <ul className="list-disc pl-6 space-y-1 mt-2">
+            <li><code>breed_labels.csv</code> : correspondance entre BreedID, BreedName et Type (1 = chien, 2 = chat)</li>
+            <li><code>color_labels.csv</code> : correspondance entre ColorID et nom de couleur</li>
+            <li><code>state_labels.csv</code> : correspondance entre StateID et nom de l’État malaisien</li>
+          </ul>
+
+          <p className="mt-4">
+            Ce jeu de données riche, structuré et nettoyé permet une analyse complète de la rapidité d’adoption en croisant de multiples dimensions (visuelles, comportementales, économiques).
+          </p>
 
 
 
@@ -119,41 +192,12 @@ export default function Home() {
             </div>
 
             <div className="space-y-2">
-            <h3 className="text-lg font-medium">Résultat : </h3>
+              <h3 className="text-lg font-medium">Résultat : </h3>
               <p>Un jeu de données nettoyé, optimisé et prêt pour l'analyse exploratoire et la modélisation prédictive.</p>
             </div>
           </section>
 
-          {/* Introduction du graphe */}
-          <p className="mb-4">
-            Afin d’introduire visuellement les types d’animaux disponibles à l’adoption dans le jeu de données,
-            le graphique suivant présente la répartition entre chiens 🐶 et chats 🐱 :
-          </p>
 
-          {/* Graphe interactif */}
-          <AnimalTypeChart />
-
-          {/* Interprétation */}
-          <p className="mt-6">
-            On observe que les chiens sont légèrement plus nombreux que les chats dans ce jeu de données.
-            Cette dominance peut influencer les résultats des modèles prédictifs, notamment si certains types d’animaux sont adoptés plus vite que d'autres.
-            Cette visualisation permet ainsi de poser les bases d’une analyse comparative par type d’animal.
-          </p>
-          <p className="mb-4">
-            En complément de la répartition des types d’animaux, il est également pertinent d’examiner leur âge.
-            L’âge joue un rôle crucial dans le processus d’adoption : les jeunes animaux sont généralement plus recherchés,
-            tandis que les animaux plus âgés peuvent rencontrer davantage de difficultés à trouver un foyer.
-            Le graphique suivant présente la distribution de l’âge des animaux en tranches de 3 mois, ce qui permet de mieux visualiser
-            la concentration des profils selon leur stade de vie.
-          </p>
-
-          <AgeDistributionChart />
-
-          <p className="mt-6">
-            On observe que la majorité des animaux proposés à l’adoption ont moins d’un an, avec une forte concentration dans les 6 premiers mois.
-            Cette donnée souligne que les refuges accueillent principalement des jeunes animaux, ce qui pourrait influencer les tendances
-            d’adoption observées dans le reste de l’analyse.
-          </p>
 
 
         </section>

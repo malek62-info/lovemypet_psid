@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
+import Title from "./components/Title";
+import Contexte from "./components/Contexte";
+import Explication from "./components/Explications";
+import Conclusions from "./components/Conclusions";
 
 const COLORS = [
     "#60A5FA", "#34D399", "#FBBF24", "#F87171", "#A78BFA",
@@ -16,12 +20,10 @@ export default function TopSterilizedBreedsChart() {
             .then(setData);
     }, []);
 
-    if (!data) return <p className="text-center">Chargement des données...</p>;
+    if (!data) return <p className="text-center text-gray-500">Chargement des données...</p>;
 
     const filtered = data.filter((d) => d.Type === animalType);
-    const topBreeds = [...filtered]
-        .sort((a, b) => b.Count - a.Count)
-        .slice(0, 10);
+    const topBreeds = [...filtered].sort((a, b) => b.Count - a.Count).slice(0, 10);
 
     const plotData = topBreeds.map((breed, i) => ({
         x: [breed.BreedName],
@@ -33,80 +35,75 @@ export default function TopSterilizedBreedsChart() {
     }));
 
     return (
-        <div className="flex flex-col items-center my-10">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-                Top 10 races les plus stérilisées ({animalType === 1 ? "Chiens 🐶" : "Chats 🐱"})
-            </h2>
-
-            <div className="mb-6">
-                <button
-                    onClick={() => setAnimalType(1)}
-                    className={`px-4 py-2 mr-2 rounded ${animalType === 1 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-                >
-                    Chiens
-                </button>
-                <button
-                    onClick={() => setAnimalType(2)}
-                    className={`px-4 py-2 rounded ${animalType === 2 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-                >
-                    Chats
-                </button>
-            </div>
-
-            <Plot
-                data={plotData}
-                layout={{
-                    barmode: "group",
-                    xaxis: {
-                        title: "Race",
-                        tickangle: -45,
-                        tickfont: { size: 12 },
-                    },
-                    yaxis: {
-                        title: "Nombre d'animaux stérilisés",
-                        tickfont: { size: 12 },
-                    },
-                    legend: { orientation: "h", y: -0.3 },
-                    height: 500,
-                    margin: { t: 40, b: 100, l: 60, r: 30 },
-                    font: { family: "Inter, sans-serif" },
-                    plot_bgcolor: "#f9fafb",
-                    paper_bgcolor: "#f9fafb",
-                }}
-                config={{ responsive: true }}
-                style={{ width: "100%", maxWidth: "900px" }}
+        <div className="w-full">
+            <Title
+                text={`Top 10 Races les Plus Stérilisées (${animalType === 1 ? "Chiens 🐶" : "Chats 🐱"})`}
+                number={7}
             />
 
-            {/* Interprétation */}
-            <div className="bg-white shadow-md rounded-xl p-6 max-w-4xl text-justify leading-relaxed text-gray-800 mt-10">
-                <p className="mb-4">
-                    Ce graphique présente les <strong>10 races les plus fréquemment stérilisées</strong>, en fonction du type d’animal sélectionné : chien 🐶 ou chat 🐱.
-                    Il permet d’identifier les races ciblées par les politiques de stérilisation, souvent en lien avec leur fréquence d’apparition en refuge ou chez les adoptants.
-                </p>
-
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Chez les chiens 🐶</h4>
-                <p>
-                    Les races comme le <strong>Labrador Retriever (121)</strong>, le <strong>Golden Retriever (80)</strong>, ou encore le <strong>Poodle (73)</strong> sont les plus stérilisées.
-                    Ces races sont très populaires, ce qui reflète leur fréquence en refuge, mais aussi la volonté de limiter leur reproduction non contrôlée.
-                    Les <strong>races croisées (Mixed Breed)</strong> sont massivement représentées (plus de 4000 cas), illustrant une priorité donnée à la régulation
-                    des populations non standardisées.
-                </p>
-
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Chez les chats 🐱</h4>
-                <p>
-                    Les chats stérilisés sont principalement issus de races non pures comme les <strong>Domestic Short Hair (2658)</strong>,
-                    les <strong>Medium Hair (925)</strong> ou les <strong>Long Hair (210)</strong>. Cela correspond à la réalité du terrain : la majorité des chats
-                    en refuge sont des chats dits « de gouttière », et la stérilisation est l’un des outils les plus efficaces pour prévenir
-                    la surpopulation féline.
-                </p>
-
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Conclusion</h4>
-                <p>
-                    Ce graphique permet de mettre en lumière les races sur lesquelles se concentrent les efforts de stérilisation. Que ce soit
-                    pour <strong>contrôler la reproduction des races les plus présentes</strong> ou <strong>réduire la surpopulation</strong>,
-                    la stérilisation joue un rôle clé dans la gestion des adoptions et du bien-être animal.
-                </p>
+            <div className="flex justify-end mb-4">
+                <button
+                    className={`btn ${animalType === 1 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                    onClick={() => setAnimalType(1)}
+                >
+                    🐶 Chiens
+                </button>
+                <button
+                    className={`btn ml-2 ${animalType === 2 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                    onClick={() => setAnimalType(2)}
+                >
+                    🐱 Chats
+                </button>
             </div>
+
+            <div className="bg-white shadow-md rounded-xl p-6">
+                <Plot
+                    data={plotData}
+                    layout={{
+                        barmode: "group",
+                        xaxis: {
+                            title: "Race",
+                            tickangle: -45,
+                            tickfont: { size: 12 },
+                        },
+                        yaxis: {
+                            title: "Nombre d'animaux stérilisés",
+                            tickfont: { size: 12 },
+                        },
+                        legend: { orientation: "h", y: -0.3 },
+                        height: 500,
+                        margin: { t: 40, b: 100, l: 60, r: 30 },
+                        font: { family: "Inter, sans-serif" },
+                        plot_bgcolor: "#ffffff",
+                        paper_bgcolor: "#ffffff",
+                    }}
+                    config={{ responsive: true, displayModeBar: true, displaylogo: false }}
+                    style={{ width: "100%" }}
+                />
+            </div>
+
+            <Contexte texte="Ce graphique présente les races les plus fréquemment stérilisées parmi les chiens et les chats. Il met en évidence les tendances de stérilisation selon les races les plus présentes en refuge." />
+            <Explication
+                title="Tendances de stérilisation chez les chiens et les chats"
+                points={[
+                    "Chez les chiens, les races les plus stérilisées sont majoritairement populaires et répandues dans les refuges, comme le Labrador Retriever (121), le Golden Retriever (80), le Poodle (73), et le Shih Tzu (78).",
+                    "Le Mixed Breed, catégorie qui regroupe les chiens de race mixte, est largement dominant avec plus de 4000 animaux stérilisés, ce qui reflète l’abondance de ces profils dans les structures d’accueil.",
+                    "Du côté des chats, la tendance est similaire. Les trois races de gouttière — Domestic Short Hair (2658), Domestic Medium Hair (925), et Domestic Long Hair (210) — forment l’écrasante majorité des individus stérilisés.",
+                    "Les races de chats plus spécifiques comme le Siamese (184), le Persian (151) ou le Tabby (234) figurent aussi parmi les plus stérilisées, montrant une prise en charge proactive même pour les races reconnaissables.",
+                    "La stérilisation est pratiquée sur des volumes très élevés, ce qui confirme qu’elle est une stratégie prioritaire des refuges pour limiter les naissances non contrôlées."
+                ]}
+            />
+
+
+            <Conclusions
+                conclusions={[
+                    "La stérilisation concerne en majorité les races les plus représentées dans les refuges, qu’il s’agisse de chiens ou de chats. Cela inclut à la fois des races très populaires (Labrador, Shih Tzu, Siamese…) et surtout des animaux de races mixtes.",
+                    "Les chiffres révèlent une priorité claire donnée à la stérilisation des animaux de gouttière, qu’il s’agisse de chiens croisés ou de chats de type 'domestic'.",
+                    "Ces pratiques permettent de limiter efficacement la surpopulation, en ciblant les profils les plus nombreux et potentiellement les plus reproducteurs.",
+                    "L’analyse montre que la stérilisation est un levier opérationnel stratégique dans les politiques de gestion des refuges, notamment en anticipation des adoptions ou pour réduire les abandons futurs."
+                ]}
+            />
+
         </div>
     );
 }

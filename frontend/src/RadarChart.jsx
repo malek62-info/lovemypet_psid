@@ -1,7 +1,11 @@
-import Plot from "react-plotly.js";
 import { useEffect, useState } from "react";
+import Plot from "react-plotly.js";
+import Title from "./components/Title";
+import Contexte from "./components/Contexte";
+import Explication from "./components/Explications";
+import Conclusions from "./components/Conclusions";
 
-export default function RadarInteractive() {
+const RadarChart = () => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
@@ -10,7 +14,8 @@ export default function RadarInteractive() {
             .then(setData);
     }, []);
 
-    if (!data) return <p className="text-center text-gray-500">Chargement du graphe...</p>;
+    if (!data)
+        return <p className="text-center text-gray-500">Chargement du graphe...</p>;
 
     const labels = Object.keys(data);
     const values = Object.values(data);
@@ -27,12 +32,12 @@ export default function RadarInteractive() {
     }));
 
     return (
-        <div className="my-10 flex flex-col items-center">
-            <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-                Analyse interactive des facteurs de non-adoption
-            </h2>
+        <div className="w-full">
+            <Title
+                text="Analyse interactive des facteurs de non-adoption"
+                number={6}
+            />
 
-            {/* === Graphe === */}
             <Plot
                 data={traces}
                 layout={{
@@ -40,59 +45,53 @@ export default function RadarInteractive() {
                         radialaxis: {
                             visible: true,
                             range: [0, Math.max(...values) + 2],
+                            tickfont: { size: 14 },
                         },
                     },
                     showlegend: true,
-                    legend: { orientation: "h", y: -0.3 },
+                    legend: { orientation: "h", y: -0.3, font: { size: 14 } },
                     height: 500,
                     margin: { t: 50 },
+                    hovermode: "closest",
                 }}
                 config={{
                     responsive: true,
+                    displayModeBar: true,
+                    displaylogo: false,
                 }}
-                style={{ width: "100%", maxWidth: "700px" }}
+                style={{ width: "100%", maxWidth: "700px", margin: "0 auto" }}
             />
 
-            {/* === Interprétation === */}
-            <div className="bg-white shadow-md rounded-xl p-6 max-w-4xl text-justify leading-relaxed text-gray-800 mt-10">
-                <p className="mb-4">
-                    Ce graphique met en évidence les caractéristiques moyennes des animaux qui ne sont <strong>pas adoptés après 100 jours</strong>.
-                    Il permet de dégager un profil type à partir de différentes variables comportementales, physiques et logistiques,
-                    et d’identifier les éléments qui freinent l’adoption rapide.
-                </p>
+            <Contexte texte="Ce graphique met en lumière les caractéristiques typiques des animaux qui restent sans adoption après plus de 100 jours. Il permet d’identifier les variables clés qui influencent négativement l’adoption." />
 
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Un profil marqué par l'âge et les frais</h4>
-                <p>
-                    Le facteur le plus significatif est l’âge : les animaux concernés ont en moyenne <strong>plus de 13 mois</strong>,
-                    ce qui les classe dans une tranche d’âge moins attractive pour les adoptants. Cette préférence généralisée pour les jeunes animaux
-                    rend leur adoption plus lente, voire improbable sans campagne de valorisation. De plus, ces animaux sont associés à des <strong>frais d’adoption non négligeables</strong> (21.32 en moyenne), ce qui peut constituer un obstacle financier ou symbolique.
-                </p>
+            <Explication
+                title="Profil type des animaux non adoptés"
+                points={[
+                    "Âgés en moyenne de 13,7 mois, ces animaux ne sont plus perçus comme des bébés, ce qui réduit leur attractivité face aux jeunes chiots ou chatons.",
+                    "Des frais d’adoption supérieurs à 21€ peuvent freiner les potentiels adoptants, notamment lorsqu’ils comparent avec d'autres animaux gratuits ou moins coûteux.",
+                    "Malgré un bon état de santé (note moyenne de 1.05 sur 2), la santé ne semble pas être un critère différenciateur majeur dans l’adoption rapide.",
+                ]}
+            />
 
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Des critères neutres ou peu différenciants</h4>
-                <p>
-                    Les autres caractéristiques comme la <strong>taille à maturité</strong> (1.88) et la <strong>longueur du pelage</strong> (1.41)
-                    montrent que ces animaux sont souvent de taille moyenne avec un pelage court, ce qui en soi n’est pas un facteur repoussoir.
-                    Leurs <strong>états de santé sont généralement bons</strong> (1.05), ce qui indique que les freins à l’adoption
-                    sont davantage liés à des perceptions qu’à des problèmes médicaux.
-                </p>
+            <Explication
+                title="Facteurs liés à la visibilité et à la perception"
+                points={[
+                    "Un pelage plutôt court (1.41) et une taille moyenne (1.88) suggèrent un physique jugé neutre ou banal, sans élément particulièrement attractif pour les visiteurs.",
+                    "Le nombre moyen de photos est faible (3.32), ce qui réduit l’engagement émotionnel des visiteurs en ligne. La présentation visuelle est un levier clé encore sous-exploité.",
+                    "L’aspect affectif et l’attrait esthétique sont essentiels : les données suggèrent que ces animaux manquent d’éléments différenciateurs ou de 'coup de cœur' visuel.",
+                ]}
+            />
 
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">L'importance de la visibilité</h4>
-                <p>
-                    Le nombre moyen de photos par profil reste faible (3.32), ce qui peut limiter la capacité à générer un attachement chez
-                    l’adoptant. Les photos sont pourtant un levier essentiel dans le processus d’adoption, en particulier en ligne.
-                    Un effort sur la <strong>valorisation visuelle des profils</strong> est donc un axe d’amélioration majeur.
-                </p>
+            <Conclusions
+                conclusions={[
+                    "Les animaux non adoptés ne souffrent pas nécessairement de problèmes de santé ou de comportement, mais plutôt d’un manque de visibilité et d’attraits perçus.",
+                    "Agir sur la communication visuelle (photos qualitatives, vidéos), ainsi que sur les frais d’adoption ou les campagnes ciblées pour les animaux plus âgés, peut considérablement améliorer leur taux d’adoption.",
+                    "Ce type de profil met en lumière la nécessité d'une stratégie proactive en refuge, où l'expérience utilisateur en ligne joue un rôle central dans la prise de décision."
+                ]}
+            />
 
-                <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Conclusion</h4>
-                <p>
-                    Le profil des animaux non adoptés après 100 jours est souvent celui d’un animal adulte, peu mis en avant visuellement,
-                    et parfois soumis à des frais d’adoption. Bien que leur état de santé soit bon, ces éléments contribuent à ralentir le processus.
-                    Pour améliorer le taux d’adoption, il est recommandé de <strong>mettre en avant les animaux plus âgés</strong> à travers
-                    des campagnes dédiées, de <strong>réduire les frais</strong> ou les justifier, et de <strong>soigner la présentation des profils</strong> via des photos engageantes et des descriptions valorisantes.
-                </p>
-            </div>
         </div>
     );
+};
 
-}
-
+export default RadarChart;

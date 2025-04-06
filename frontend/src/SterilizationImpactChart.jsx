@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
+import Title from "./components/Title";
+import Contexte from "./components/Contexte";
+import Explication from "./components/Explications";
+import Conclusions from "./components/Conclusions";
 
 export default function SterilizationImpactChart() {
   const [data, setData] = useState(null);
@@ -15,7 +19,6 @@ export default function SterilizationImpactChart() {
 
   const filtered = data.filter((d) => d.Type === animalType);
 
-  // Trouver les 10 races les plus fréquentes (stérilisés + non stérilisés)
   const raceCounts = {};
   filtered.forEach((d) => {
     raceCounts[d.BreedName] = (raceCounts[d.BreedName] || 0) + d.total;
@@ -37,30 +40,19 @@ export default function SterilizationImpactChart() {
       return entry ? entry.adoption_rate : null;
     });
 
-  const getText = (dataset) =>
-    xLabels.map((race) => {
-      const entry = dataset.find((d) => d.BreedName === race);
-      return entry ? `${entry.adopted_fast} sur ${entry.total}` : "Aucune donnée";
-    });
-
   return (
-    <div className="flex flex-col items-center my-10">
-      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Impact de la stérilisation sur l’adoption rapide ({animalType === 1 ? "Chiens 🐶" : "Chats 🐱"})
-      </h2>
+    <div className="w-full mb-12">
+      <Title
+        text="Impact de la stérilisation sur l’adoption rapide selon la race"
+        number={8}
+      />
 
-      <div className="mb-4">
-        <button
-          onClick={() => setAnimalType(1)}
-          className={`px-4 py-2 mr-2 rounded ${animalType === 1 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-        >
-          Chiens
+      <div className="flex justify-end space-x-2 mb-6">
+        <button className="btn" onClick={() => setAnimalType(1)}>
+          🐶 Chiens
         </button>
-        <button
-          onClick={() => setAnimalType(2)}
-          className={`px-4 py-2 rounded ${animalType === 2 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-        >
-          Chats
+        <button className="btn" onClick={() => setAnimalType(2)}>
+          🐱 Chats
         </button>
       </div>
 
@@ -85,67 +77,60 @@ export default function SterilizationImpactChart() {
         ]}
         layout={{
           barmode: "group",
-          xaxis: { title: "Race", tickangle: -45 },
-          yaxis: { title: "% d'adoption rapide", range: [0, 100] },
+          xaxis: {
+            title: { text: "Race", font: { size: 16 } },
+            tickangle: -45,
+            tickfont: { size: 12 },
+          },
+          yaxis: {
+            title: { text: "% d'adoption rapide", font: { size: 16 } },
+            tickfont: { size: 14 },
+            range: [0, 100],
+          },
+          legend: {
+            font: { size: 14 },
+            orientation: "h",
+            y: -0.3,
+          },
           height: 500,
           margin: { t: 40, b: 100, l: 60, r: 30 },
-          legend: { orientation: "h", y: -0.25 },
-          plot_bgcolor: "#f9fafb",
-          paper_bgcolor: "#f9fafb",
+          plot_bgcolor: "#ffffff",
+          paper_bgcolor: "#ffffff",
           font: { family: "Inter, sans-serif" },
         }}
-        config={{ responsive: true }}
-        style={{ width: "100%", maxWidth: "900px" }}
+        config={{ responsive: true, displayModeBar: true, displaylogo: false }}
+        style={{ width: "100%", height: "600px", marginBottom: "30px" }}
       />
 
-      {/* === Interprétation === */}
-      <div className="bg-white shadow-md rounded-xl p-6 max-w-4xl text-justify leading-relaxed text-gray-800 mt-10">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-          Analyse de l’impact de la stérilisation sur l’adoption rapide
-        </h3>
-        <p className="mb-4">
-          Cette analyse se base sur un comparatif du <strong>taux d’adoption rapide (%)</strong> entre animaux <strong>stérilisés</strong> et <strong>non stérilisés</strong>, parmi les <strong>10 races les plus représentées</strong> chez les chiens 🐶 et les chats 🐱. Elle vise à identifier si la stérilisation peut jouer un rôle significatif dans la rapidité d’adoption.
-        </p>
-        <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600">Une tendance globale en faveur des animaux stérilisés</h4>
-        <p>
-          Les résultats montrent que, pour la majorité des races étudiées, les <strong>animaux stérilisés sont adoptés plus rapidement</strong> que leurs homologues non stérilisés. Voici quelques exemples marquants :
-        </p>
-        <ul className="list-disc pl-5 mb-4">
-          <li><strong>Golden Retriever</strong> : 41,2 % (stérilisés) vs 22,7 % (non stérilisés)</li>
-          <li><strong>Poodle</strong> : 47,9 % vs 29,8 %</li>
-          <li><strong>Shih Tzu</strong> : 43,6 % vs 37,1 %</li>
-          <li><strong>Rottweiler</strong> : 43,8 % vs 25,0 %</li>
-          <li><strong>Schnauzer</strong> : 48,3 % vs 20,0 %</li>
-        </ul>
-        <p>
-          Ces chiffres illustrent une <strong>préférence des adoptants</strong> pour les animaux déjà stérilisés, souvent perçus comme plus faciles à intégrer dans leur nouveau foyer.
-        </p>
+      <Contexte texte="Ce graphique compare le pourcentage d'adoption rapide des animaux stérilisés et non stérilisés pour les 10 races les plus fréquentes chez les chiens et chats." />
 
-        <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600"> Des exceptions et nuances selon la race</h4>
-        <p>
-          Certaines races montrent des écarts plus faibles ou même inverses :
-        </p>
-        <ul className="list-disc pl-5 mb-4">
-          <li><strong>Bull Terrier</strong> : 22,2 % d’adoption rapide non stérilisés contre 0 % stérilisés</li>
-          <li><strong>Jack Russell Terrier</strong> : 23,3 % vs 11,1 %</li>
-        </ul>
-        <p>
-          Ces cas soulignent que <strong>l’impact de la stérilisation varie selon la race</strong> et n’est pas le seul facteur déterminant de l’adoption.
-        </p>
+      <Explication
+        title="Analyse comportementale et perception"
+        points={[
+          "Un levier comportemental et sanitaire : la stérilisation est perçue positivement par les adoptants, car elle est souvent associée à un animal plus calme, moins agressif, et avec un risque réduit de fugue ou de reproduction non contrôlée. Cela explique en partie pourquoi les chiens stérilisés sont adoptés plus rapidement.",
+          "Effet renforcé sur certaines races populaires : chez des races comme le Golden Retriever, le Poodle ou le Schnauzer, déjà très prisées, la stérilisation semble booster leur attractivité. Ces races combinent des traits physiques appréciés et un comportement jugé stable, et le fait qu’elles soient stérilisées rassure les adoptants sur leur future gestion.",
+          "La stérilisation comme marqueur de soin : un chien stérilisé donne l’image d’un animal ayant reçu des soins, ce qui valorise sa fiche en refuge. Cette perception de sérieux du refuge ou de l'ancien propriétaire peut influencer positivement la décision d’adoption."
+        ]}
+      />
 
-        <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600"> Un levier stratégique pour les refuges</h4>
-        <p>
-          En priorisant la stérilisation des races qui en tirent le plus de bénéfices (Labrador, Husky, Pomeranian…), les refuges peuvent <strong>accélérer l’adoption</strong> et mieux gérer la rotation des animaux.
-        </p>
+      <Explication
+        title="Limites et nuances selon les races"
+        points={[
+          "Des exceptions révélatrices : certaines races montrent un effet inverse, comme le Bull Terrier, pour lequel les stérilisés ne sont jamais adoptés rapidement dans l’échantillon. Cela peut traduire une méfiance vis-à-vis de certaines races, où la stérilisation ne compense pas les stéréotypes négatifs associés (race dite 'à risque' ou 'difficile'). Cela met en lumière l’impact de la race sur la perception du public, parfois plus fort que l'état de stérilisation.",
+          "Facteurs concurrents à la stérilisation : chez des races comme le Jack Russell Terrier, même stérilisés, les taux d’adoption rapide restent faibles. Ce chien est souvent vu comme hyperactif, difficile à canaliser. Cela montre que les traits comportementaux dominants de la race peuvent neutraliser l’effet bénéfique de la stérilisation.",
+          "Effet plafonné sur certaines races très prisées : dans quelques cas, la stérilisation n’a pas d’effet fort car la race est déjà très demandée. Par exemple, les Corgis ou Pugs, avec ou sans stérilisation, présentent des taux d’adoption relativement similaires. Cela reflète un plafonnement de l’impact lorsque la race est déjà attractive par nature."
+        ]}
+      />
 
-        <h4 className="text-lg font-semibold mt-6 mb-2 text-indigo-600"> Conclusion</h4>
-        <p>
-          Cette analyse démontre que la stérilisation est un <strong>facteur-clé d’accélération de l’adoption</strong> pour de nombreuses races. Elle renforce l’idée que des décisions ciblées sur certaines races peuvent améliorer l’efficacité des campagnes d’adoption.
-        </p>
-      </div>
-
+      <Conclusions
+        conclusions={[
+          "La stérilisation joue un rôle important dans la perception des animaux en refuge. Elle rassure les adoptants sur le plan comportemental et sanitaire, et donne l'image d’un animal bien préparé.",
+          "Elle est particulièrement efficace pour améliorer la vitesse d’adoption des races populaires mais neutres ou jugées faciles à vivre.",
+          "Cependant, son efficacité est modulée par l’image de la race : certaines races bénéficient peu de la stérilisation en raison de stéréotypes négatifs, tandis que d’autres très prisées n’en ont pas besoin pour être rapidement adoptées.",
+          "Il est donc essentiel d’intégrer la stérilisation dans une stratégie d’adoption globale qui prend aussi en compte la communication autour de la race, le comportement, l’âge, et l’apparence visuelle."
+        ]}
+      />
 
     </div>
-
   );
 }
