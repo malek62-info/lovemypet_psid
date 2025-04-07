@@ -480,3 +480,93 @@ async def get_age_vaccination_data():
     output = result.to_dict(orient='records')
     
     return JSONResponse(content=output)
+
+
+
+
+@app.get("/furlength-early-adoption")
+def get_furlength_early_adoption(gender: int = None):
+    """
+    Calcule et retourne les adoptions rapides par longueur de fourrure.
+    Paramètre 'gender' permet de filtrer les données par sexe (1 = mâle, 2 = femelle).
+    """
+    df = load_data()
+    
+    # Vérifier que les colonnes existent
+    if "FurLength" not in df.columns or "AdoptionSpeed" not in df.columns or "Gender" not in df.columns:
+        return {"error": "Colonnes manquantes dans le fichier"}
+    
+    # Filtrer pour ne garder que les adoptions rapides (0 et 1)
+    df = df[df["AdoptionSpeed"].isin([0, 1])]
+    
+    # Filtrer par sexe si le paramètre 'gender' est fourni
+    if gender is not None:
+        df = df[df["Gender"] == gender]
+    
+    # Compter le nombre d'adoptions par longueur de fourrure
+    adoption_counts = df["FurLength"].value_counts().sort_index()
+    
+    # Préparer les libellés
+    fur_length_labels = {
+        0: "Non spécifié",
+        1: "Court",
+        2: "Moyen",
+        3: "Long"
+    }
+    
+    # Préparer les données pour le frontend
+    data = {
+        "fur_length": [],
+        "count": [],
+        "percentage": []
+    }
+    
+    total_adoptions = len(df)
+    
+    for fur_length, count in adoption_counts.items():
+        data["fur_length"].append(fur_length_labels.get(fur_length, str(fur_length)))
+        data["count"].append(int(count))
+        data["percentage"].append(round((count / total_adoptions) * 100, 2))
+    
+    return data
+
+
+
+
+@app.get("/furlength-dewormed")
+def get_furlength_dewormed():
+    df = load_data()
+
+    # Vérifier si les colonnes nécessaires existent
+    if "FurLength" not in df.columns or "Dewormed" not in df.columns:
+        return {"error": "Colonnes manquantes dans le fichier"}
+
+    # Ne garder que les lignes avec des valeurs valides pour FurLength (1, 2, 3)
+    df = df[df["FurLength"].isin([1, 2, 3])]
+
+    # Séparer les groupes vermifugés et non vermifugés
+    df_dewormed = df[df["Dewormed"] == 1]
+    df_non_dewormed = df[df["Dewormed"] == 2]
+
+    # Compter les occurrences par type de fourrure
+    fur_length_counts_dewormed = df_dewormed["FurLength"].value_counts()
+    fur_length_counts_non_dewormed = df_non_dewormed["FurLength"].value_counts()
+
+    fur_length_labels = {
+        1: "Court",
+        2: "Moyen",
+        3: "Long"
+    }
+
+    data = {
+        "fur_length": [],
+        "dewormed_count": [],
+        "non_dewormed_count": []
+    }
+
+    for length in [1, 2, 3]:
+        data["fur_length"].append(fur_length_labels[length])
+        data["dewormed_count"].append(int(fur_length_counts_dewormed.get(length, 0)))
+        data["non_dewormed_count"].append(int(fur_length_counts_non_dewormed.get(length, 0)))
+
+    return data

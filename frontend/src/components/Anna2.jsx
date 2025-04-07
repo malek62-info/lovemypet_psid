@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 
-const Graphe7 = () => {
+const Anna2 = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,4 +59,4 @@ const Graphe7 = () => {
   );
 };
 
-export default Graphe7;
+export default Anna2;

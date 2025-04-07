@@ -1,24 +1,32 @@
 import React from "react";
 import Wrapper from "../components/Wrapper";
 
-import Graphe1 from "../components/Graphe1";
-import Graphe2 from "../components/Graphe2";
-import Graphe3 from "../components/Graphe3";
-import Graphe4 from "../components/Graphe4";
-import Graphe5 from "../components/Graphe5";
-import Graphe6 from "../components/Graphe6";
-import Graphe7 from "../components/Graphe7";
+import Anna1 from "../components/Anna1";
+import Anna2 from "../components/Anna2";
+import Anna3 from "../components/Anna3";
+import Anna4 from "../components/Anna4";
+import Anna5 from "../components/Anna5";
+import Anna6 from "../components/Anna6";
+import Anna7 from "../components/Anna7";
+import Anna8 from "../components/Anna8";
+import Anna9 from "../components/Anna9";
+import Anna10 from "../components/Anna10";
 
 const Dashboard = () => {
   return (
     <Wrapper>
-      {/* <Graphe1 />
-      <Graphe2 />
-      <Graphe3 />
-      <Graphe4 />
-      <Graphe5 />
-      <Graphe6 /> */}
-      <Graphe7 />
+      <Anna1 />
+      <Anna2 />
+      <Anna3 />
+      <Anna4 />
+      <Anna5 />
+      <Anna6 />
+      <Anna7 />
+      <Anna8 />
+      <Anna9 />
+      <Anna10 />
+
+
     </Wrapper>
   );
 };

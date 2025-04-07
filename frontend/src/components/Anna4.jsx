@@ -5,7 +5,7 @@ import Title from "./Title";
 import Explication from "./Explications";
 import Contexte from "./Contexte";
 
-const AdoptionSpeedChart = () => {
+const Anna4 = () => {
   const [data, setData] = useState([]);
   const [sizeFilter, setSizeFilter] = useState("all");
   const [feeRange, setFeeRange] = useState([0, 800]);
@@ -142,4 +142,4 @@ const AdoptionSpeedChart = () => {
   );
 };
 
-export default AdoptionSpeedChart;
+export default Anna4;

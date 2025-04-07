@@ -5,7 +5,7 @@ import Title from "./Title";
 import Explication from "./Explications";
 import Contexte from "./Contexte";
 
-const Graphe4 = () => {
+const Anna7 = () => {
   // États pour stocker les données des différents graphiques
   const [stackedDataDog, setStackedDataDog] = useState([]);
   const [stackedDataCat, setStackedDataCat] = useState([]);
@@ -398,4 +398,4 @@ const Graphe4 = () => {
   );
 };
 
-export default Graphe4;
+export default Anna7;

@@ -5,7 +5,7 @@ import Title from "./Title";
 import Explication from "./Explications";
 import Contexte from "./Contexte";
 
-export default function Graphe6() {
+export default function Anna8() {
   const [data, setData] = useState(null);
   const [animalType, setAnimalType] = useState(1); 
 

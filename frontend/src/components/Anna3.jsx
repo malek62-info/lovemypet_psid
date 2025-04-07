@@ -7,7 +7,7 @@ import Title from "./Title";
 import Explication from "./Explications";
 import Contexte from "./Contexte";
 
-function Graphe2() {
+function Anna3() {
   const [data, setData] = useState(null); // Utilisation de null comme valeur initiale
 
   useEffect(() => {
@@ -292,4 +292,4 @@ function Graphe2() {
   );
 }
 
-export default Graphe2;
+export default Anna3;
