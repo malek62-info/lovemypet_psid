@@ -456,21 +456,67 @@ def get_top_breeds_adoption(animal_type: int):
 
 
 
+# @app.get("/age-vaccination-data")
+# async def get_age_vaccination_data():
+#     # Charger les données
+#     df = load_data()
+    
+#     # Nettoyage des données
+#     df = df.dropna(subset=['Age', 'Vaccinated'])
+#     df = df[df['Vaccinated'] == 2]  # Garder uniquement les non-vaccinés (2)
+#     df['Age'] = df['Age'].astype(int)  # S'assurer que l'âge est un entier
+
+#     # Définir des intervalles d'âge (par exemple, de 0 à 250, avec des intervalles de 10 ans)
+#     bins = list(range(0, 260, 10))  # Intervalles de 10 ans (0-10, 10-20, ..., 240-250)
+#     labels = [f'{i}-{i+9}' for i in range(0, 250, 10)]  # Modifié pour correspondre aux bins
+    
+#     # Ajouter une colonne 'AgeGroup' pour l'intervalle d'âge
+#     df['AgeGroup'] = pd.cut(df['Age'], bins=bins, labels=labels, right=False)
+
+#     # Compter les non-vaccinés par groupe d'âge
+#     result = (
+#         df.groupby('AgeGroup')['Vaccinated']
+#         .value_counts()
+#         .unstack(fill_value=0)
+#         .rename(columns={2: 'NoNumberVaccinated'})  # Se concentrer sur les non-vaccinés
+#         .reset_index()
+#     )
+    
+#     # Ajouter les groupes d'âge manquants avec des counts à 0
+#     all_age_groups = set(labels)
+#     current_age_groups = set(result['AgeGroup'])
+#     missing_age_groups = all_age_groups - current_age_groups
+    
+#     for age_group in missing_age_groups:
+#         result = result.append({
+#             'AgeGroup': age_group,
+#             'NoNumberVaccinated': 0
+#         }, ignore_index=True)
+    
+#     # Trier par groupe d'âge
+#     result = result.sort_values(by='AgeGroup').reset_index(drop=True)
+    
+#     # Convertir en format demandé
+#     output = result.to_dict(orient='records')
+    
+#     return JSONResponse(content=output)
+
+
 @app.get("/age-vaccination-data")
 async def get_age_vaccination_data():
     # Charger les données
     df = load_data()
-    
+
     # Nettoyage des données
     df = df.dropna(subset=['Age', 'Vaccinated'])
-    df = df[df['Vaccinated'] == 2]  # Garder uniquement les non-vaccinés (2)
-    df['Age'] = df['Age'].astype(int)  # S'assurer que l'âge est un entier
+    df = df[df['Vaccinated'] == 2]  # Garder uniquement les non-vaccinés
+    df['Age'] = df['Age'].astype(int)
 
-    # Définir des intervalles d'âge (par exemple, de 0 à 250, avec des intervalles de 10 ans)
-    bins = list(range(0, 260, 10))  # Intervalles de 10 ans (0-10, 10-20, ..., 240-250)
-    labels = [f'{i}-{i+9}' for i in range(0, 250, 10)]  # Modifié pour correspondre aux bins
-    
-    # Ajouter une colonne 'AgeGroup' pour l'intervalle d'âge
+    # Définir les intervalles d'âge
+    bins = [0, 11, 21, 31, 41, float('inf')]
+    labels = ['0-10', '11-20', '21-30', '31-40', '41+']
+
+    # Créer la colonne de groupe d'âge
     df['AgeGroup'] = pd.cut(df['Age'], bins=bins, labels=labels, right=False)
 
     # Compter les non-vaccinés par groupe d'âge
@@ -481,27 +527,23 @@ async def get_age_vaccination_data():
         .rename(columns={2: 'NoNumberVaccinated'})  # Se concentrer sur les non-vaccinés
         .reset_index()
     )
-    
-    # Ajouter les groupes d'âge manquants avec des counts à 0
-    all_age_groups = set(labels)
-    current_age_groups = set(result['AgeGroup'])
-    missing_age_groups = all_age_groups - current_age_groups
-    
-    for age_group in missing_age_groups:
-        result = result.append({
-            'AgeGroup': age_group,
-            'NoNumberVaccinated': 0
-        }, ignore_index=True)
-    
+
+    # Ajouter les groupes d'âge manquants
+    for label in labels:
+        if label not in result['AgeGroup'].values:
+            result = result.append({
+                'AgeGroup': label,
+                'NoNumberVaccinated': 0
+            }, ignore_index=True)
+
     # Trier par groupe d'âge
+    result['AgeGroup'] = pd.Categorical(result['AgeGroup'], categories=labels, ordered=True)
     result = result.sort_values(by='AgeGroup').reset_index(drop=True)
-    
-    # Convertir en format demandé
+
+    # Convertir en format JSON
     output = result.to_dict(orient='records')
-    
+
     return JSONResponse(content=output)
-
-
 
 
 @app.get("/furlength-early-adoption")
