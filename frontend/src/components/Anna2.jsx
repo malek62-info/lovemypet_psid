@@ -78,24 +78,24 @@ const Anna2 = () => {
         style={{ width: "100%", height: "600px", marginBottom: "30px" }}
       />
 
-      <Contexte texte="Cette analyse vise à comprendre les raisons du nombre important d'animaux non vaccinés observé dans les premières données. En regroupant ces données par tranche d'âge, nous cherchons à identifier des tendances pouvant expliquer cette situation." />
+      <Contexte texte="Le graphique précédent a montré qu’un plus grand nombre d’animaux sont adoptés sans être vaccinés, ce qui peut surprendre. Pour mieux comprendre cette situation, nous avons réalisé ce nouveau graphique afin d’analyser la relation entre l’âge des animaux et leur statut vaccinal." />
 
       <Explication
-        title="Interprétation du graphique"
+        title="Ce que montre le graphique"
         points={[
-          "Le graphique montre clairement que la majorité des animaux non vaccinés appartiennent à la tranche d’âge 0-10 ans (6580 cas).",
-          "Les tranches suivantes présentent une baisse nette : 383 pour 11-20 ans, 134 pour 21-30 ans, 63 pour 31-40 ans, et 67 pour les 41 ans et plus.",
-          "Cela suggère que les animaux les plus jeunes sont les moins vaccinés.",
-          "Cette tendance peut être liée au fait que certains protocoles de vaccination ne s'appliquent qu'à partir d'un certain âge.",
-          "De plus, beaucoup de personnes préfèrent adopter des animaux jeunes, qui n'ont pas encore atteint l'âge requis pour la vaccination.",
+          "La majorité des animaux non vaccinés ont moins de 10 mois (6580 cas), ce qui est une proportion très importante.",
+          "Le nombre diminue fortement avec l’âge : 383 entre 11 et 20 mois, et encore moins au-delà.",
+          "Cela signifie que beaucoup d’animaux sont adoptés avant même d’avoir atteint l’âge pour recevoir leurs premiers vaccins.",
+          "Certains protocoles vétérinaires prévoient en effet la vaccination à partir d’un certain âge, ce qui peut expliquer cet écart.",
+          "Enfin, les adoptants ont tendance à préférer les animaux jeunes, ce qui renforce cette tendance naturelle.",
         ]}
       />
 
       <Conclusions
         conclusions={[
-          "En général, les animaux non vaccinés sont majoritairement très jeunes.",
-          "Cela peut s'expliquer par une préférence des adoptants pour des animaux jeunes, combinée à des délais nécessaires avant de pouvoir administrer les premiers vaccins.",
-          "Ce constat n'indique donc pas forcément un problème de sensibilisation, mais plutôt une réalité liée à l'âge des animaux et au calendrier vaccinal.",
+          "Les animaux non vaccinés sont majoritairement très jeunes, souvent âgés de moins de 10 mois.",
+          "Cela s’explique par le fait qu’ils n’ont pas encore atteint l’âge de la première vaccination et qu’ils sont adoptés très tôt.",
+          "Ce phénomène ne reflète donc pas un manque d'information, mais plutôt une conséquence logique liée à l'âge et aux protocoles de vaccination.",
         ]}
       />
     </div>
