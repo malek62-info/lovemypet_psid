@@ -54,8 +54,7 @@ export default function Anna8() {
   return (
     <div className="w-full mb-12">
       <Title
-        text="Impact de la stérilisation sur l’adoption rapide selon la race"
-        number={8}
+        text="Impact de la stérilisation sur l’adoption rapide selon la race" number={8}
       />
 
       {/* Filtres animaux et race pure/mixte */}

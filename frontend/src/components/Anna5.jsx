@@ -117,11 +117,11 @@ const Anna5 = () => {
         title="Distribution Générale"
 
         points={[
-          "Fourrure courte : Avec 52.9%, les animaux à poil court sont ceux qui sont le plus souvent adoptés rapidement.",
+          "Fourrure courte : Avec 52.7%, les animaux à poil court sont ceux qui sont le plus souvent adoptés rapidement.",
           "Ils représentent plus de la moitié des adoptions dans les 7 premiers jours.",
-          "Fourrure moyenne : Représente 38.8% des adoptions rapides.",
+          "Fourrure moyenne : Représente 38.5% des adoptions rapides.",
           "Une proportion non négligeable, mais nettement inférieure à celle des poils courts.",
-          "Fourrure longue : Seulement 8.27%.",
+          "Fourrure longue : Seulement 8.86%.",
           "Une très faible part, suggérant que ces animaux mettent plus de temps à trouver une famille.",
         ]}
       />

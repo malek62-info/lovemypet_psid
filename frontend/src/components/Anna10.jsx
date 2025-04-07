@@ -152,7 +152,7 @@ const Anna10 = () => {
   return (
     <div className="">
       <>
-        <Title text="Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées " number={5} />
+        <Title text="Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées " number={9} />
 
         {/* Nouveau Graphique 3 : Top 10 races pures vs mixtes */}
         <div className="w-full mb-12">
@@ -212,9 +212,9 @@ const Anna10 = () => {
 
 
           <Contexte
-            texte="   Les graphiques présentent les 10 races pures (barres vertes) et les 10 races mixtes (barres rouges)
+            texte="   Les graphiques présentent les 10 races pures et les 10 races mixtes
              de chiens et de chats adoptées le plus rapidement, basées sur la vitesse d’adoption moyenne 
-             (0 = adopté le jour même, 4 = non adopté après 100 jours). L’objectif est de comprendre les préférences des adoptants et d’identifier les différences entre chiens et chats."
+             . L’objectif est de comprendre les préférences des adoptants et d’identifier les différences entre chiens et chats."
 
           />
 
@@ -222,13 +222,12 @@ const Anna10 = () => {
           <Explication
             title="Vitesse d'adoption chez les chiens"
             points={[
-              "Adopté le jour même (barres bleues)",
               "Le premier graphique montre les 10 races pures et mixtes de chiens adoptés le plus rapidement.",
-              "Courses pures dominantes : Le Basset Hound (1.60) est le plus rapide, suivi du Border Collie (1.69) et du Pug (1.71).",
-              "Courses mixtes compétitives : Le Maltese mixte (1.30) est le plus rapide de tous, suivi du Cocker Spaniel mixte (1.50).",
-              "Écart Pure vs Mixte : Certaines races comme le Cocker Spaniel sont adoptées plus vite sous forme mixte (1,50) que pure (1,88).",
-              "Préférence pour certaines courses pures : Les courses pures comme le Basset Hound et le Border Collie sont très prisées.",
-              "Attrait des mixtes : Le Maltais mixte (1h30) montre une forte demande pour les croisements de petite taille."
+              "races pures dominantes : Le Basset Hound  est le plus rapide",
+              "races mixtes compétitives : Le collie mixte  est le plus rapide de tous, suivi du maltese mixte .",
+              "Écart Pure vs Mixte : Certaines races comme le Cocker Spaniel sont adoptées plus vite sous forme mixte que pure.",
+              "Préférence pour certaines races pures : Les races pures comme le Basset Hound ",
+              "Attrait des mixtes : Le Maltais mixte  montre une forte demande pour les croisements de petite taille."
             ]}
           />
 
@@ -236,35 +235,23 @@ const Anna10 = () => {
             title="Vitesse d'adoption chez les chats"
             points={[
               "Le deuxième graphique montre les 10 races pures et mixtes de chats adoptés le plus rapidement.",
-              "Races mixtes en tête : Le Ragdoll mixte (1,70) et le Maine Coon mixte (1,75) sont les plus rapides.",
-              "Races pures compétitives : Le Domestic Long Hair (1.70) est la race pure la plus rapide, suivi du Russian Blue (1.91).",
-              "Écart Pure vs Mixte : Des races comme le Maine Coon (1,75 mixte vs 2,00 pure) et le Siamese (1,91 mixte vs 2,12 pure) sont adoptées plus vite sous forme mixte.",
-              "Popularité des mixtes : Les croisements comme le Ragdoll et le Maine Coon dominent, reflétant une préférence pour les mixtes.",
-              "Races pures attractives : Le Domestic Long Hair et le Russian Blue attirent, mais les mixtes sont souvent plus rapides."
+              "Races mixtes en tête : Le burmese Ragdoll mixte  et le Maine Coon mixte sont les plus rapides.",
+              "Races pures compétitives : Le Domestic Long Hair  est la race pure la plus rapide, suivi du Russian Blue.",
+              "Écart Pure vs Mixte : Des races comme le Maine Coon  et le Siamese sont adoptées plus vite sous forme mixte.",
             ]}
           />
-          <Explication
-            title="Comparaison entre chiens et chats"
-            points={[
-              "Chiens : Les races pures comme le Basset Hound (1,60) sont souvent adoptées plus rapidement que les mixtes, sauf pour le Maltais (1,30).",
-              "Chats : Les races mixtes (ex. : Ragdoll à 1.70) rivalisent avec les pures, démontrant une moindre importance de la pureté.",
-              "Chiens : Les races pures (Border Collie, Pug) et certains mixtes (Maltais) sont dominants, reflétant des préférences marquées.",
-              "Chats : Les mixtes (Ragdoll, Maine Coon) sont plus populaires, les adoptants étant moins attachés à la pureté."
-            ]}
-          />
+
 
           <Conclusions
             conclusions={[
-              "Mise en avant des races populaires : Promouvoir les races pures comme le Basset Hound pour les chiens et les mixtes comme le Ragdoll pour les chats.",
-              "Sensibilisation aux races moins populaires : Encourager l'adoption de races comme le Silky Terrier (chiens, 2.34) et le Bengal (chats, 2.34).",
-              "Focus sur les mixtes pour les chats : Les refuges peuvent mettre en avant les croisements de races prisées pour accélérer les adoptions.",
+              "Chez les chiens, les races pures sont généralement adoptées plus rapidement, avec le Basset Hound en tête.",
+              "Certaines races mixtes, comme le Collie mixte, restent très compétitives.",
+              "Chez les chats, les races mixtes sont privilégiées, notamment le Burmese Ragdoll mixte et le Maine Coon mixte.",
+              "Cela montre une préférence pour les races pures chez les chiens, souvent liées à des critères physiques précis.",
+              "Chez les chats, les adoptants semblent apprécier davantage la variété et le caractère unique des races mixtes."
             ]}
           />
-
         </div>
-
-
-
       </>
     </div>
   );
