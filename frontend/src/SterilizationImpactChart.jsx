@@ -67,9 +67,6 @@ export default function SterilizationImpactChart() {
         </button>
       </div>
       <div className="flex justify-end space-x-2 mb-6">
-        <button className="btn" onClick={() => setPureFilter("all")}>
-          Toutes les races
-        </button>
         <button className="btn" onClick={() => setPureFilter("pure")}>
           Races pures
         </button>
@@ -129,30 +126,48 @@ export default function SterilizationImpactChart() {
 
       {/* Explications et conclusions (inchangées) */}
       <Explication
-        title="Analyse comportementale et perception"
+        title="Impact de la stérilisation sur l’adoption rapide"
         points={[
-          "Un levier comportemental et sanitaire : la stérilisation est perçue positivement par les adoptants, car elle est souvent associée à un animal plus calme, moins agressif, et avec un risque réduit de fugue ou de reproduction non contrôlée.",
-          "Effet renforcé sur certaines races populaires : chez des races comme le Golden Retriever, le Poodle ou le Schnauzer, déjà très prisées, la stérilisation semble booster leur attractivité.",
-          "La stérilisation comme marqueur de soin : elle renforce l’image d’un animal préparé, ce qui valorise sa fiche en refuge.",
+          "De manière générale, les animaux stérilisés présentent un taux d’adoption rapide plus élevé que ceux qui ne le sont pas. Cette tendance est visible chez un grand nombre de races, qu’elles soient populaires ou non.",
+          "La stérilisation est perçue comme un gage de responsabilité et de soins vétérinaires déjà effectués, ce qui peut rassurer les adoptants potentiels. Cela réduit les coûts futurs et évite les comportements liés à la reproduction, perçus comme contraignants.",
+          "Chez certaines races très représentées dans les refuges, comme les Labradors ou les Beagles, le taux d’adoption rapide est presque doublé lorsque les chiens sont stérilisés. Cela montre que ce critère joue un rôle structurant dans la décision d’adoption.",
+          "Toutefois, la stérilisation ne compense pas toujours d'autres facteurs limitants. Pour certaines races au comportement jugé difficile ou à l’apparence moins appréciée, l’effet de la stérilisation est plus faible, voire nul."
         ]}
       />
 
+
       <Explication
-        title="Limites et nuances selon les races"
+        title="Influence de la pureté de race sur les chances d’adoption"
         points={[
-          "Certaines races comme le Bull Terrier ne profitent pas de la stérilisation dans l’échantillon observé.",
-          "Chez des races comme le Jack Russell Terrier, les traits comportementaux dominants peuvent neutraliser l’effet de la stérilisation.",
-          "Pour les races déjà très prisées (Corgis, Pugs), la stérilisation n’apporte pas forcément d’effet supplémentaire.",
+          "La pureté de race agit comme un facteur d’attractivité supplémentaire. De nombreux adoptants recherchent des animaux de race pure, associés à certaines qualités physiques, comportementales ou symboliques.",
+          "Pour les races connues et appréciées comme le Golden Retriever, le Shih Tzu ou le Poodle, les animaux de race pure bénéficient en moyenne de meilleurs taux d’adoption rapide que leurs homologues croisés.",
+          "À l’inverse, pour des races plus controversées (Pit Bull Terrier, Bull Terrier, etc.), la race pure peut parfois être un frein si elle est associée à une image négative. Les stéréotypes jouent ici un rôle plus fort que la génétique réelle.",
+          "Enfin, les animaux croisés ou 'mixed breed' sont globalement moins favorisés, mais l’effet est atténué lorsqu’ils sont stérilisés. Cela indique que l’image de soin et de stabilité peut compenser l’absence de pedigree dans certains cas."
+        ]}
+      />
+
+
+      <Explication
+        title="Croisement des effets : stérilisation et pureté de race"
+        points={[
+          "Les animaux qui cumulent stérilisation et pureté de race sont généralement ceux qui bénéficient du meilleur taux d’adoption rapide. Ce double signal – santé et conformité à une race – semble particulièrement rassurant pour les adoptants.",
+          "Chez les races populaires (Poodle, Labrador, Shih Tzu), ce croisement crée un effet amplificateur. Un Poodle pur de race et stérilisé peut avoir un taux d’adoption rapide supérieur à 40 %, contre moins de 20 % pour un équivalent non stérilisé ou croisé.",
+          "Chez les races mixtes, la stérilisation est le facteur clé. La pureté de race joue peu ou pas de rôle, mais la stérilisation améliore nettement la perception, en apportant une preuve de soins vétérinaires et d’anticipation de comportements futurs.",
+          "Enfin, certaines races très stigmatisées conservent un faible taux d’adoption malgré ces deux attributs. Cela souligne l’importance des représentations culturelles de la race dans le processus d’adoption, qui peuvent surpasser les critères objectifs."
         ]}
       />
 
       <Conclusions
         conclusions={[
-          "La stérilisation joue un rôle positif sur la perception des animaux par les adoptants.",
-          "Elle influence particulièrement les races perçues comme équilibrées ou faciles à vivre.",
-          "Son impact dépend aussi du type de race (pure ou mixte) et de l’image associée.",
+          "La stérilisation est un levier efficace pour favoriser l’adoption rapide, en particulier lorsqu’elle est combinée à d’autres attributs positifs comme la race pure.",
+          "La race pure joue un rôle ambivalent : elle augmente l’attractivité pour certaines races populaires mais peut aussi nuire à l’image d’un animal pour des races perçues comme 'à risque'.",
+          "Les croisés peuvent bénéficier d’une stérilisation bien mise en valeur, qui améliore leur image de soin et de stabilité.",
+          "Les stratégies de communication en refuge doivent être adaptées : valoriser les animaux croisés stérilisés, rassurer sur les races pure breed controversées, et mettre en avant les qualités comportementales et sanitaires de chaque animal.",
+          "Une lecture croisée des variables – stérilisation, pureté de race, comportement attendu – permet de mieux orienter les efforts pour maximiser les chances d’adoption rapide."
         ]}
       />
+
+
     </div>
   );
 }
