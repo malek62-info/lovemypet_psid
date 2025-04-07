@@ -169,58 +169,78 @@ def get_sterilization_by_gender(animal_type: int):
         sterilization_data.append(entry)
 
     return {"data": sterilization_data}
-
 @app.get("/sterilization-percent-by-age/{animal_type}")
 def get_sterilization_percent_by_age(animal_type: int):
     """
-    Retourne le pourcentage d'animaux stérilisés par âge et sexe.
-    Exclut 'Pas sûr' (3) pour Sterilized et 'Mixte' (3) pour Gender.
+    Retourne le pourcentage d'animaux stérilisés par tranches d'âge en mois
+    Format compatible avec le front-end existant
     """
     df = load_data()
 
-    if "Type" not in df.columns:
-        return {"error": "Colonne 'Type' manquante dans le fichier"}
+    # Validation des données
+    required_columns = ["Type", "Age", "Gender", "Sterilized"]
+    for col in required_columns:
+        if col not in df.columns:
+            return {"error": f"Colonne '{col}' manquante dans le fichier"}
 
     df = df[df["Type"] == animal_type]
 
     if df.empty:
         return {"error": "Aucune donnée trouvée pour ce type d'animal"}
 
+    # Filtrage des données
     df = df[
-        (df["Sterilized"] != 3) &
-        (df["Gender"] != 3)
-    ]
+        (df["Sterilized"].isin([1, 2])) &  # 1: Oui, 2: Non
+        (df["Gender"].isin([1, 2]))        # 1: Mâle, 2: Femelle
+    ].copy()
 
-    def categorize_age(age):
-        if age <= 2: return "Âge - Jeune"
-        elif age <= 7: return "Âge - Adulte"
-        else: return "Âge - Senior"
+    # Conversion de l'âge en mois si nécessaire (supposons que l'âge est déjà en mois)
+    df["AgeMonths"] = df["Age"]  # Si l'âge est déjà en mois
+    # Si l'âge est en années: df["AgeMonths"] = df["Age"] * 12
 
-    df["AgeCategory"] = df["Age"].apply(categorize_age)
+    # Création de tranches d'âge de 10 mois
+    def create_age_groups(age_months):
+        lower = (age_months // 10) * 10
+        upper = lower + 9
+        return f"{lower}-{upper}"
 
-    grouped = df.groupby(["AgeCategory", "Gender", "Sterilized"]).size().unstack(fill_value=0)
+    df["AgeGroup"] = df["AgeMonths"].apply(create_age_groups)
 
-    grouped.columns = ["Sterilized_No" if col == 2 else "Sterilized_Yes" for col in grouped.columns]
+    # Calcul des pourcentages
+    result = (
+        df.groupby(["AgeGroup", "Gender", "Sterilized"])
+        .size()
+        .unstack(fill_value=0)
+        .rename(columns={1: "Sterilized_Yes", 2: "Sterilized_No"})
+        .assign(Total=lambda x: x["Sterilized_Yes"] + x["Sterilized_No"])
+        .assign(Sterilized_Percent=lambda x: (x["Sterilized_Yes"] / x["Total"] * 100).round(1))
+        .reset_index()
+    )
 
-    grouped["Total"] = grouped["Sterilized_Yes"] + grouped["Sterilized_No"]
+    # Préparation des données au format attendu par le front
+    output_data = []
+    
+    # On s'assure que toutes les tranches d'âge sont présentes même sans données
+    all_age_groups = sorted(df["AgeGroup"].unique(), key=lambda x: int(x.split('-')[0]))
+    
+    for age_group in all_age_groups:
+        group_data = result[result["AgeGroup"] == age_group]
+        
+        # Données pour les mâles
+        male_data = group_data[group_data["Gender"] == 1]
+        male_percent = float(male_data["Sterilized_Percent"].iloc[0]) if not male_data.empty else 0.0
+        
+        # Données pour les femelles
+        female_data = group_data[group_data["Gender"] == 2]
+        female_percent = float(female_data["Sterilized_Percent"].iloc[0]) if not female_data.empty else 0.0
+        
+        output_data.append({
+            "Age": f"{age_group} mois",  # Format "X-X mois"
+            "Male_Sterilization_Percent": male_percent,
+            "Female_Sterilization_Percent": female_percent
+        })
 
-    grouped["Sterilized_Yes_Percent"] = (grouped["Sterilized_Yes"] / grouped["Total"] * 100).round(1)
-    grouped = grouped.reset_index()
-
-    age_categories = ["Âge - Jeune", "Âge - Adulte", "Âge - Senior"]
-    sterilization_data = []
-
-    for age in age_categories:
-        entry = {"Age": age}
-        age_data = grouped[grouped["AgeCategory"] == age]
-        male_data = age_data[age_data["Gender"] == 1]
-        entry["Male_Sterilization_Percent"] = float(male_data["Sterilized_Yes_Percent"].iloc[0]) if not male_data.empty else 0.0
-        female_data = age_data[age_data["Gender"] == 2]
-        entry["Female_Sterilization_Percent"] = float(female_data["Sterilized_Yes_Percent"].iloc[0]) if not female_data.empty else 0.0
-        sterilization_data.append(entry)
-
-    return {"data": sterilization_data}
-
+    return {"data": output_data}
 
 
 @app.get("/adoption-speed-density/{animal_type}")

@@ -20,7 +20,7 @@ const Dashboard = () => {
       <Anna3 />
       <Anna4 />
       <Anna5 />
-      <Anna6 />
+
       <Anna7 />
       <Anna8 />
       <Anna9 />

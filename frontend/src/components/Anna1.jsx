@@ -131,7 +131,7 @@ const Anna1 = () => {
 
   return (
     <div className="">
-      <Title text="Facteurs Influents sur la Vitesse d'Adoption des Animaux : Chiens vs Chats" number={1} />
+      <Title text="Adoption Animale : Les Clés pour une Adoption Rapide des Chiens et Chats" number={1} />
 
       <div className="w-full mb-12">
         <div className="flex justify-end space-x-2">
@@ -219,7 +219,7 @@ const Anna1 = () => {
           points={[
             "Santé générale : Les chats en bonne santé sont adoptés plus rapidement.",
             "Stérilisation : Les chats non stérilisés sont adoptés plus rapidement.",
-            "Vaccination : La vaccination joue un rôle important chez les chats.",
+             "La vaccination joue un rôle important dans le processus d’adoption Cependant, les données montrent que les chats non vaccinés sont adoptés en plus grand nombre que les chats vaccinés.Ce phénomène sera expliqué dans les graphiques suivants.",
           ]}
         />
 
@@ -227,14 +227,13 @@ const Anna1 = () => {
           title="Analyse des Chats et Comparaison avec les Chiens"
           points={[
             "Facteurs de santé : Déterminants pour la rapidité d'adoption.",
-            "Stérilisation : Moins stérilisé = adoption plus rapide.",
-            "Vaccination : Cruciale pour les chats, secondaire pour les chiens.",
+            "Stérilisation : Moins stérilisé dont adoption plus rapide.",
           ]}
         />
 
         <Conclusions
           conclusions={[
-            "Les soins de santé influencent différemment l'adoption chez les chiens et les chats. La non-stérilisation accélère l’adoption pour les deux espèces. La vaccination est clé pour les chats, tandis que la taille joue un rôle chez les chiens."
+            "Les soins de santé influencent différemment l'adoption chez les chiens et les chats. La non-stérilisation accélère l’adoption pour les deux espèces.   La taille joue un rôle chez les chiens.et pas trop pour les chats"
           ]}
         />
       </div>

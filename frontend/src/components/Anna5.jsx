@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
 import Title from "./Title";
 import Contexte from "./Contexte";
+import Explication from "./Explications";
+import Conclusions from "./Conclusions";
 
 const Anna5 = () => {
   const [data, setData] = useState(null);
@@ -44,7 +46,6 @@ const Anna5 = () => {
 
   const pieChartLayout = {
     title: {
-      text: "Répartition des adoptions rapides par longueur de fourrure",
       font: {
         size: 20,
         family: "Arial, sans-serif",
@@ -63,11 +64,7 @@ const Anna5 = () => {
 
   return (
     <div>
-      <Title text="Impact de la Longueur de Fourrure sur les Adoptions Rapides" number={5} />
-
-      <Contexte
-        texte="Analyse des adoptions qui ont eu lieu le même jour ou dans les 7 jours suivants."
-      />
+      <Title text="Plus c’est court, plus c’est adopté ? Étude sur la rapidité d’adoption selon la fourrure" number={5} />
 
       <div className="mb-8">
         <label htmlFor="gender" className="mr-2 font-semibold">
@@ -105,6 +102,51 @@ const Anna5 = () => {
           displayModeBar: false,
           responsive: true,
         }}
+      />
+
+      <Contexte
+        texte="Cette analyse examine l’impact de la longueur de fourrure sur la rapidité d’adoption des animaux,
+     en se concentrant exclusivement sur les adoptions rapides : celles réalisées le même jour 
+     ou entre 1 et 7 jours 
+      après leur mise en adoption. Le graphique illustre comment les différentes longueurs de fourrure
+       (courte, moyenne, longue) influencent la probabilité d’une adoption immédiate ou très rapide, 
+       mettant en lumière les préférences potentielles des adoptants face à ce critère physique."
+      />
+
+      <Explication
+        title="Distribution Générale"
+
+        points={[
+          "Fourrure courte : Avec 52.9%, les animaux à poil court sont ceux qui sont le plus souvent adoptés rapidement.",
+          "Ils représentent plus de la moitié des adoptions dans les 7 premiers jours.",
+          "Fourrure moyenne : Représente 38.8% des adoptions rapides.",
+          "Une proportion non négligeable, mais nettement inférieure à celle des poils courts.",
+          "Fourrure longue : Seulement 8.27%.",
+          "Une très faible part, suggérant que ces animaux mettent plus de temps à trouver une famille.",
+        ]}
+      />
+
+
+      <Explication
+      title="Influence de la Longueur de la Fourrure"
+        points={[
+          "La longueur de la fourrure influence clairement la vitesse d’adoption.",
+          "Animaux à fourrure courte :",
+          "Perçus comme plus faciles à entretenir (moins de toilettage, moins de poils).",
+          "Jugés plus pratiques pour les foyers actifs.",
+          "Parfois considérés comme plus “propres”.",
+          "Animaux à fourrure longue :",
+          "Considérés comme plus exigeants (brossage régulier, risque de nœuds).",
+          "Moins recherchés sur le plan esthétique dans certains cas.",
+        ]}
+      />
+
+      <Conclusions
+        conclusions={[
+          "Les animaux à poil court sont adoptés plus rapidement, probablement en raison de leur entretien perçu comme plus simple.",
+          "Les animaux à poil long connaissent une adoption plus lente, ce qui peut refléter des préférences pratiques ou esthétiques des adoptants.",
+          "Cette donnée peut guider les refuges à adapter leur communication en mettant en avant les avantages pratiques des animaux à poil long.",
+        ]}
       />
     </div>
   );
