@@ -8,6 +8,7 @@ import Conclusions from "./components/Conclusions";
 export default function SterilizationImpactChart() {
   const [data, setData] = useState(null);
   const [animalType, setAnimalType] = useState(1); // 1 = chiens, 2 = chats
+  const [pureFilter, setPureFilter] = useState("all"); // "all", "pure", "mixed"
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/sterilization_adoption_impact")
@@ -17,7 +18,12 @@ export default function SterilizationImpactChart() {
 
   if (!data) return <p className="text-center">Chargement du graphique...</p>;
 
-  const filtered = data.filter((d) => d.Type === animalType);
+  const filtered = data.filter((d) => {
+    if (d.Type !== animalType) return false;
+    if (pureFilter === "pure" && d.IsPureBreed !== true) return false;
+    if (pureFilter === "mixed" && d.IsPureBreed !== false) return false;
+    return true;
+  });
 
   const raceCounts = {};
   filtered.forEach((d) => {
@@ -29,8 +35,12 @@ export default function SterilizationImpactChart() {
     .slice(0, 10)
     .map(([race]) => race);
 
-  const sterilized = filtered.filter((d) => d.Sterilized === 2 && topRaces.includes(d.BreedName));
-  const notSterilized = filtered.filter((d) => d.Sterilized === 1 && topRaces.includes(d.BreedName));
+  const sterilized = filtered.filter(
+    (d) => d.Sterilized === 2 && topRaces.includes(d.BreedName)
+  );
+  const notSterilized = filtered.filter(
+    (d) => d.Sterilized === 1 && topRaces.includes(d.BreedName)
+  );
 
   const xLabels = topRaces;
 
@@ -47,7 +57,8 @@ export default function SterilizationImpactChart() {
         number={8}
       />
 
-      <div className="flex justify-end space-x-2 mb-6">
+      {/* Filtres animaux et race pure/mixte */}
+      <div className="flex justify-end space-x-2 mb-4">
         <button className="btn" onClick={() => setAnimalType(1)}>
           🐶 Chiens
         </button>
@@ -55,7 +66,19 @@ export default function SterilizationImpactChart() {
           🐱 Chats
         </button>
       </div>
+      <div className="flex justify-end space-x-2 mb-6">
+        <button className="btn" onClick={() => setPureFilter("all")}>
+          Toutes les races
+        </button>
+        <button className="btn" onClick={() => setPureFilter("pure")}>
+          Races pures
+        </button>
+        <button className="btn" onClick={() => setPureFilter("mixed")}>
+          Races mixtes
+        </button>
+      </div>
 
+      {/* Graphique Plotly */}
       <Plot
         data={[
           {
@@ -102,35 +125,34 @@ export default function SterilizationImpactChart() {
         style={{ width: "100%", height: "600px", marginBottom: "30px" }}
       />
 
-      <Contexte texte="Ce graphique compare le pourcentage d'adoption rapide des animaux stérilisés et non stérilisés pour les 10 races les plus fréquentes chez les chiens et chats." />
+      <Contexte texte="Ce graphique compare le pourcentage d'adoption rapide des animaux stérilisés et non stérilisés pour les 10 races les plus fréquentes. Vous pouvez filtrer les résultats par type d’animal et par pureté de race." />
 
+      {/* Explications et conclusions (inchangées) */}
       <Explication
         title="Analyse comportementale et perception"
         points={[
-          "Un levier comportemental et sanitaire : la stérilisation est perçue positivement par les adoptants, car elle est souvent associée à un animal plus calme, moins agressif, et avec un risque réduit de fugue ou de reproduction non contrôlée. Cela explique en partie pourquoi les chiens stérilisés sont adoptés plus rapidement.",
-          "Effet renforcé sur certaines races populaires : chez des races comme le Golden Retriever, le Poodle ou le Schnauzer, déjà très prisées, la stérilisation semble booster leur attractivité. Ces races combinent des traits physiques appréciés et un comportement jugé stable, et le fait qu’elles soient stérilisées rassure les adoptants sur leur future gestion.",
-          "La stérilisation comme marqueur de soin : un chien stérilisé donne l’image d’un animal ayant reçu des soins, ce qui valorise sa fiche en refuge. Cette perception de sérieux du refuge ou de l'ancien propriétaire peut influencer positivement la décision d’adoption."
+          "Un levier comportemental et sanitaire : la stérilisation est perçue positivement par les adoptants, car elle est souvent associée à un animal plus calme, moins agressif, et avec un risque réduit de fugue ou de reproduction non contrôlée.",
+          "Effet renforcé sur certaines races populaires : chez des races comme le Golden Retriever, le Poodle ou le Schnauzer, déjà très prisées, la stérilisation semble booster leur attractivité.",
+          "La stérilisation comme marqueur de soin : elle renforce l’image d’un animal préparé, ce qui valorise sa fiche en refuge.",
         ]}
       />
 
       <Explication
         title="Limites et nuances selon les races"
         points={[
-          "Des exceptions révélatrices : certaines races montrent un effet inverse, comme le Bull Terrier, pour lequel les stérilisés ne sont jamais adoptés rapidement dans l’échantillon. Cela peut traduire une méfiance vis-à-vis de certaines races, où la stérilisation ne compense pas les stéréotypes négatifs associés (race dite 'à risque' ou 'difficile'). Cela met en lumière l’impact de la race sur la perception du public, parfois plus fort que l'état de stérilisation.",
-          "Facteurs concurrents à la stérilisation : chez des races comme le Jack Russell Terrier, même stérilisés, les taux d’adoption rapide restent faibles. Ce chien est souvent vu comme hyperactif, difficile à canaliser. Cela montre que les traits comportementaux dominants de la race peuvent neutraliser l’effet bénéfique de la stérilisation.",
-          "Effet plafonné sur certaines races très prisées : dans quelques cas, la stérilisation n’a pas d’effet fort car la race est déjà très demandée. Par exemple, les Corgis ou Pugs, avec ou sans stérilisation, présentent des taux d’adoption relativement similaires. Cela reflète un plafonnement de l’impact lorsque la race est déjà attractive par nature."
+          "Certaines races comme le Bull Terrier ne profitent pas de la stérilisation dans l’échantillon observé.",
+          "Chez des races comme le Jack Russell Terrier, les traits comportementaux dominants peuvent neutraliser l’effet de la stérilisation.",
+          "Pour les races déjà très prisées (Corgis, Pugs), la stérilisation n’apporte pas forcément d’effet supplémentaire.",
         ]}
       />
 
       <Conclusions
         conclusions={[
-          "La stérilisation joue un rôle important dans la perception des animaux en refuge. Elle rassure les adoptants sur le plan comportemental et sanitaire, et donne l'image d’un animal bien préparé.",
-          "Elle est particulièrement efficace pour améliorer la vitesse d’adoption des races populaires mais neutres ou jugées faciles à vivre.",
-          "Cependant, son efficacité est modulée par l’image de la race : certaines races bénéficient peu de la stérilisation en raison de stéréotypes négatifs, tandis que d’autres très prisées n’en ont pas besoin pour être rapidement adoptées.",
-          "Il est donc essentiel d’intégrer la stérilisation dans une stratégie d’adoption globale qui prend aussi en compte la communication autour de la race, le comportement, l’âge, et l’apparence visuelle."
+          "La stérilisation joue un rôle positif sur la perception des animaux par les adoptants.",
+          "Elle influence particulièrement les races perçues comme équilibrées ou faciles à vivre.",
+          "Son impact dépend aussi du type de race (pure ou mixte) et de l’image associée.",
         ]}
       />
-
     </div>
   );
 }

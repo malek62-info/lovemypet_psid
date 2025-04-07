@@ -325,28 +325,33 @@ def sterilization_topbreeds():
 @app.get("/api/sterilization_adoption_impact")
 def sterilization_adoption_impact():
     import pandas as pd
+    import os
+
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     df = pd.read_csv(os.path.join(BASE_DIR, "data", "data_clean.csv"))
     breeds = pd.read_csv(os.path.join(BASE_DIR, "data", "breed_labels.csv"))
 
-    # Fusionner les noms de races
+    # Ajouter info de race pure
+    df["IsPureBreed"] = df["Breed2"] == 0
+
+    # Fusionner noms de races
     breeds = breeds.rename(columns={"BreedID": "Breed1", "BreedName": "BreedName"})
     df = df.merge(breeds[["Breed1", "BreedName"]], on="Breed1", how="left")
     df = df[df["BreedName"].notna()]
 
-    # Garde uniquement AdoptionSpeed 0 ou 1 (adoption rapide)
+    # Adoption rapide
     df["AdoptedFast"] = df["AdoptionSpeed"].isin([0, 1])
 
-    # Garde uniquement stérilisés / non-stérilisés (ignore inconnus)
+    # Garder uniquement stérilisés / non-stérilisés
     df = df[df["Sterilized"].isin([1, 2])]
 
-    # Compter nombre total et nombre adoptés rapidement par race, type et statut de stérilisation
-    grouped = df.groupby(["Type", "Breed1", "BreedName", "Sterilized"]).agg(
+    # Regrouper par type, race, stérilisation et pureté
+    grouped = df.groupby(["Type", "Breed1", "BreedName", "Sterilized", "IsPureBreed"]).agg(
         total=("AdoptedFast", "count"),
         adopted_fast=("AdoptedFast", "sum")
     ).reset_index()
 
-    # Calcul du pourcentage
+    # Pourcentage
     grouped["adoption_rate"] = (grouped["adopted_fast"] / grouped["total"] * 100).round(1)
 
     return grouped.to_dict(orient="records")
