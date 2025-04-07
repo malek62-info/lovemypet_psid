@@ -20,13 +20,10 @@ const Dashboard = () => {
       <Anna3 />
       <Anna4 />
       <Anna5 />
-
       <Anna7 />
       <Anna8 />
-      <Anna9 />
       <Anna10 />
-
-
+      <Anna9 />
     </Wrapper>
   );
 };

@@ -152,7 +152,7 @@ const Anna10 = () => {
   return (
     <div className="">
       <>
-        <Title text="Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées " number={9} />
+        <Title text="Top 10 Races Pures et Mixtes les Plus Rapides à Être Adoptées " number={7} />
 
         {/* Nouveau Graphique 3 : Top 10 races pures vs mixtes */}
         <div className="w-full mb-12">

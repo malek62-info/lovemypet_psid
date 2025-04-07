@@ -36,7 +36,7 @@ const Anna9 = () => {
         <div className="w-full">
             <Title
                 text="Analyse interactive des facteurs de non-adoption"
-                number={6}
+                number={8}
             />
 
             <Plot

@@ -73,7 +73,7 @@ const Anna7 = () => {
 
   return (
     <div className="">
-      <Title text="Comprendre la Stérilisation Animale : Une Question d'Âge et de Genre" number={6} />
+      <Title text="Comprendre la Stérilisation Animale : Une Question d'Âge et de Genre" number={5} />
 
       <div className="flex justify-end mb-8">
         <div className="flex space-x-3">

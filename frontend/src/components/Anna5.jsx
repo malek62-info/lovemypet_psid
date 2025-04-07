@@ -64,7 +64,7 @@ const Anna5 = () => {
 
   return (
     <div>
-      <Title text="Plus c’est court, plus c’est adopté ? Étude sur la rapidité d’adoption selon la fourrure" number={5} />
+      <Title text="Plus c’est court, plus c’est adopté ? Étude sur la rapidité d’adoption selon la fourrure" number={4} />
 
       <div className="mb-8">
         <label htmlFor="gender" className="mr-2 font-semibold">

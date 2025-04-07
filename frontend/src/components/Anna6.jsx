@@ -57,7 +57,7 @@ const Anna6 = () => {
 
   return (
     <div className="">
-      <Title text="Répartition de la Longueur de Fourrure et de la Vermifugation" number={6} />
+      <Title text="Répartition de la Longueur de Fourrure et de la Vermifugation" number={5} />
 
       <Contexte
         texte="Analyse des longueurs de fourrure en fonction de l'état de vermifugation des animaux."
