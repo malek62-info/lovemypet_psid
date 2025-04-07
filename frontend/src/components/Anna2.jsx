@@ -49,7 +49,7 @@ const Anna2 = () => {
     <div>
       <Title
         text="Analyse du lien entre l'âge des animaux et leur non-vaccination"
-        number={1}
+        number={1.1}
       />
 
       <Plot
