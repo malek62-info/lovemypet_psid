@@ -1,10 +1,11 @@
 import React from 'react'
 import Wrapper from '../components/Wrapper'
+import Formulaire from '../components/Formulaire'
 
 const Ml = () => {
   return (
     <Wrapper>
-        page de ml
+        <Formulaire/>
     </Wrapper>
   )
 }

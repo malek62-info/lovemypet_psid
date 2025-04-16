@@ -1,8 +1,8 @@
 "use client";
 
-import {  PawPrint, ChartLine, Home, Menu, X } from "lucide-react";
+import {  PawPrint, ChartLine, Home, Menu, X , Brain } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation  } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +14,11 @@ const Navbar = () => {
       href: "/dashboard",
       label: "Tableau de bord",
       icon: <ChartLine className="w-5 h-5 " />,
+    },
+    {
+      href: "/ml",
+      label: "Machine learning",
+      icon: <Brain className="w-5 h-5 " />,
     },
     // { href: "/ml", label: "Machine Learning", icon: <Bot  className="w-5 h-5 " /> },
   ];
