@@ -5,6 +5,7 @@ import os
 import numpy as np  # Ajout de l'importation de numpy
 import logging
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -632,3 +633,97 @@ def get_furlength_dewormed():
         data["non_dewormed_count"].append(int(fur_length_counts_non_dewormed.get(length, 0)))
 
     return data
+
+
+#IA
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import nltk
+import pandas as pd
+import joblib
+import os
+
+
+
+# Télécharger le lexique de VADER (si non téléchargé)
+nltk.download('vader_lexicon')
+
+# Charger le modèle et le scaler
+MODEL_PATH = os.path.join("data", "model.pkl")
+SCALER_PATH = os.path.join("data", "scaler.pkl")  # Facultatif si tu as un scaler
+
+model = joblib.load(MODEL_PATH)
+# scaler = joblib.load(SCALER_PATH)  # Décommente si tu utilises un scaler
+
+# Initialiser VADER
+analyzer = SentimentIntensityAnalyzer()
+
+# Modèle de données en entrée
+class PetFeatures(BaseModel):
+    Age: int
+    Breed1: int
+    Breed2: int
+    Color1: int
+    Color2: int
+    Dewormed: int
+    Fee: int
+    FurLength: int
+    Gender: int
+    MaturitySize: int
+    PhotoAmt: int
+    PureBreed: int
+    Sterilized: int
+    Vaccinated: int
+    description: str
+
+# Endpoint de prédiction
+@app.post("/predict")
+def predict_pet_adoption(pet: PetFeatures):
+    try:
+        # Étape 1 : Analyse de sentiment
+        sentiment = analyzer.polarity_scores(pet.description)
+
+        # Étape 2 : Préparation des données
+        input_data = pd.DataFrame([{
+            'Age': pet.Age,
+            'PureBreed': pet.PureBreed,
+            'State': 41401,  # Valeur fixe
+            'Gender': pet.Gender,
+            'Breed1': pet.Breed1,
+            'Breed2': pet.Breed2,
+            'Color1': pet.Color1,
+            'Color2': pet.Color2,
+            'MaturitySize': pet.MaturitySize,
+            'FurLength': pet.FurLength,
+            'Vaccinated': pet.Vaccinated,
+            'Dewormed': pet.Dewormed,
+            'Sterilized': pet.Sterilized,
+            'PhotoAmt': pet.PhotoAmt,
+            'Fee': pet.Fee,
+            'pos': round(sentiment['pos'], 3),
+            'neg': round(sentiment['neg'], 3),
+            'neu': round(sentiment['neu'], 3)
+        }])
+
+        # Étape 3 : Transformation (si scaler utilisé)
+        # input_data = scaler.transform(input_data)
+
+        # Étape 4 : Prédiction
+        prediction = model.predict(input_data)[0]
+        probas = model.predict_proba(input_data)[0]
+
+        # Étape 5 : Réponse
+        return {
+            "prediction": int(prediction),
+            "proba_rapide_adoption": round(probas[0], 3),
+            "proba_lente_adoption": round(probas[1], 3),
+            "sentiment": {
+                "pos": round(sentiment['pos'], 3),
+                "neg": round(sentiment['neg'], 3),
+                "neu": round(sentiment['neu'], 3)
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
