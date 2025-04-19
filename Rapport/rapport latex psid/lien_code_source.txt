@@ -1,0 +1,3 @@
+Code source de notre projet : https://github.com/malek62-info/lovemypet_psid.git
+Lien vers la vidéo YouTube : https://youtu.be/peasVRZxtHg
+Lien vers le Dataset : https://www.kaggle.com/competitions/petfinder-adoption-prediction/overview
