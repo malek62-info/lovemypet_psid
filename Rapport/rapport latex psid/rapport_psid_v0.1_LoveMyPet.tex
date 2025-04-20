@@ -467,7 +467,7 @@ Ce projet propose de prendre le problème à la racine : plutôt que de chercher
 
 \subsection{Analyse des valeurs aberrantes (outliers)}
 
-Les boxplots ont été utilisés pour analyser la distribution des variables du jeu de données. Pour la variable continue \textbf{Age}, des valeurs aberrantes dépassant 150 (jusqu'à 250) ont été détectées, ce qui est anormal pour l'âge d'un animal de compagnie. Ces données aberrantes ont été supprimées afin d'améliorer la qualité des données et d'éviter un impact négatif sur le modèle.
+Les boxplots ont été utilisés pour analyser la distribution des variables du jeu de données. Pour la variable continue \textbf{Age}, des valeurs aberrantes dépassant 150 (jusqu'à 250) ont été détectées. Ces données aberrantes ont été supprimées afin d'améliorer la qualité des données et d'éviter un impact négatif sur le modèle.
 
 Les autres variables, telles que \textbf{Gender}, \textbf{Color1}, \textbf{Color2}, \textbf{Color3}, \textbf{MaturitySize}, \textbf{FurLength}, \textbf{Vaccinated} et \textbf{Dewormed}, sont des variables catégoriques codées numériquement (par exemple, de 1 à 7 pour \texttt{Color1}). Les points isolés observés dans leurs boxplots correspondent à des catégories moins fréquentes, ce qui est attendu pour des variables catégoriques, et ne constitue donc pas des anomalies.
 
@@ -574,8 +574,7 @@ Les résultats montrent une amélioration modeste mais notable :
     \item \textbf{Après SMOTE} : précision = 0.3762, rappel = 0.3902, F1-score = 0.3759
 \end{itemize}
 
-Ces résultats confirment l’intérêt de SMOTE pour améliorer la reconnaissance des classes rares, tout en limitant l’effet de surapprentissage.
-
+Bien que l'utilisation de SMOTE ait permis une légère amélioration des performances du modèle — en augmentant la précision, le rappel et le F1-score — les résultats globaux restent relativement faibles. Cela suggère que le déséquilibre des classes n'était pas le seul facteur limitant la performance. Le modèle semble toujours souffrir d’un sous-apprentissage, ce qui indique qu’il n’est pas capable de capturer suffisamment de complexité dans les données pour bien différencier les classes. 
 
 \subsection{Amélioration par duplication de la classe 0}
 
@@ -673,7 +672,7 @@ Cette homogénéité des répartitions rend difficile l’identification de vari
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{sterilized_adoption_trend.png}
-    \caption{Tendance de la variable \texttt{Sterilized} selon les classes d'\texttt{AdoptionSpeed} (graphe 1)}
+    \caption{Tendance de la variable \texttt{Sterilized} selon les classes d'\texttt{AdoptionSpeed}}
     \label{fig:sterilized_trend_1}
 \end{figure}
 
@@ -816,7 +815,12 @@ Pour approfondir l’analyse des regroupements de classes, nous avons évalué l
 
 \paragraph{1. Regroupement (0+1+2) vs (3+4) :}
 
-Dans cette configuration, le modèle CatBoost a montré des résultats globalement satisfaisants. Le \textbf{MSE est de 0.3498}, accompagné d’un \textbf{biais de 0.2741} et d’une \textbf{variance de 0.0758}. La précision globale atteint \textbf{66.16\%}, tout comme le rappel et le f1-score, ce qui montre une bonne stabilité du modèle et une performance équilibrée entre les deux classes. La matrice de confusion indique que la majorité des exemples sont bien prédits, avec une légère confusion entre les classes.
+Dans cette configuration, le modèle CatBoost a montré des résultats globalement satisfaisants.
+ Le \textbf{MSE est de 0.3498}, accompagné d’un \textbf{biais de 0.2741} et d’une \textbf{variance de 0.0758}.
+  La précision globale atteint \textbf{66.16\%}, tout comme le rappel et le f1-score, ce qui montre une bonne
+   stabilité du modèle et une performance équilibrée entre les deux classes. La matrice de 
+   confusion indique que la majorité des exemples sont bien prédits, avec une légère confusion entre les classes en voie 
+   bien que le model detecte bien la class 0 mais il arrive pas bien a detecter la classe 1 ou il il a confu bien aven la claas 0 .
 
 \begin{figure}[H]
     \centering
@@ -825,12 +829,19 @@ Dans cette configuration, le modèle CatBoost a montré des résultats globaleme
     \label{fig:catboost012_conf}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.55\textwidth]{catboost_012_vs_34_scores.png}
-    \caption{Tableau des scores - CatBoost (regroupement 0+1+2 vs 3+4)}
-    \label{fig:catboost012_scores}
-\end{figure}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
+\hline
+0.6616 & 0.6616 & 0.6615 & 0.3498 & 0.2741 & 0.0758 \\
+\hline
+\end{tabular}
+\caption{Résultats du modèle CatBoost (regroupement 0+1+2 vs 3+4)}
+\end{table}
+
+    
 
 \paragraph{2. Regroupement (1+2) vs (3+4) :}
 
@@ -843,12 +854,17 @@ Ce deuxième regroupement a également été testé afin de voir si l'exclusion 
     \label{fig:catboost12_conf}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.55\textwidth]{catboost_12_vs_34_scores.png}
-    \caption{Tableau des scores - CatBoost (regroupement 1+2 vs 3+4)}
-    \label{fig:catboost12_scores}
-\end{figure}
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\ \hline
+\textbf{Résultats} & 0.6527 & 0.6527 & 0.6527 & 0.3600 & 0.2843 & 0.0757 \\ \hline
+\end{tabular}
+\caption{Résultats du modèle catBost (regroupement 1+2 vs 3+4)}
+\label{tab:resultats}
+\end{table}
+
 
 \paragraph{Conclusion :} Ces résultats montrent que CatBoost parvient à modéliser correctement les regroupements binaires, avec une stabilité des prédictions (variance faible) et un compromis intéressant entre biais et variance. Le regroupement \textbf{(0+1+2) vs (3+4)} donne des performances légèrement supérieures.
 
@@ -923,6 +939,21 @@ La \textbf{fusion (0,1,2) \& (3,4)} présente un biais légèrement inférieur (
 En termes de prédictions, la \textbf{fusion (1,2) \& (3,4)} offre un équilibre supérieur entre précision et rappel pour les deux classes, avec des f1-scores légèrement meilleurs et une précision globale plus élevée (66.39 \% contre 65.35 \%), ce qui montre une performance générale légèrement meilleure.
 
 \textbf{Conclusion :} La fusion \textbf{(1,2) \& (3,4)} s’avère être la meilleure option, offrant une meilleure généralisation et un équilibre supérieur entre le sous-apprentissage et le sur-apprentissage.
+
+\section{ Les descriptions positives accélèrent-elles l’adoption des animaux ?
+}
+
+Dans le cadre de notre projet, nous avons constaté que la variable "description" dans notre jeu de données pourrait avoir un impact sur nos résultats. Nous avons donc décidé d'analyser cette variable et d'examiner l'impact des sentiments exprimés dans les descriptions des animaux sur leur vitesse d'adoption. Pour ce faire, nous utilisons l'outil VADER, qui permet d'analyser automatiquement les descriptions rédigées par les anciens propriétaires. Cet outil génère plusieurs scores de sentiment : positif, négatif, neutre, ainsi qu'un score global composé. Ces scores sont ensuite enregistrés dans un fichier intitulé "sentiment.csv".
+
+L'objectif de cette expérimentation est d'explorer s'il existe une corrélation entre les émotions véhiculées dans les descriptions textuelles et le temps nécessaire à l'adoption d'un animal. En croisant les scores de sentiment avec les délais d'adoption, nous espérons mieux comprendre l'influence de descriptions plus ou moins positives sur le comportement des adoptants potentiels.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{image.jpg}
+    \caption{Exemple d'analyse de sentiment sur des descriptions}
+    \label{fig:sentiment}
+\end{figure}
 
 \subsection{Ajout des sentiments textuels dans le Gradient Boosting}
 
