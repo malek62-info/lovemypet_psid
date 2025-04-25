@@ -738,6 +738,22 @@ Deux configurations ont été testées : un clustering en \textbf{5 groupes} et 
 
 Le graphe avec $k=5$ montre un chevauchement important entre les groupes, ce qui suggère que la distinction entre les 5 catégories d’adoption n’est pas clairement définie dans l’espace des données. À l’inverse, la représentation avec $k=2$ montre des groupes bien séparés, suggérant qu’un découpage en \textbf{deux catégories globales} serait plus pertinent. Cela renforce l’idée que le problème de prédiction est sans doute mal posé avec 5 classes trop proches ou arbitraires, et qu’un regroupement permettrait une classification plus robuste.
 
+\subsubsection{Analyse des clusters : Répartition de la variable \textit{AdoptionSpeed}}
+
+Afin d’évaluer si les clusters formés par l’algorithme de K-Means correspondent à des profils comportementaux différents vis-à-vis de la vitesse d’adoption, nous avons visualisé la répartition de la variable \textit{AdoptionSpeed} dans chacun des cinq clusters obtenus. Le graphique ci-dessous montre la proportion de chaque classe (0 à 4) au sein de chaque groupe.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{repartition_de_adoptionspeed.png}
+    \caption{Répartition de la variable \textit{AdoptionSpeed} dans chacun des 5 clusters (k=5)}
+    \label{fig:cluster_adoption_split}
+\end{figure}
+
+On constate que toutes les classes d’\textit{AdoptionSpeed} sont représentées dans chaque cluster, avec des proportions relativement similaires d’un cluster à l’autre. Par exemple, la classe 4 (correspondant à une adoption lente) est présente dans chacun des groupes, parfois légèrement dominante comme dans le cluster 1. Les classes 2 et 3 sont également bien réparties, tandis que la classe 0 reste très minoritaire dans tous les cas.
+
+Cette homogénéité suggère que les variables utilisées pour le clustering (âge, race, couleur, stérilisation, etc.) ne suffisent pas à segmenter efficacement les animaux selon leur rapidité d’adoption. Autrement dit, les regroupements trouvés par K-Means ne révèlent pas de profils très distincts en termes de vitesse d’adoption. Cela renforce la pertinence d’une transformation binaire du problème de classification (par exemple en regroupant certaines classes), comme exploré dans les étapes suivantes de notre analyse.
+
+
 \subsection{Comparaison de regroupements de classes avec Random Forest}
 
 Afin d’optimiser la prédiction de la vitesse d’adoption des animaux, nous avons exploré deux regroupements binaires alternatifs à la classification initiale en 5 classes. L’objectif est de simplifier le problème tout en conservant une interprétabilité pertinente.
