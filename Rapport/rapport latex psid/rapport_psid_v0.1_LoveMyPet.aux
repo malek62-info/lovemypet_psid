@@ -116,46 +116,48 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Répartition de la variable \textit  {AdoptionSpeed} dans chacun des 5 clusters (k=5)}}{27}{figure.22}\protected@file@percent }
 \newlabel{fig:cluster_adoption_split}{{22}{27}{Répartition de la variable \textit {AdoptionSpeed} dans chacun des 5 clusters (k=5)}{figure.22}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.10}Comparaison de regroupements de classes avec Random Forest}{27}{subsection.5.10}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparaison des performances entre deux regroupements de classes avec Random Forest}}{28}{table.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.10.1}Optimisation des performances avec GridSearchCV}{28}{subsubsection.5.10.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Résultats pour le regroupement (0,1,2) vs (3,4) :}{28}{subsubsection.5.10.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Résultats pour le regroupement (1,2) vs (3,4) :}{28}{subsubsection.5.10.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Matrice de confusion - Regroupement (0,1,2) vs (3,4)}}{28}{figure.23}\protected@file@percent }
+\newlabel{fig:rf_confusion_groupe012}{{23}{28}{Matrice de confusion - Regroupement (0,1,2) vs (3,4)}{figure.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Matrice de confusion - Regroupement (1,2) vs (3,4)}}{28}{figure.24}\protected@file@percent }
+\newlabel{fig:rf_confusion_groupe12}{{24}{28}{Matrice de confusion - Regroupement (1,2) vs (3,4)}{figure.24}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparaison des performances selon deux regroupements de classes}}{29}{table.1}\protected@file@percent }
+\newlabel{tab:rf_comparaison_regroupements}{{1}{29}{Comparaison des performances selon deux regroupements de classes}{table.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.11}Comparaison des résultats avec CatBoost sur différents regroupements de classes}{29}{subsection.5.11}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{1. Regroupement (0+1+2) vs (3+4) :}{29}{subsection.5.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}}{29}{figure.23}\protected@file@percent }
-\newlabel{fig:catboost012_conf}{{23}{29}{Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}{figure.23}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Résultats du modèle CatBoost (regroupement 0+1+2 vs 3+4)}}{29}{table.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}}{30}{figure.25}\protected@file@percent }
+\newlabel{fig:catboost012_conf}{{25}{30}{Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}{figure.25}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Résultats du modèle CatBoost (regroupement 0+1+2 vs 3+4)}}{30}{table.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{2. Regroupement (1+2) vs (3+4) :}{30}{table.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}}{30}{figure.24}\protected@file@percent }
-\newlabel{fig:catboost12_conf}{{24}{30}{Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}{figure.24}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Résultats du modèle catBost (regroupement 1+2 vs 3+4)}}{30}{table.3}\protected@file@percent }
-\newlabel{tab:resultats}{{3}{30}{Résultats du modèle catBost (regroupement 1+2 vs 3+4)}{table.3}{}}
-\@writefile{toc}{\contentsline {paragraph}{Conclusion :}{30}{table.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.12}Comparaison des combinaisons avec Gradient Boosting}{30}{subsection.5.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.1}Entraînement du modèle Gradient Boosting — combinaison (0,1,2) vs (3,4)}{30}{subsubsection.5.12.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Rapport de classification — Gradient Boosting (0,1,2) vs (3,4)}}{31}{figure.25}\protected@file@percent }
-\newlabel{fig:gb_report_012_34}{{25}{31}{Rapport de classification — Gradient Boosting (0,1,2) vs (3,4)}{figure.25}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Matrice de confusion — Gradient Boosting (0,1,2) vs (3,4)}}{31}{figure.26}\protected@file@percent }
-\newlabel{fig:gb_confusion_012_34}{{26}{31}{Matrice de confusion — Gradient Boosting (0,1,2) vs (3,4)}{figure.26}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.2}Entraînement du modèle Gradient Boosting — combinaison (1,2) vs (3,4)}{32}{subsubsection.5.12.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Rapport de classification — Gradient Boosting (1,2) vs (3,4)}}{32}{figure.27}\protected@file@percent }
-\newlabel{fig:gb_report_12_34}{{27}{32}{Rapport de classification — Gradient Boosting (1,2) vs (3,4)}{figure.27}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {28}{\ignorespaces Matrice de confusion — Gradient Boosting (1,2) vs (3,4)}}{33}{figure.28}\protected@file@percent }
-\newlabel{fig:gb_confusion_12_34}{{28}{33}{Matrice de confusion — Gradient Boosting (1,2) vs (3,4)}{figure.28}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.3}Comparaison des deux combinaisons avec Gradient Boosting}{33}{subsubsection.5.12.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces Comparaison des performances entre les deux fusions de classes}}{34}{figure.29}\protected@file@percent }
-\newlabel{fig:comparaison_fusion_gradient_boosting}{{29}{34}{Comparaison des performances entre les deux fusions de classes}{figure.29}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6} Les descriptions positives accélèrent-elles l’adoption des animaux ? }{35}{section.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Exemple d'analyse de sentiment sur des descriptions}}{35}{figure.30}\protected@file@percent }
-\newlabel{fig:sentiment}{{30}{35}{Exemple d'analyse de sentiment sur des descriptions}{figure.30}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Ajout des sentiments textuels dans le Gradient Boosting}{35}{subsection.6.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces Rapport de classification avec ajout des variables de sentiment}}{36}{figure.31}\protected@file@percent }
-\newlabel{fig:rapport_sentiment}{{31}{36}{Rapport de classification avec ajout des variables de sentiment}{figure.31}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces Matrice de confusion avec ajout des variables de sentiment}}{36}{figure.32}\protected@file@percent }
-\newlabel{fig:matrice_sentiment}{{32}{36}{Matrice de confusion avec ajout des variables de sentiment}{figure.32}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Optimisation du Gradient Boosting avec les sentiments (GridSearchCV)}{37}{subsection.6.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {33}{\ignorespaces Rapport de classification -- Gradient Boosting avec sentiments (optimisé)}}{37}{figure.33}\protected@file@percent }
-\newlabel{fig:classification_sentiment_gridsearch}{{33}{37}{Rapport de classification -- Gradient Boosting avec sentiments (optimisé)}{figure.33}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {34}{\ignorespaces Matrice de confusion -- Gradient Boosting avec sentiments (optimisé)}}{38}{figure.34}\protected@file@percent }
-\newlabel{fig:matrice_confusion_sentiment_gridsearch}{{34}{38}{Matrice de confusion -- Gradient Boosting avec sentiments (optimisé)}{figure.34}{}}
-\gdef \@abspage@last{38}
+\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}}{31}{figure.26}\protected@file@percent }
+\newlabel{fig:catboost12_conf}{{26}{31}{Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}{figure.26}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Résultats du modèle catBost (regroupement 1+2 vs 3+4)}}{31}{table.3}\protected@file@percent }
+\newlabel{tab:resultats}{{3}{31}{Résultats du modèle catBost (regroupement 1+2 vs 3+4)}{table.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Conclusion :}{31}{table.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.12}Comparaison des combinaisons avec Gradient Boosting}{31}{subsection.5.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.1}Entraînement du modèle Gradient Boosting — combinaison (0,1,2) vs (3,4)}{31}{subsubsection.5.12.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Rapport de classification — Gradient Boosting (0,1,2) vs (3,4)}}{32}{figure.27}\protected@file@percent }
+\newlabel{fig:gb_report_012_34}{{27}{32}{Rapport de classification — Gradient Boosting (0,1,2) vs (3,4)}{figure.27}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {28}{\ignorespaces Matrice de confusion — Gradient Boosting (0,1,2) vs (3,4)}}{32}{figure.28}\protected@file@percent }
+\newlabel{fig:gb_confusion_012_34}{{28}{32}{Matrice de confusion — Gradient Boosting (0,1,2) vs (3,4)}{figure.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.2}Entraînement du modèle Gradient Boosting — combinaison (1,2) vs (3,4)}{33}{subsubsection.5.12.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces Rapport de classification — Gradient Boosting (1,2) vs (3,4)}}{33}{figure.29}\protected@file@percent }
+\newlabel{fig:gb_report_12_34}{{29}{33}{Rapport de classification — Gradient Boosting (1,2) vs (3,4)}{figure.29}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Matrice de confusion — Gradient Boosting (1,2) vs (3,4)}}{34}{figure.30}\protected@file@percent }
+\newlabel{fig:gb_confusion_12_34}{{30}{34}{Matrice de confusion — Gradient Boosting (1,2) vs (3,4)}{figure.30}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.12.3}Comparaison des deux combinaisons avec Gradient Boosting}{34}{subsubsection.5.12.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces Comparaison des performances entre les deux fusions de classes}}{35}{figure.31}\protected@file@percent }
+\newlabel{fig:comparaison_fusion_gradient_boosting}{{31}{35}{Comparaison des performances entre les deux fusions de classes}{figure.31}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6} Les descriptions positives accélèrent-elles l’adoption des animaux ? }{36}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces Exemple d'analyse de sentiment sur des descriptions}}{36}{figure.32}\protected@file@percent }
+\newlabel{fig:sentiment}{{32}{36}{Exemple d'analyse de sentiment sur des descriptions}{figure.32}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Ajout des sentiments textuels dans le Gradient Boosting}{36}{subsection.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {33}{\ignorespaces Rapport de classification avec ajout des variables de sentiment}}{37}{figure.33}\protected@file@percent }
+\newlabel{fig:rapport_sentiment}{{33}{37}{Rapport de classification avec ajout des variables de sentiment}{figure.33}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {34}{\ignorespaces Matrice de confusion avec ajout des variables de sentiment}}{37}{figure.34}\protected@file@percent }
+\newlabel{fig:matrice_sentiment}{{34}{37}{Matrice de confusion avec ajout des variables de sentiment}{figure.34}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Optimisation du Gradient Boosting avec les sentiments (GridSearchCV)}{38}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {35}{\ignorespaces Rapport de classification -- Gradient Boosting avec sentiments (optimisé)}}{38}{figure.35}\protected@file@percent }
+\newlabel{fig:classification_sentiment_gridsearch}{{35}{38}{Rapport de classification -- Gradient Boosting avec sentiments (optimisé)}{figure.35}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {36}{\ignorespaces Matrice de confusion -- Gradient Boosting avec sentiments (optimisé)}}{39}{figure.36}\protected@file@percent }
+\newlabel{fig:matrice_confusion_sentiment_gridsearch}{{36}{39}{Matrice de confusion -- Gradient Boosting avec sentiments (optimisé)}{figure.36}{}}
+\gdef \@abspage@last{39}

@@ -744,6 +744,16 @@ INPUT ./repartition_de_adoptionspeed.png
 INPUT repartition_de_adoptionspeed.png
 INPUT ./repartition_de_adoptionspeed.png
 INPUT ./repartition_de_adoptionspeed.png
+INPUT ./matrice1.png
+INPUT ./matrice1.png
+INPUT matrice1.png
+INPUT ./matrice1.png
+INPUT ./matrice1.png
+INPUT ./matrice2.png
+INPUT ./matrice2.png
+INPUT matrice2.png
+INPUT ./matrice2.png
+INPUT ./matrice2.png
 INPUT ./catboost_012_vs_34_confusion.png
 INPUT ./catboost_012_vs_34_confusion.png
 INPUT catboost_012_vs_34_confusion.png

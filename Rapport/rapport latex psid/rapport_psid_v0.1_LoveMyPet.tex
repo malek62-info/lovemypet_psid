@@ -756,70 +756,59 @@ Cette homogénéité suggère que les variables utilisées pour le clustering (�
 
 \subsection{Comparaison de regroupements de classes avec Random Forest}
 
-Afin d’optimiser la prédiction de la vitesse d’adoption des animaux, nous avons exploré deux regroupements binaires alternatifs à la classification initiale en 5 classes. L’objectif est de simplifier le problème tout en conservant une interprétabilité pertinente.
+Afin de mieux comprendre le comportement du modèle, nous avons appliqué une classification binaire en testant deux stratégies de regroupement des classes de la variable \textit{AdoptionSpeed}.
 
-Les deux combinaisons testées sont :
-\begin{itemize}
-    \item \textbf{Combinaison 1} : \texttt{[0,1,2]} vs \texttt{[3,4]} — où \texttt{0} représente une adoption rapide ou modérée, et \texttt{1} une adoption lente ou non adoption.
-    \item \textbf{Combinaison 2} : \texttt{[1,2]} vs \texttt{[3,4]} — où la classe \texttt{0} (adoption le jour même) est exclue.
-\end{itemize}
+\subsubsection*{Regroupement 1 : (0, 1, 2) vs (3, 4)}
 
-Ces regroupements ont été évalués à l’aide d’un modèle \textbf{Random Forest} avec une validation croisée à 5 plis, et en mesurant plusieurs métriques : \textit{accuracy}, \textit{precision}, \textit{recall}, \textit{F1-score}, mais aussi le biais, la variance et l’erreur quadratique moyenne (MSE).
+Dans cette première approche, les classes 0, 1 et 2 ont été fusionnées en une classe unique représentant une adoption rapide, tandis que les classes 3 et 4 ont été regroupées sous la classe représentant une adoption lente ou une non-adoption.
 
-\vspace{0.3cm}
-\begin{table}[h]
-\centering
-\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
-\hline
-\textbf{Regroupement} & \textbf{Accuracy} & \textbf{Précision} & \textbf{Recall} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
-\hline
-\texttt{[0,1,2]} vs \texttt{[3,4]} & 62.7\% & 62.7\% & 62.7\% & 62.7\% & 0.376 & 0.274 & 0.101  \\
-\texttt{[1,2]} vs \texttt{[3,4]}   & 61.4\% & 61.5\% & 61.4\% & 61.5\% & 0.385 & 0.284 & 0.101  \\
-\hline
-\end{tabular}
-\caption{Comparaison des performances entre deux regroupements de classes avec Random Forest}
+Le modèle Random Forest obtient une \textbf{accuracy de 61.27\%}, une \textbf{précision pondérée de 0.6128}, un \textbf{rappel pondéré de 0.6128}, un \textbf{f1-score pondéré de 0.6127}, un \textbf{MSE de 0.3857}, un \textbf{biais de 0.2829} et une \textbf{variance de 0.1028}. La validation croisée donne une moyenne d’accuracy de \textbf{62.55\%}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{matrice1.png}
+    \caption{Matrice de confusion - Regroupement (0,1,2) vs (3,4)}
+    \label{fig:rf_confusion_groupe012}
+\end{figure}
+
+\subsubsection*{Regroupement 2 : (1, 2) vs (3, 4)}
+
+Dans une seconde configuration, la classe 0 a été exclue car très peu représentée. Les classes 1 et 2 (adoption modérée à rapide) ont été regroupées, et comparées aux classes 3 et 4 (adoption lente à inexistante).
+
+Avec cette configuration, le modèle obtient une \textbf{accuracy de 60.86\%}, une \textbf{précision pondérée de 0.6085}, un \textbf{rappel pondéré de 0.6086}, un \textbf{f1-score pondéré de 0.6085}, un \textbf{MSE de 0.394}, un \textbf{biais de 0.2912} et une \textbf{variance de 0.1028}. La moyenne en validation croisée est de \textbf{62.57\%}, très proche de la première configuration.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{matrice2.png}
+    \caption{Matrice de confusion - Regroupement (1,2) vs (3,4)}
+    \label{fig:rf_confusion_groupe12}
+\end{figure}
+
+\subsubsection*{Comparaison des deux regroupements}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{Critères} & \textbf{(0,1,2) vs (3,4)} & \textbf{(1,2) vs (3,4)} \\
+        \hline
+        Accuracy & 61.27\% & 60.86\% \\
+        Précision (pondérée) & 0.6128 & 0.6085 \\
+        Rappel (pondéré) & 0.6128 & 0.6086 \\
+        F1-score (pondéré) & 0.6127 & 0.6085 \\
+        MSE & 0.3857 & 0.394 \\
+        Biais & 0.2829 & 0.2912 \\
+        Variance & 0.1028 & 0.1028 \\
+        Moyenne CV & 0.6255 & 0.6257 \\
+        \hline
+    \end{tabular}
+    \caption{Comparaison des performances selon deux regroupements de classes}
+    \label{tab:rf_comparaison_regroupements}
 \end{table}
 
-\noindent
-On observe que la première combinaison \texttt{[0,1,2]} vs \texttt{[3,4]} donne de meilleures performances globales, avec un F1-score de \textbf{62.7\%}, une \textit{erreur quadratique moyenne (MSE)} plus faible, ainsi qu’un \textit{biais} plus bas. Cela suggère qu'inclure la classe 0 (adoption immédiate) dans les cas d’adoption rapide/modérée améliore la robustesse du modèle.
-
-Ce résultat conforte l'idée que le reclassement judicieux de la variable cible peut améliorer les performances prédictives, tout en gardant du sens dans l'interprétation métier.
-\subsubsection{Optimisation des performances avec GridSearchCV}
-
-Afin d'améliorer les performances du modèle Random Forest, une recherche d'hyperparamètres a été réalisée à l’aide de \texttt{GridSearchCV}, en explorant plusieurs combinaisons de paramètres tels que \texttt{max\_depth}, \texttt{n\_estimators}, \texttt{min\_samples\_split}, \texttt{min\_samples\_leaf}, et \texttt{max\_features}. Deux regroupements de classes ont été testés : \textbf{(0,1,2) vs (3,4)} et \textbf{(1,2) vs (3,4)}.
-
-Les meilleurs paramètres trouvés par GridSearch pour les deux cas sont :
-\begin{itemize}
-    \item \texttt{max\_depth=10}, \texttt{n\_estimators=200}, \texttt{min\_samples\_split=5}, \texttt{min\_samples\_leaf=2}, \texttt{max\_features='sqrt'}
-\end{itemize}
-
-\paragraph{Résultats pour le regroupement (0,1,2) vs (3,4) :}
-\begin{itemize}
-    \item Accuracy : 65.07\%
-    \item Précision : 65.09\%
-    \item Rappel : 65.07\%
-    \item F1-score : 65.05\%
-    \item MSE : 0.3553
-    \item Biais : 0.2948
-    \item Variance : 0.0605
-    \item Moyenne de validation croisée : 64.6\%
-\end{itemize}
-
-\paragraph{Résultats pour le regroupement (1,2) vs (3,4) :}
-\begin{itemize}
-    \item Accuracy : 65.07\%
-    \item Précision : 65.09\%
-    \item Rappel : 65.07\%
-    \item F1-score : 65.05\%
-    \item MSE : 0.3553
-    \item Biais : 0.2948
-    \item Variance : 0.0605
-    \item Moyenne de validation croisée : 64.6\%
-\end{itemize}
+Les deux stratégies donnent des résultats très similaires. Le regroupement (0,1,2) vs (3,4) obtient des métriques légèrement supérieures, mais le choix entre les deux peut dépendre de la distribution future des données ou des objectifs métier (ex. : minimiser les faux positifs pour les animaux à risque de non adoption).
 
 
-
-Les deux regroupements donnent des résultats quasiment identiques après optimisation, confirmant la robustesse du modèle Random Forest. Toutefois, on remarque que le gain en performance reste marginal après optimisation, suggérant qu’une approche plus fine comme l’analyse de nouvelles variables ou le test d’autres algorithmes pourrait être plus prometteuse pour améliorer les performances globales.
 
 \subsection{Comparaison des résultats avec CatBoost sur différents regroupements de classes}
 
