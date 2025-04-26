@@ -3,9 +3,9 @@ import { Sparkles } from "lucide-react";
 
 const Formulaire = () => {
   const [formData, setFormData] = useState({
+    Type: 0,
     Age: 0,
     PureBreed: 0,
-    Gender: 0,
     Breed1: 0,
     Breed2: 0,
     Color1: 0,
@@ -16,1245 +16,1557 @@ const Formulaire = () => {
     Dewormed: 0,
     Sterilized: 0,
     PhotoAmt: 0,
+    VideoAmt: 0,
     Fee: 0,
-    description: "",
+    Health: 0,
   });
 
   const [apiResponse, setApiResponse] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [breedOptions] = useState([
+  const cat = [
     {
-      "BreedID": "1",
-      "BreedName": "Affenpinscher"
+      "id": 241,
+      "name": "Abyssinian",
+      "type": 2
     },
     {
-      "BreedID": "2",
-      "BreedName": "Afghan Hound"
+      "id": 242,
+      "name": "American Curl",
+      "type": 2
     },
     {
-      "BreedID": "3",
-      "BreedName": "Airedale Terrier"
+      "id": 243,
+      "name": "American Shorthair",
+      "type": 2
     },
     {
-      "BreedID": "4",
-      "BreedName": "Akbash"
+      "id": 244,
+      "name": "American Wirehair",
+      "type": 2
     },
     {
-      "BreedID": "5",
-      "BreedName": "Akita"
+      "id": 245,
+      "name": "Applehead Siamese",
+      "type": 2
     },
     {
-      "BreedID": "6",
-      "BreedName": "Alaskan Malamute"
+      "id": 246,
+      "name": "Balinese",
+      "type": 2
     },
     {
-      "BreedID": "7",
-      "BreedName": "American Bulldog"
+      "id": 247,
+      "name": "Bengal",
+      "type": 2
     },
     {
-      "BreedID": "8",
-      "BreedName": "American Eskimo Dog"
+      "id": 248,
+      "name": "Birman",
+      "type": 2
     },
     {
-      "BreedID": "9",
-      "BreedName": "American Hairless Terrier"
+      "id": 249,
+      "name": "Bobtail",
+      "type": 2
     },
     {
-      "BreedID": "10",
-      "BreedName": "American Staffordshire Terrier"
+      "id": 250,
+      "name": "Bombay",
+      "type": 2
     },
     {
-      "BreedID": "11",
-      "BreedName": "American Water Spaniel"
+      "id": 251,
+      "name": "British Shorthair",
+      "type": 2
     },
     {
-      "BreedID": "12",
-      "BreedName": "Anatolian Shepherd"
+      "id": 252,
+      "name": "Burmese",
+      "type": 2
     },
     {
-      "BreedID": "13",
-      "BreedName": "Appenzell Mountain Dog"
+      "id": 253,
+      "name": "Burmilla",
+      "type": 2
     },
     {
-      "BreedID": "14",
-      "BreedName": "Australian Cattle Dog/Blue Heeler"
+      "id": 254,
+      "name": "Calico",
+      "type": 2
     },
     {
-      "BreedID": "15",
-      "BreedName": "Australian Kelpie"
+      "id": 255,
+      "name": "Canadian Hairless",
+      "type": 2
     },
     {
-      "BreedID": "16",
-      "BreedName": "Australian Shepherd"
+      "id": 256,
+      "name": "Chartreux",
+      "type": 2
     },
     {
-      "BreedID": "17",
-      "BreedName": "Australian Terrier"
+      "id": 257,
+      "name": "Chausie",
+      "type": 2
     },
     {
-      "BreedID": "18",
-      "BreedName": "Basenji"
+      "id": 258,
+      "name": "Chinchilla",
+      "type": 2
     },
     {
-      "BreedID": "19",
-      "BreedName": "Basset Hound"
+      "id": 259,
+      "name": "Cornish Rex",
+      "type": 2
     },
     {
-      "BreedID": "20",
-      "BreedName": "Beagle"
+      "id": 260,
+      "name": "Cymric",
+      "type": 2
     },
     {
-      "BreedID": "21",
-      "BreedName": "Bearded Collie"
+      "id": 261,
+      "name": "Devon Rex",
+      "type": 2
     },
     {
-      "BreedID": "22",
-      "BreedName": "Beauceron"
+      "id": 262,
+      "name": "Dilute Calico",
+      "type": 2
     },
     {
-      "BreedID": "23",
-      "BreedName": "Bedlington Terrier"
+      "id": 263,
+      "name": "Dilute Tortoiseshell",
+      "type": 2
     },
     {
-      "BreedID": "24",
-      "BreedName": "Belgian Shepherd Dog Sheepdog"
+      "id": 264,
+      "name": "Domestic Long Hair",
+      "type": 2
     },
     {
-      "BreedID": "25",
-      "BreedName": "Belgian Shepherd Laekenois"
+      "id": 265,
+      "name": "Domestic Medium Hair",
+      "type": 2
     },
     {
-      "BreedID": "26",
-      "BreedName": "Belgian Shepherd Malinois"
+      "id": 266,
+      "name": "Domestic Short Hair",
+      "type": 2
     },
     {
-      "BreedID": "27",
-      "BreedName": "Belgian Shepherd Tervuren"
+      "id": 267,
+      "name": "Egyptian Mau",
+      "type": 2
     },
     {
-      "BreedID": "28",
-      "BreedName": "Bernese Mountain Dog"
+      "id": 268,
+      "name": "Exotic Shorthair",
+      "type": 2
     },
     {
-      "BreedID": "29",
-      "BreedName": "Bichon Frise"
+      "id": 269,
+      "name": "Extra-Toes Cat (Hemingway Polydactyl)",
+      "type": 2
     },
     {
-      "BreedID": "30",
-      "BreedName": "Black and Tan Coonhound"
+      "id": 270,
+      "name": "Havana",
+      "type": 2
     },
     {
-      "BreedID": "31",
-      "BreedName": "Black Labrador Retriever"
+      "id": 271,
+      "name": "Himalayan",
+      "type": 2
     },
     {
-      "BreedID": "32",
-      "BreedName": "Black Mouth Cur"
+      "id": 272,
+      "name": "Japanese Bobtail",
+      "type": 2
     },
     {
-      "BreedID": "33",
-      "BreedName": "Black Russian Terrier"
+      "id": 273,
+      "name": "Javanese",
+      "type": 2
     },
     {
-      "BreedID": "34",
-      "BreedName": "Bloodhound"
+      "id": 274,
+      "name": "Korat",
+      "type": 2
     },
     {
-      "BreedID": "35",
-      "BreedName": "Blue Lacy"
+      "id": 275,
+      "name": "LaPerm",
+      "type": 2
     },
     {
-      "BreedID": "36",
-      "BreedName": "Bluetick Coonhound"
+      "id": 276,
+      "name": "Maine Coon",
+      "type": 2
     },
     {
-      "BreedID": "37",
-      "BreedName": "Boerboel"
+      "id": 277,
+      "name": "Manx",
+      "type": 2
     },
     {
-      "BreedID": "38",
-      "BreedName": "Bolognese"
+      "id": 278,
+      "name": "Munchkin",
+      "type": 2
     },
     {
-      "BreedID": "39",
-      "BreedName": "Border Collie"
+      "id": 279,
+      "name": "Nebelung",
+      "type": 2
     },
     {
-      "BreedID": "40",
-      "BreedName": "Border Terrier"
+      "id": 280,
+      "name": "Norwegian Forest Cat",
+      "type": 2
     },
     {
-      "BreedID": "41",
-      "BreedName": "Borzoi"
+      "id": 281,
+      "name": "Ocicat",
+      "type": 2
     },
     {
-      "BreedID": "42",
-      "BreedName": "Boston Terrier"
+      "id": 282,
+      "name": "Oriental Long Hair",
+      "type": 2
     },
     {
-      "BreedID": "43",
-      "BreedName": "Bouvier des Flanders"
+      "id": 283,
+      "name": "Oriental Short Hair",
+      "type": 2
     },
     {
-      "BreedID": "44",
-      "BreedName": "Boxer"
+      "id": 284,
+      "name": "Oriental Tabby",
+      "type": 2
     },
     {
-      "BreedID": "45",
-      "BreedName": "Boykin Spaniel"
+      "id": 285,
+      "name": "Persian",
+      "type": 2
     },
     {
-      "BreedID": "46",
-      "BreedName": "Briard"
+      "id": 286,
+      "name": "Pixie-Bob",
+      "type": 2
     },
     {
-      "BreedID": "47",
-      "BreedName": "Brittany Spaniel"
+      "id": 287,
+      "name": "Ragamuffin",
+      "type": 2
     },
     {
-      "BreedID": "48",
-      "BreedName": "Brussels Griffon"
+      "id": 288,
+      "name": "Ragdoll",
+      "type": 2
     },
     {
-      "BreedID": "49",
-      "BreedName": "Bull Terrier"
+      "id": 289,
+      "name": "Russian Blue",
+      "type": 2
     },
     {
-      "BreedID": "50",
-      "BreedName": "Bullmastiff"
+      "id": 290,
+      "name": "Scottish Fold",
+      "type": 2
     },
     {
-      "BreedID": "51",
-      "BreedName": "Cairn Terrier"
+      "id": 291,
+      "name": "Selkirk Rex",
+      "type": 2
     },
     {
-      "BreedID": "52",
-      "BreedName": "Canaan Dog"
+      "id": 292,
+      "name": "Siamese",
+      "type": 2
     },
     {
-      "BreedID": "53",
-      "BreedName": "Cane Corso Mastiff"
+      "id": 293,
+      "name": "Siberian",
+      "type": 2
     },
     {
-      "BreedID": "54",
-      "BreedName": "Carolina Dog"
+      "id": 294,
+      "name": "Silver",
+      "type": 2
     },
     {
-      "BreedID": "55",
-      "BreedName": "Catahoula Leopard Dog"
+      "id": 295,
+      "name": "Singapura",
+      "type": 2
     },
     {
-      "BreedID": "56",
-      "BreedName": "Cattle Dog"
+      "id": 296,
+      "name": "Snowshoe",
+      "type": 2
     },
     {
-      "BreedID": "57",
-      "BreedName": "Caucasian Sheepdog (Caucasian Ovtcharka)"
+      "id": 297,
+      "name": "Somali",
+      "type": 2
     },
     {
-      "BreedID": "58",
-      "BreedName": "Cavalier King Charles Spaniel"
+      "id": 298,
+      "name": "Sphynx (hairless cat)",
+      "type": 2
     },
     {
-      "BreedID": "59",
-      "BreedName": "Chesapeake Bay Retriever"
+      "id": 299,
+      "name": "Tabby",
+      "type": 2
     },
     {
-      "BreedID": "60",
-      "BreedName": "Chihuahua"
+      "id": 300,
+      "name": "Tiger",
+      "type": 2
     },
     {
-      "BreedID": "61",
-      "BreedName": "Chinese Crested Dog"
+      "id": 301,
+      "name": "Tonkinese",
+      "type": 2
     },
     {
-      "BreedID": "62",
-      "BreedName": "Chinese Foo Dog"
+      "id": 302,
+      "name": "Torbie",
+      "type": 2
     },
     {
-      "BreedID": "63",
-      "BreedName": "Chinook"
+      "id": 303,
+      "name": "Tortoiseshell",
+      "type": 2
     },
     {
-      "BreedID": "64",
-      "BreedName": "Chocolate Labrador Retriever"
+      "id": 304,
+      "name": "Turkish Angora",
+      "type": 2
     },
     {
-      "BreedID": "65",
-      "BreedName": "Chow Chow"
+      "id": 305,
+      "name": "Turkish Van",
+      "type": 2
     },
     {
-      "BreedID": "66",
-      "BreedName": "Cirneco dell'Etna"
-    },
-    {
-      "BreedID": "67",
-      "BreedName": "Clumber Spaniel"
-    },
-    {
-      "BreedID": "68",
-      "BreedName": "Cockapoo"
-    },
-    {
-      "BreedID": "69",
-      "BreedName": "Cocker Spaniel"
-    },
-    {
-      "BreedID": "70",
-      "BreedName": "Collie"
-    },
-    {
-      "BreedID": "71",
-      "BreedName": "Coonhound"
-    },
-    {
-      "BreedID": "72",
-      "BreedName": "Corgi"
-    },
-    {
-      "BreedID": "73",
-      "BreedName": "Coton de Tulear"
-    },
-    {
-      "BreedID": "74",
-      "BreedName": "Curly-Coated Retriever"
-    },
-    {
-      "BreedID": "75",
-      "BreedName": "Dachshund"
-    },
-    {
-      "BreedID": "76",
-      "BreedName": "Dalmatian"
-    },
-    {
-      "BreedID": "77",
-      "BreedName": "Dandi Dinmont Terrier"
-    },
-    {
-      "BreedID": "78",
-      "BreedName": "Doberman Pinscher"
-    },
-    {
-      "BreedID": "79",
-      "BreedName": "Dogo Argentino"
-    },
-    {
-      "BreedID": "80",
-      "BreedName": "Dogue de Bordeaux"
-    },
-    {
-      "BreedID": "81",
-      "BreedName": "Dutch Shepherd"
-    },
-    {
-      "BreedID": "82",
-      "BreedName": "English Bulldog"
-    },
-    {
-      "BreedID": "83",
-      "BreedName": "English Cocker Spaniel"
-    },
-    {
-      "BreedID": "84",
-      "BreedName": "English Coonhound"
-    },
-    {
-      "BreedID": "85",
-      "BreedName": "English Pointer"
-    },
-    {
-      "BreedID": "86",
-      "BreedName": "English Setter"
-    },
-    {
-      "BreedID": "87",
-      "BreedName": "English Shepherd"
-    },
-    {
-      "BreedID": "88",
-      "BreedName": "English Springer Spaniel"
-    },
-    {
-      "BreedID": "89",
-      "BreedName": "English Toy Spaniel"
-    },
-    {
-      "BreedID": "90",
-      "BreedName": "Entlebucher"
-    },
-    {
-      "BreedID": "91",
-      "BreedName": "Eskimo Dog"
-    },
-    {
-      "BreedID": "92",
-      "BreedName": "Feist"
-    },
-    {
-      "BreedID": "93",
-      "BreedName": "Field Spaniel"
-    },
-    {
-      "BreedID": "94",
-      "BreedName": "Fila Brasileiro"
-    },
-    {
-      "BreedID": "95",
-      "BreedName": "Finnish Lapphund"
-    },
-    {
-      "BreedID": "96",
-      "BreedName": "Finnish Spitz"
-    },
-    {
-      "BreedID": "97",
-      "BreedName": "Flat-coated Retriever"
-    },
-    {
-      "BreedID": "98",
-      "BreedName": "Fox Terrier"
-    },
-    {
-      "BreedID": "99",
-      "BreedName": "Foxhound"
-    },
-    {
-      "BreedID": "100",
-      "BreedName": "French Bulldog"
-    },
-    {
-      "BreedID": "101",
-      "BreedName": "Galgo Spanish Greyhound"
-    },
-    {
-      "BreedID": "102",
-      "BreedName": "German Pinscher"
-    },
-    {
-      "BreedID": "103",
-      "BreedName": "German Shepherd Dog"
-    },
-    {
-      "BreedID": "104",
-      "BreedName": "German Shorthaired Pointer"
-    },
-    {
-      "BreedID": "105",
-      "BreedName": "German Spitz"
-    },
-    {
-      "BreedID": "106",
-      "BreedName": "German Wirehaired Pointer"
-    },
-    {
-      "BreedID": "107",
-      "BreedName": "Giant Schnauzer"
-    },
-    {
-      "BreedID": "108",
-      "BreedName": "Glen of Imaal Terrier"
-    },
-    {
-      "BreedID": "109",
-      "BreedName": "Golden Retriever"
-    },
-    {
-      "BreedID": "110",
-      "BreedName": "Gordon Setter"
-    },
-    {
-      "BreedID": "111",
-      "BreedName": "Great Dane"
-    },
-    {
-      "BreedID": "112",
-      "BreedName": "Great Pyrenees"
-    },
-    {
-      "BreedID": "113",
-      "BreedName": "Greater Swiss Mountain Dog"
-    },
-    {
-      "BreedID": "114",
-      "BreedName": "Greyhound"
-    },
-    {
-      "BreedID": "115",
-      "BreedName": "Harrier"
-    },
-    {
-      "BreedID": "116",
-      "BreedName": "Havanese"
-    },
-    {
-      "BreedID": "117",
-      "BreedName": "Hound"
-    },
-    {
-      "BreedID": "118",
-      "BreedName": "Hovawart"
-    },
-    {
-      "BreedID": "119",
-      "BreedName": "Husky"
-    },
-    {
-      "BreedID": "120",
-      "BreedName": "Ibizan Hound"
-    },
-    {
-      "BreedID": "121",
-      "BreedName": "Illyrian Sheepdog"
-    },
-    {
-      "BreedID": "122",
-      "BreedName": "Irish Setter"
-    },
-    {
-      "BreedID": "123",
-      "BreedName": "Irish Terrier"
-    },
-    {
-      "BreedID": "124",
-      "BreedName": "Irish Water Spaniel"
-    },
-    {
-      "BreedID": "125",
-      "BreedName": "Irish Wolfhound"
-    },
-    {
-      "BreedID": "126",
-      "BreedName": "Italian Greyhound"
-    },
-    {
-      "BreedID": "127",
-      "BreedName": "Italian Spinone"
-    },
-    {
-      "BreedID": "128",
-      "BreedName": "Jack Russell Terrier"
-    },
-    {
-      "BreedID": "129",
-      "BreedName": "Jack Russell Terrier (Parson Russell Terrier)"
-    },
-    {
-      "BreedID": "130",
-      "BreedName": "Japanese Chin"
-    },
-    {
-      "BreedID": "131",
-      "BreedName": "Jindo"
-    },
-    {
-      "BreedID": "132",
-      "BreedName": "Kai Dog"
-    },
-    {
-      "BreedID": "133",
-      "BreedName": "Karelian Bear Dog"
-    },
-    {
-      "BreedID": "134",
-      "BreedName": "Keeshond"
-    },
-    {
-      "BreedID": "135",
-      "BreedName": "Kerry Blue Terrier"
-    },
-    {
-      "BreedID": "136",
-      "BreedName": "Kishu"
-    },
-    {
-      "BreedID": "137",
-      "BreedName": "Klee Kai"
-    },
-    {
-      "BreedID": "138",
-      "BreedName": "Komondor"
-    },
-    {
-      "BreedID": "139",
-      "BreedName": "Kuvasz"
-    },
-    {
-      "BreedID": "140",
-      "BreedName": "Kyi Leo"
-    },
-    {
-      "BreedID": "141",
-      "BreedName": "Labrador Retriever"
-    },
-    {
-      "BreedID": "142",
-      "BreedName": "Lakeland Terrier"
-    },
-    {
-      "BreedID": "143",
-      "BreedName": "Lancashire Heeler"
-    },
-    {
-      "BreedID": "144",
-      "BreedName": "Leonberger"
-    },
-    {
-      "BreedID": "145",
-      "BreedName": "Lhasa Apso"
-    },
-    {
-      "BreedID": "146",
-      "BreedName": "Lowchen"
-    },
-    {
-      "BreedID": "147",
-      "BreedName": "Maltese"
-    },
-    {
-      "BreedID": "148",
-      "BreedName": "Manchester Terrier"
-    },
-    {
-      "BreedID": "149",
-      "BreedName": "Maremma Sheepdog"
-    },
-    {
-      "BreedID": "150",
-      "BreedName": "Mastiff"
-    },
-    {
-      "BreedID": "151",
-      "BreedName": "McNab"
-    },
-    {
-      "BreedID": "152",
-      "BreedName": "Miniature Pinscher"
-    },
-    {
-      "BreedID": "153",
-      "BreedName": "Mountain Cur"
-    },
-    {
-      "BreedID": "154",
-      "BreedName": "Mountain Dog"
-    },
-    {
-      "BreedID": "155",
-      "BreedName": "Munsterlander"
-    },
-    {
-      "BreedID": "156",
-      "BreedName": "Neapolitan Mastiff"
-    },
-    {
-      "BreedID": "157",
-      "BreedName": "New Guinea Singing Dog"
-    },
-    {
-      "BreedID": "158",
-      "BreedName": "Newfoundland Dog"
-    },
-    {
-      "BreedID": "159",
-      "BreedName": "Norfolk Terrier"
-    },
-    {
-      "BreedID": "160",
-      "BreedName": "Norwegian Buhund"
-    },
-    {
-      "BreedID": "161",
-      "BreedName": "Norwegian Elkhound"
-    },
-    {
-      "BreedID": "162",
-      "BreedName": "Norwegian Lundehund"
-    },
-    {
-      "BreedID": "163",
-      "BreedName": "Norwich Terrier"
-    },
-    {
-      "BreedID": "164",
-      "BreedName": "Nova Scotia Duck-Tolling Retriever"
-    },
-    {
-      "BreedID": "165",
-      "BreedName": "Old English Sheepdog"
-    },
-    {
-      "BreedID": "166",
-      "BreedName": "Otterhound"
-    },
-    {
-      "BreedID": "167",
-      "BreedName": "Papillon"
-    },
-    {
-      "BreedID": "168",
-      "BreedName": "Patterdale Terrier (Fell Terrier)"
-    },
-    {
-      "BreedID": "169",
-      "BreedName": "Pekingese"
-    },
-    {
-      "BreedID": "170",
-      "BreedName": "Peruvian Inca Orchid"
-    },
-    {
-      "BreedID": "171",
-      "BreedName": "Petit Basset Griffon Vendeen"
-    },
-    {
-      "BreedID": "172",
-      "BreedName": "Pharaoh Hound"
-    },
-    {
-      "BreedID": "173",
-      "BreedName": "Pit Bull Terrier"
-    },
-    {
-      "BreedID": "174",
-      "BreedName": "Plott Hound"
-    },
-    {
-      "BreedID": "175",
-      "BreedName": "Podengo Portugueso"
-    },
-    {
-      "BreedID": "176",
-      "BreedName": "Pointer"
-    },
-    {
-      "BreedID": "177",
-      "BreedName": "Polish Lowland Sheepdog"
-    },
-    {
-      "BreedID": "178",
-      "BreedName": "Pomeranian"
-    },
-    {
-      "BreedID": "179",
-      "BreedName": "Poodle"
-    },
-    {
-      "BreedID": "180",
-      "BreedName": "Portuguese Water Dog"
-    },
-    {
-      "BreedID": "181",
-      "BreedName": "Presa Canario"
-    },
-    {
-      "BreedID": "182",
-      "BreedName": "Pug"
-    },
-    {
-      "BreedID": "183",
-      "BreedName": "Puli"
-    },
-    {
-      "BreedID": "184",
-      "BreedName": "Pumi"
-    },
-    {
-      "BreedID": "185",
-      "BreedName": "Rat Terrier"
-    },
-    {
-      "BreedID": "186",
-      "BreedName": "Redbone Coonhound"
-    },
-    {
-      "BreedID": "187",
-      "BreedName": "Retriever"
-    },
-    {
-      "BreedID": "188",
-      "BreedName": "Rhodesian Ridgeback"
-    },
-    {
-      "BreedID": "189",
-      "BreedName": "Rottweiler"
-    },
-    {
-      "BreedID": "190",
-      "BreedName": "Saint Bernard"
-    },
-    {
-      "BreedID": "191",
-      "BreedName": "Saluki"
-    },
-    {
-      "BreedID": "192",
-      "BreedName": "Samoyed"
-    },
-    {
-      "BreedID": "193",
-      "BreedName": "Sarplaninac"
-    },
-    {
-      "BreedID": "194",
-      "BreedName": "Schipperke"
-    },
-    {
-      "BreedID": "195",
-      "BreedName": "Schnauzer"
-    },
-    {
-      "BreedID": "196",
-      "BreedName": "Scottish Deerhound"
-    },
-    {
-      "BreedID": "197",
-      "BreedName": "Scottish Terrier Scottie"
-    },
-    {
-      "BreedID": "198",
-      "BreedName": "Sealyham Terrier"
-    },
-    {
-      "BreedID": "199",
-      "BreedName": "Setter"
-    },
-    {
-      "BreedID": "200",
-      "BreedName": "Shar Pei"
-    },
-    {
-      "BreedID": "201",
-      "BreedName": "Sheep Dog"
-    },
-    {
-      "BreedID": "202",
-      "BreedName": "Shepherd"
-    },
-    {
-      "BreedID": "203",
-      "BreedName": "Shetland Sheepdog Sheltie"
-    },
-    {
-      "BreedID": "204",
-      "BreedName": "Shiba Inu"
-    },
-    {
-      "BreedID": "205",
-      "BreedName": "Shih Tzu"
-    },
-    {
-      "BreedID": "206",
-      "BreedName": "Siberian Husky"
-    },
-    {
-      "BreedID": "207",
-      "BreedName": "Silky Terrier"
-    },
-    {
-      "BreedID": "208",
-      "BreedName": "Skye Terrier"
-    },
-    {
-      "BreedID": "209",
-      "BreedName": "Sloughi"
-    },
-    {
-      "BreedID": "210",
-      "BreedName": "Smooth Fox Terrier"
-    },
-    {
-      "BreedID": "211",
-      "BreedName": "South Russian Ovtcharka"
-    },
-    {
-      "BreedID": "212",
-      "BreedName": "Spaniel"
-    },
-    {
-      "BreedID": "213",
-      "BreedName": "Spitz"
-    },
-    {
-      "BreedID": "214",
-      "BreedName": "Staffordshire Bull Terrier"
-    },
-    {
-      "BreedID": "215",
-      "BreedName": "Standard Poodle"
-    },
-    {
-      "BreedID": "216",
-      "BreedName": "Sussex Spaniel"
-    },
-    {
-      "BreedID": "217",
-      "BreedName": "Swedish Vallhund"
-    },
-    {
-      "BreedID": "218",
-      "BreedName": "Terrier"
-    },
-    {
-      "BreedID": "219",
-      "BreedName": "Thai Ridgeback"
-    },
-    {
-      "BreedID": "220",
-      "BreedName": "Tibetan Mastiff"
-    },
-    {
-      "BreedID": "221",
-      "BreedName": "Tibetan Spaniel"
-    },
-    {
-      "BreedID": "222",
-      "BreedName": "Tibetan Terrier"
-    },
-    {
-      "BreedID": "223",
-      "BreedName": "Tosa Inu"
-    },
-    {
-      "BreedID": "224",
-      "BreedName": "Toy Fox Terrier"
-    },
-    {
-      "BreedID": "225",
-      "BreedName": "Treeing Walker Coonhound"
-    },
-    {
-      "BreedID": "226",
-      "BreedName": "Vizsla"
-    },
-    {
-      "BreedID": "227",
-      "BreedName": "Weimaraner"
-    },
-    {
-      "BreedID": "228",
-      "BreedName": "Welsh Corgi"
-    },
-    {
-      "BreedID": "229",
-      "BreedName": "Welsh Springer Spaniel"
-    },
-    {
-      "BreedID": "230",
-      "BreedName": "Welsh Terrier"
-    },
-    {
-      "BreedID": "231",
-      "BreedName": "West Highland White Terrier Westie"
-    },
-    {
-      "BreedID": "232",
-      "BreedName": "Wheaten Terrier"
-    },
-    {
-      "BreedID": "233",
-      "BreedName": "Whippet"
-    },
-    {
-      "BreedID": "234",
-      "BreedName": "White German Shepherd"
-    },
-    {
-      "BreedID": "235",
-      "BreedName": "Wire Fox Terrier"
-    },
-    {
-      "BreedID": "236",
-      "BreedName": "Wire-haired Pointing Griffon"
-    },
-    {
-      "BreedID": "237",
-      "BreedName": "Wirehaired Terrier"
-    },
-    {
-      "BreedID": "238",
-      "BreedName": "Xoloitzcuintle/Mexican Hairless"
-    },
-    {
-      "BreedID": "239",
-      "BreedName": "Yellow Labrador Retriever"
-    },
-    {
-      "BreedID": "240",
-      "BreedName": "Yorkshire Terrier Yorkie"
-    },
-    {
-      "BreedID": "307",
-      "BreedName": "Mixed Breed"
-    },
-    {
-      "BreedID": "241",
-      "BreedName": "Abyssinian"
-    },
-    {
-      "BreedID": "242",
-      "BreedName": "American Curl"
-    },
-    {
-      "BreedID": "243",
-      "BreedName": "American Shorthair"
-    },
-    {
-      "BreedID": "244",
-      "BreedName": "American Wirehair"
-    },
-    {
-      "BreedID": "245",
-      "BreedName": "Applehead Siamese"
-    },
-    {
-      "BreedID": "246",
-      "BreedName": "Balinese"
-    },
-    {
-      "BreedID": "247",
-      "BreedName": "Bengal"
-    },
-    {
-      "BreedID": "248",
-      "BreedName": "Birman"
-    },
-    {
-      "BreedID": "249",
-      "BreedName": "Bobtail"
-    },
-    {
-      "BreedID": "250",
-      "BreedName": "Bombay"
-    },
-    {
-      "BreedID": "251",
-      "BreedName": "British Shorthair"
-    },
-    {
-      "BreedID": "252",
-      "BreedName": "Burmese"
-    },
-    {
-      "BreedID": "253",
-      "BreedName": "Burmilla"
-    },
-    {
-      "BreedID": "254",
-      "BreedName": "Calico"
-    },
-    {
-      "BreedID": "255",
-      "BreedName": "Canadian Hairless"
-    },
-    {
-      "BreedID": "256",
-      "BreedName": "Chartreux"
-    },
-    {
-      "BreedID": "257",
-      "BreedName": "Chausie"
-    },
-    {
-      "BreedID": "258",
-      "BreedName": "Chinchilla"
-    },
-    {
-      "BreedID": "259",
-      "BreedName": "Cornish Rex"
-    },
-    {
-      "BreedID": "260",
-      "BreedName": "Cymric"
-    },
-    {
-      "BreedID": "261",
-      "BreedName": "Devon Rex"
-    },
-    {
-      "BreedID": "262",
-      "BreedName": "Dilute Calico"
-    },
-    {
-      "BreedID": "263",
-      "BreedName": "Dilute Tortoiseshell"
-    },
-    {
-      "BreedID": "264",
-      "BreedName": "Domestic Long Hair"
-    },
-    {
-      "BreedID": "265",
-      "BreedName": "Domestic Medium Hair"
-    },
-    {
-      "BreedID": "266",
-      "BreedName": "Domestic Short Hair"
-    },
-    {
-      "BreedID": "267",
-      "BreedName": "Egyptian Mau"
-    },
-    {
-      "BreedID": "268",
-      "BreedName": "Exotic Shorthair"
-    },
-    {
-      "BreedID": "269",
-      "BreedName": "Extra-Toes Cat (Hemingway Polydactyl)"
-    },
-    {
-      "BreedID": "270",
-      "BreedName": "Havana"
-    },
-    {
-      "BreedID": "271",
-      "BreedName": "Himalayan"
-    },
-    {
-      "BreedID": "272",
-      "BreedName": "Japanese Bobtail"
-    },
-    {
-      "BreedID": "273",
-      "BreedName": "Javanese"
-    },
-    {
-      "BreedID": "274",
-      "BreedName": "Korat"
-    },
-    {
-      "BreedID": "275",
-      "BreedName": "LaPerm"
-    },
-    {
-      "BreedID": "276",
-      "BreedName": "Maine Coon"
-    },
-    {
-      "BreedID": "277",
-      "BreedName": "Manx"
-    },
-    {
-      "BreedID": "278",
-      "BreedName": "Munchkin"
-    },
-    {
-      "BreedID": "279",
-      "BreedName": "Nebelung"
-    },
-    {
-      "BreedID": "280",
-      "BreedName": "Norwegian Forest Cat"
-    },
-    {
-      "BreedID": "281",
-      "BreedName": "Ocicat"
-    },
-    {
-      "BreedID": "282",
-      "BreedName": "Oriental Long Hair"
-    },
-    {
-      "BreedID": "283",
-      "BreedName": "Oriental Short Hair"
-    },
-    {
-      "BreedID": "284",
-      "BreedName": "Oriental Tabby"
-    },
-    {
-      "BreedID": "285",
-      "BreedName": "Persian"
-    },
-    {
-      "BreedID": "286",
-      "BreedName": "Pixie-Bob"
-    },
-    {
-      "BreedID": "287",
-      "BreedName": "Ragamuffin"
-    },
-    {
-      "BreedID": "288",
-      "BreedName": "Ragdoll"
-    },
-    {
-      "BreedID": "289",
-      "BreedName": "Russian Blue"
-    },
-    {
-      "BreedID": "290",
-      "BreedName": "Scottish Fold"
-    },
-    {
-      "BreedID": "291",
-      "BreedName": "Selkirk Rex"
-    },
-    {
-      "BreedID": "292",
-      "BreedName": "Siamese"
-    },
-    {
-      "BreedID": "293",
-      "BreedName": "Siberian"
-    },
-    {
-      "BreedID": "294",
-      "BreedName": "Silver"
-    },
-    {
-      "BreedID": "295",
-      "BreedName": "Singapura"
-    },
-    {
-      "BreedID": "296",
-      "BreedName": "Snowshoe"
-    },
-    {
-      "BreedID": "297",
-      "BreedName": "Somali"
-    },
-    {
-      "BreedID": "298",
-      "BreedName": "Sphynx (hairless cat)"
-    },
-    {
-      "BreedID": "299",
-      "BreedName": "Tabby"
-    },
-    {
-      "BreedID": "300",
-      "BreedName": "Tiger"
-    },
-    {
-      "BreedID": "301",
-      "BreedName": "Tonkinese"
-    },
-    {
-      "BreedID": "302",
-      "BreedName": "Torbie"
-    },
-    {
-      "BreedID": "303",
-      "BreedName": "Tortoiseshell"
-    },
-    {
-      "BreedID": "304",
-      "BreedName": "Turkish Angora"
-    },
-    {
-      "BreedID": "305",
-      "BreedName": "Turkish Van"
-    },
-    {
-      "BreedID": "306",
-      "BreedName": "Tuxedo"
+      "id": 306,
+      "name": "Tuxedo",
+      "type": 2
     }
-  ]);
+  ];
+
+  const race_dog = [
+    {
+      "id": 1,
+      "name": "Affenpinscher",
+      "type": 1
+    },
+    {
+      "id": 2,
+      "name": "Afghan Hound",
+      "type": 1
+    },
+    {
+      "id": 3,
+      "name": "Airedale Terrier",
+      "type": 1
+    },
+    {
+      "id": 4,
+      "name": "Akbash",
+      "type": 1
+    },
+    {
+      "id": 5,
+      "name": "Akita",
+      "type": 1
+    },
+    {
+      "id": 6,
+      "name": "Alaskan Malamute",
+      "type": 1
+    },
+    {
+      "id": 7,
+      "name": "American Bulldog",
+      "type": 1
+    },
+    {
+      "id": 8,
+      "name": "American Eskimo Dog",
+      "type": 1
+    },
+    {
+      "id": 9,
+      "name": "American Hairless Terrier",
+      "type": 1
+    },
+    {
+      "id": 10,
+      "name": "American Staffordshire Terrier",
+      "type": 1
+    },
+    {
+      "id": 11,
+      "name": "American Water Spaniel",
+      "type": 1
+    },
+    {
+      "id": 12,
+      "name": "Anatolian Shepherd",
+      "type": 1
+    },
+    {
+      "id": 13,
+      "name": "Appenzell Mountain Dog",
+      "type": 1
+    },
+    {
+      "id": 14,
+      "name": "Australian Cattle Dog/Blue Heeler",
+      "type": 1
+    },
+    {
+      "id": 15,
+      "name": "Australian Kelpie",
+      "type": 1
+    },
+    {
+      "id": 16,
+      "name": "Australian Shepherd",
+      "type": 1
+    },
+    {
+      "id": 17,
+      "name": "Australian Terrier",
+      "type": 1
+    },
+    {
+      "id": 18,
+      "name": "Basenji",
+      "type": 1
+    },
+    {
+      "id": 19,
+      "name": "Basset Hound",
+      "type": 1
+    },
+    {
+      "id": 20,
+      "name": "Beagle",
+      "type": 1
+    },
+    {
+      "id": 21,
+      "name": "Bearded Collie",
+      "type": 1
+    },
+    {
+      "id": 22,
+      "name": "Beauceron",
+      "type": 1
+    },
+    {
+      "id": 23,
+      "name": "Bedlington Terrier",
+      "type": 1
+    },
+    {
+      "id": 24,
+      "name": "Belgian Shepherd Dog Sheepdog",
+      "type": 1
+    },
+    {
+      "id": 25,
+      "name": "Belgian Shepherd Laekenois",
+      "type": 1
+    },
+    {
+      "id": 26,
+      "name": "Belgian Shepherd Malinois",
+      "type": 1
+    },
+    {
+      "id": 27,
+      "name": "Belgian Shepherd Tervuren",
+      "type": 1
+    },
+    {
+      "id": 28,
+      "name": "Bernese Mountain Dog",
+      "type": 1
+    },
+    {
+      "id": 29,
+      "name": "Bichon Frise",
+      "type": 1
+    },
+    {
+      "id": 30,
+      "name": "Black and Tan Coonhound",
+      "type": 1
+    },
+    {
+      "id": 31,
+      "name": "Black Labrador Retriever",
+      "type": 1
+    },
+    {
+      "id": 32,
+      "name": "Black Mouth Cur",
+      "type": 1
+    },
+    {
+      "id": 33,
+      "name": "Black Russian Terrier",
+      "type": 1
+    },
+    {
+      "id": 34,
+      "name": "Bloodhound",
+      "type": 1
+    },
+    {
+      "id": 35,
+      "name": "Blue Lacy",
+      "type": 1
+    },
+    {
+      "id": 36,
+      "name": "Bluetick Coonhound",
+      "type": 1
+    },
+    {
+      "id": 37,
+      "name": "Boerboel",
+      "type": 1
+    },
+    {
+      "id": 38,
+      "name": "Bolognese",
+      "type": 1
+    },
+    {
+      "id": 39,
+      "name": "Border Collie",
+      "type": 1
+    },
+    {
+      "id": 40,
+      "name": "Border Terrier",
+      "type": 1
+    },
+    {
+      "id": 41,
+      "name": "Borzoi",
+      "type": 1
+    },
+    {
+      "id": 42,
+      "name": "Boston Terrier",
+      "type": 1
+    },
+    {
+      "id": 43,
+      "name": "Bouvier des Flanders",
+      "type": 1
+    },
+    {
+      "id": 44,
+      "name": "Boxer",
+      "type": 1
+    },
+    {
+      "id": 45,
+      "name": "Boykin Spaniel",
+      "type": 1
+    },
+    {
+      "id": 46,
+      "name": "Briard",
+      "type": 1
+    },
+    {
+      "id": 47,
+      "name": "Brittany Spaniel",
+      "type": 1
+    },
+    {
+      "id": 48,
+      "name": "Brussels Griffon",
+      "type": 1
+    },
+    {
+      "id": 49,
+      "name": "Bull Terrier",
+      "type": 1
+    },
+    {
+      "id": 50,
+      "name": "Bullmastiff",
+      "type": 1
+    },
+    {
+      "id": 51,
+      "name": "Cairn Terrier",
+      "type": 1
+    },
+    {
+      "id": 52,
+      "name": "Canaan Dog",
+      "type": 1
+    },
+    {
+      "id": 53,
+      "name": "Cane Corso Mastiff",
+      "type": 1
+    },
+    {
+      "id": 54,
+      "name": "Carolina Dog",
+      "type": 1
+    },
+    {
+      "id": 55,
+      "name": "Catahoula Leopard Dog",
+      "type": 1
+    },
+    {
+      "id": 56,
+      "name": "Cattle Dog",
+      "type": 1
+    },
+    {
+      "id": 57,
+      "name": "Caucasian Sheepdog (Caucasian Ovtcharka)",
+      "type": 1
+    },
+    {
+      "id": 58,
+      "name": "Cavalier King Charles Spaniel",
+      "type": 1
+    },
+    {
+      "id": 59,
+      "name": "Chesapeake Bay Retriever",
+      "type": 1
+    },
+    {
+      "id": 60,
+      "name": "Chihuahua",
+      "type": 1
+    },
+    {
+      "id": 61,
+      "name": "Chinese Crested Dog",
+      "type": 1
+    },
+    {
+      "id": 62,
+      "name": "Chinese Foo Dog",
+      "type": 1
+    },
+    {
+      "id": 63,
+      "name": "Chinook",
+      "type": 1
+    },
+    {
+      "id": 64,
+      "name": "Chocolate Labrador Retriever",
+      "type": 1
+    },
+    {
+      "id": 65,
+      "name": "Chow Chow",
+      "type": 1
+    },
+    {
+      "id": 66,
+      "name": "Cirneco dell'Etna",
+      "type": 1
+    },
+    {
+      "id": 67,
+      "name": "Clumber Spaniel",
+      "type": 1
+    },
+    {
+      "id": 68,
+      "name": "Cockapoo",
+      "type": 1
+    },
+    {
+      "id": 69,
+      "name": "Cocker Spaniel",
+      "type": 1
+    },
+    {
+      "id": 70,
+      "name": "Collie",
+      "type": 1
+    },
+    {
+      "id": 71,
+      "name": "Coonhound",
+      "type": 1
+    },
+    {
+      "id": 72,
+      "name": "Corgi",
+      "type": 1
+    },
+    {
+      "id": 73,
+      "name": "Coton de Tulear",
+      "type": 1
+    },
+    {
+      "id": 74,
+      "name": "Curly-Coated Retriever",
+      "type": 1
+    },
+    {
+      "id": 75,
+      "name": "Dachshund",
+      "type": 1
+    },
+    {
+      "id": 76,
+      "name": "Dalmatian",
+      "type": 1
+    },
+    {
+      "id": 77,
+      "name": "Dandi Dinmont Terrier",
+      "type": 1
+    },
+    {
+      "id": 78,
+      "name": "Doberman Pinscher",
+      "type": 1
+    },
+    {
+      "id": 79,
+      "name": "Dogo Argentino",
+      "type": 1
+    },
+    {
+      "id": 80,
+      "name": "Dogue de Bordeaux",
+      "type": 1
+    },
+    {
+      "id": 81,
+      "name": "Dutch Shepherd",
+      "type": 1
+    },
+    {
+      "id": 82,
+      "name": "English Bulldog",
+      "type": 1
+    },
+    {
+      "id": 83,
+      "name": "English Cocker Spaniel",
+      "type": 1
+    },
+    {
+      "id": 84,
+      "name": "English Coonhound",
+      "type": 1
+    },
+    {
+      "id": 85,
+      "name": "English Pointer",
+      "type": 1
+    },
+    {
+      "id": 86,
+      "name": "English Setter",
+      "type": 1
+    },
+    {
+      "id": 87,
+      "name": "English Shepherd",
+      "type": 1
+    },
+    {
+      "id": 88,
+      "name": "English Springer Spaniel",
+      "type": 1
+    },
+    {
+      "id": 89,
+      "name": "English Toy Spaniel",
+      "type": 1
+    },
+    {
+      "id": 90,
+      "name": "Entlebucher",
+      "type": 1
+    },
+    {
+      "id": 91,
+      "name": "Eskimo Dog",
+      "type": 1
+    },
+    {
+      "id": 92,
+      "name": "Feist",
+      "type": 1
+    },
+    {
+      "id": 93,
+      "name": "Field Spaniel",
+      "type": 1
+    },
+    {
+      "id": 94,
+      "name": "Fila Brasileiro",
+      "type": 1
+    },
+    {
+      "id": 95,
+      "name": "Finnish Lapphund",
+      "type": 1
+    },
+    {
+      "id": 96,
+      "name": "Finnish Spitz",
+      "type": 1
+    },
+    {
+      "id": 97,
+      "name": "Flat-coated Retriever",
+      "type": 1
+    },
+    {
+      "id": 98,
+      "name": "Fox Terrier",
+      "type": 1
+    },
+    {
+      "id": 99,
+      "name": "Foxhound",
+      "type": 1
+    },
+    {
+      "id": 100,
+      "name": "French Bulldog",
+      "type": 1
+    },
+    {
+      "id": 101,
+      "name": "Galgo Spanish Greyhound",
+      "type": 1
+    },
+    {
+      "id": 102,
+      "name": "German Pinscher",
+      "type": 1
+    },
+    {
+      "id": 103,
+      "name": "German Shepherd Dog",
+      "type": 1
+    },
+    {
+      "id": 104,
+      "name": "German Shorthaired Pointer",
+      "type": 1
+    },
+    {
+      "id": 105,
+      "name": "German Spitz",
+      "type": 1
+    },
+    {
+      "id": 106,
+      "name": "German Wirehaired Pointer",
+      "type": 1
+    },
+    {
+      "id": 107,
+      "name": "Giant Schnauzer",
+      "type": 1
+    },
+    {
+      "id": 108,
+      "name": "Glen of Imaal Terrier",
+      "type": 1
+    },
+    {
+      "id": 109,
+      "name": "Golden Retriever",
+      "type": 1
+    },
+    {
+      "id": 110,
+      "name": "Gordon Setter",
+      "type": 1
+    },
+    {
+      "id": 111,
+      "name": "Great Dane",
+      "type": 1
+    },
+    {
+      "id": 112,
+      "name": "Great Pyrenees",
+      "type": 1
+    },
+    {
+      "id": 113,
+      "name": "Greater Swiss Mountain Dog",
+      "type": 1
+    },
+    {
+      "id": 114,
+      "name": "Greyhound",
+      "type": 1
+    },
+    {
+      "id": 115,
+      "name": "Harrier",
+      "type": 1
+    },
+    {
+      "id": 116,
+      "name": "Havanese",
+      "type": 1
+    },
+    {
+      "id": 117,
+      "name": "Hound",
+      "type": 1
+    },
+    {
+      "id": 118,
+      "name": "Hovawart",
+      "type": 1
+    },
+    {
+      "id": 119,
+      "name": "Husky",
+      "type": 1
+    },
+    {
+      "id": 120,
+      "name": "Ibizan Hound",
+      "type": 1
+    },
+    {
+      "id": 121,
+      "name": "Illyrian Sheepdog",
+      "type": 1
+    },
+    {
+      "id": 122,
+      "name": "Irish Setter",
+      "type": 1
+    },
+    {
+      "id": 123,
+      "name": "Irish Terrier",
+      "type": 1
+    },
+    {
+      "id": 124,
+      "name": "Irish Water Spaniel",
+      "type": 1
+    },
+    {
+      "id": 125,
+      "name": "Irish Wolfhound",
+      "type": 1
+    },
+    {
+      "id": 126,
+      "name": "Italian Greyhound",
+      "type": 1
+    },
+    {
+      "id": 127,
+      "name": "Italian Spinone",
+      "type": 1
+    },
+    {
+      "id": 128,
+      "name": "Jack Russell Terrier",
+      "type": 1
+    },
+    {
+      "id": 129,
+      "name": "Jack Russell Terrier (Parson Russell Terrier)",
+      "type": 1
+    },
+    {
+      "id": 130,
+      "name": "Japanese Chin",
+      "type": 1
+    },
+    {
+      "id": 131,
+      "name": "Jindo",
+      "type": 1
+    },
+    {
+      "id": 132,
+      "name": "Kai Dog",
+      "type": 1
+    },
+    {
+      "id": 133,
+      "name": "Karelian Bear Dog",
+      "type": 1
+    },
+    {
+      "id": 134,
+      "name": "Keeshond",
+      "type": 1
+    },
+    {
+      "id": 135,
+      "name": "Kerry Blue Terrier",
+      "type": 1
+    },
+    {
+      "id": 136,
+      "name": "Kishu",
+      "type": 1
+    },
+    {
+      "id": 137,
+      "name": "Klee Kai",
+      "type": 1
+    },
+    {
+      "id": 138,
+      "name": "Komondor",
+      "type": 1
+    },
+    {
+      "id": 139,
+      "name": "Kuvasz",
+      "type": 1
+    },
+    {
+      "id": 140,
+      "name": "Kyi Leo",
+      "type": 1
+    },
+    {
+      "id": 141,
+      "name": "Labrador Retriever",
+      "type": 1
+    },
+    {
+      "id": 142,
+      "name": "Lakeland Terrier",
+      "type": 1
+    },
+    {
+      "id": 143,
+      "name": "Lancashire Heeler",
+      "type": 1
+    },
+    {
+      "id": 144,
+      "name": "Leonberger",
+      "type": 1
+    },
+    {
+      "id": 145,
+      "name": "Lhasa Apso",
+      "type": 1
+    },
+    {
+      "id": 146,
+      "name": "Lowchen",
+      "type": 1
+    },
+    {
+      "id": 147,
+      "name": "Maltese",
+      "type": 1
+    },
+    {
+      "id": 148,
+      "name": "Manchester Terrier",
+      "type": 1
+    },
+    {
+      "id": 149,
+      "name": "Maremma Sheepdog",
+      "type": 1
+    },
+    {
+      "id": 150,
+      "name": "Mastiff",
+      "type": 1
+    },
+    {
+      "id": 151,
+      "name": "McNab",
+      "type": 1
+    },
+    {
+      "id": 152,
+      "name": "Miniature Pinscher",
+      "type": 1
+    },
+    {
+      "id": 153,
+      "name": "Mountain Cur",
+      "type": 1
+    },
+    {
+      "id": 154,
+      "name": "Mountain Dog",
+      "type": 1
+    },
+    {
+      "id": 155,
+      "name": "Munsterlander",
+      "type": 1
+    },
+    {
+      "id": 156,
+      "name": "Neapolitan Mastiff",
+      "type": 1
+    },
+    {
+      "id": 157,
+      "name": "New Guinea Singing Dog",
+      "type": 1
+    },
+    {
+      "id": 158,
+      "name": "Newfoundland Dog",
+      "type": 1
+    },
+    {
+      "id": 159,
+      "name": "Norfolk Terrier",
+      "type": 1
+    },
+    {
+      "id": 160,
+      "name": "Norwegian Buhund",
+      "type": 1
+    },
+    {
+      "id": 161,
+      "name": "Norwegian Elkhound",
+      "type": 1
+    },
+    {
+      "id": 162,
+      "name": "Norwegian Lundehund",
+      "type": 1
+    },
+    {
+      "id": 163,
+      "name": "Norwich Terrier",
+      "type": 1
+    },
+    {
+      "id": 164,
+      "name": "Nova Scotia Duck-Tolling Retriever",
+      "type": 1
+    },
+    {
+      "id": 165,
+      "name": "Old English Sheepdog",
+      "type": 1
+    },
+    {
+      "id": 166,
+      "name": "Otterhound",
+      "type": 1
+    },
+    {
+      "id": 167,
+      "name": "Papillon",
+      "type": 1
+    },
+    {
+      "id": 168,
+      "name": "Patterdale Terrier (Fell Terrier)",
+      "type": 1
+    },
+    {
+      "id": 169,
+      "name": "Pekingese",
+      "type": 1
+    },
+    {
+      "id": 170,
+      "name": "Peruvian Inca Orchid",
+      "type": 1
+    },
+    {
+      "id": 171,
+      "name": "Petit Basset Griffon Vendeen",
+      "type": 1
+    },
+    {
+      "id": 172,
+      "name": "Pharaoh Hound",
+      "type": 1
+    },
+    {
+      "id": 173,
+      "name": "Pit Bull Terrier",
+      "type": 1
+    },
+    {
+      "id": 174,
+      "name": "Plott Hound",
+      "type": 1
+    },
+    {
+      "id": 175,
+      "name": "Podengo Portugueso",
+      "type": 1
+    },
+    {
+      "id": 176,
+      "name": "Pointer",
+      "type": 1
+    },
+    {
+      "id": 177,
+      "name": "Polish Lowland Sheepdog",
+      "type": 1
+    },
+    {
+      "id": 178,
+      "name": "Pomeranian",
+      "type": 1
+    },
+    {
+      "id": 179,
+      "name": "Poodle",
+      "type": 1
+    },
+    {
+      "id": 180,
+      "name": "Portuguese Water Dog",
+      "type": 1
+    },
+    {
+      "id": 181,
+      "name": "Presa Canario",
+      "type": 1
+    },
+    {
+      "id": 182,
+      "name": "Pug",
+      "type": 1
+    },
+    {
+      "id": 183,
+      "name": "Puli",
+      "type": 1
+    },
+    {
+      "id": 184,
+      "name": "Pumi",
+      "type": 1
+    },
+    {
+      "id": 185,
+      "name": "Rat Terrier",
+      "type": 1
+    },
+    {
+      "id": 186,
+      "name": "Redbone Coonhound",
+      "type": 1
+    },
+    {
+      "id": 187,
+      "name": "Retriever",
+      "type": 1
+    },
+    {
+      "id": 188,
+      "name": "Rhodesian Ridgeback",
+      "type": 1
+    },
+    {
+      "id": 189,
+      "name": "Rottweiler",
+      "type": 1
+    },
+    {
+      "id": 190,
+      "name": "Saint Bernard",
+      "type": 1
+    },
+    {
+      "id": 191,
+      "name": "Saluki",
+      "type": 1
+    },
+    {
+      "id": 192,
+      "name": "Samoyed",
+      "type": 1
+    },
+    {
+      "id": 193,
+      "name": "Sarplaninac",
+      "type": 1
+    },
+    {
+      "id": 194,
+      "name": "Schipperke",
+      "type": 1
+    },
+    {
+      "id": 195,
+      "name": "Schnauzer",
+      "type": 1
+    },
+    {
+      "id": 196,
+      "name": "Scottish Deerhound",
+      "type": 1
+    },
+    {
+      "id": 197,
+      "name": "Scottish Terrier Scottie",
+      "type": 1
+    },
+    {
+      "id": 198,
+      "name": "Sealyham Terrier",
+      "type": 1
+    },
+    {
+      "id": 199,
+      "name": "Setter",
+      "type": 1
+    },
+    {
+      "id": 200,
+      "name": "Shar Pei",
+      "type": 1
+    },
+    {
+      "id": 201,
+      "name": "Sheep Dog",
+      "type": 1
+    },
+    {
+      "id": 202,
+      "name": "Shepherd",
+      "type": 1
+    },
+    {
+      "id": 203,
+      "name": "Shetland Sheepdog Sheltie",
+      "type": 1
+    },
+    {
+      "id": 204,
+      "name": "Shiba Inu",
+      "type": 1
+    },
+    {
+      "id": 205,
+      "name": "Shih Tzu",
+      "type": 1
+    },
+    {
+      "id": 206,
+      "name": "Siberian Husky",
+      "type": 1
+    },
+    {
+      "id": 207,
+      "name": "Silky Terrier",
+      "type": 1
+    },
+    {
+      "id": 208,
+      "name": "Skye Terrier",
+      "type": 1
+    },
+    {
+      "id": 209,
+      "name": "Sloughi",
+      "type": 1
+    },
+    {
+      "id": 210,
+      "name": "Smooth Fox Terrier",
+      "type": 1
+    },
+    {
+      "id": 211,
+      "name": "South Russian Ovtcharka",
+      "type": 1
+    },
+    {
+      "id": 212,
+      "name": "Spaniel",
+      "type": 1
+    },
+    {
+      "id": 213,
+      "name": "Spitz",
+      "type": 1
+    },
+    {
+      "id": 214,
+      "name": "Staffordshire Bull Terrier",
+      "type": 1
+    },
+    {
+      "id": 215,
+      "name": "Standard Poodle",
+      "type": 1
+    },
+    {
+      "id": 216,
+      "name": "Sussex Spaniel",
+      "type": 1
+    },
+    {
+      "id": 217,
+      "name": "Swedish Vallhund",
+      "type": 1
+    },
+    {
+      "id": 218,
+      "name": "Terrier",
+      "type": 1
+    },
+    {
+      "id": 219,
+      "name": "Thai Ridgeback",
+      "type": 1
+    },
+    {
+      "id": 220,
+      "name": "Tibetan Mastiff",
+      "type": 1
+    },
+    {
+      "id": 221,
+      "name": "Tibetan Spaniel",
+      "type": 1
+    },
+    {
+      "id": 222,
+      "name": "Tibetan Terrier",
+      "type": 1
+    },
+    {
+      "id": 223,
+      "name": "Tosa Inu",
+      "type": 1
+    },
+    {
+      "id": 224,
+      "name": "Toy Fox Terrier",
+      "type": 1
+    },
+    {
+      "id": 225,
+      "name": "Treeing Walker Coonhound",
+      "type": 1
+    },
+    {
+      "id": 226,
+      "name": "Vizsla",
+      "type": 1
+    },
+    {
+      "id": 227,
+      "name": "Weimaraner",
+      "type": 1
+    },
+    {
+      "id": 228,
+      "name": "Welsh Corgi",
+      "type": 1
+    },
+    {
+      "id": 229,
+      "name": "Welsh Springer Spaniel",
+      "type": 1
+    },
+    {
+      "id": 230,
+      "name": "Welsh Terrier",
+      "type": 1
+    },
+    {
+      "id": 231,
+      "name": "West Highland White Terrier Westie",
+      "type": 1
+    },
+    {
+      "id": 232,
+      "name": "Wheaten Terrier",
+      "type": 1
+    },
+    {
+      "id": 233,
+      "name": "Whippet",
+      "type": 1
+    },
+    {
+      "id": 234,
+      "name": "White German Shepherd",
+      "type": 1
+    },
+    {
+      "id": 235,
+      "name": "Wire Fox Terrier",
+      "type": 1
+    },
+    {
+      "id": 236,
+      "name": "Wire-haired Pointing Griffon",
+      "type": 1
+    },
+    {
+      "id": 237,
+      "name": "Wirehaired Terrier",
+      "type": 1
+    },
+    {
+      "id": 238,
+      "name": "Xoloitzcuintle/Mexican Hairless",
+      "type": 1
+    },
+    {
+      "id": 239,
+      "name": "Yellow Labrador Retriever",
+      "type": 1
+    },
+    {
+      "id": 240,
+      "name": "Yorkshire Terrier Yorkie",
+      "type": 1
+    },
+    {
+      "id": 307,
+      "name": "Mixed Breed",
+      "type": 1
+    }
+  ];
 
   const colors = [
+    { id: 0, name: "aucune couleur" }, // pour Color2
     { id: 1, name: "Black" },
     { id: 2, name: "Brown" },
     { id: 3, name: "Golden" },
@@ -1267,33 +1579,34 @@ const Formulaire = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "description") {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    } else if (name === "Breed1" || name === "Breed2") {
-      const selectedBreed = breedOptions.find(
-        (breed) => breed.BreedName === value
-      );
+    if (name === "PureBreed") {
       setFormData((prev) => ({
         ...prev,
-        [name]: selectedBreed ? parseInt(selectedBreed.BreedID) : 0,
+        [name]: Number(value),
+        Breed2: value === "1" ? 0 : prev.Breed2,
+      }));
+    } else if (name === "Breed1") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        Breed2: prev.Breed2 === Number(value) ? 0 : prev.Breed2,
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Number(value),
+      }));
     }
   };
 
-  const handlePureBreedChange = (e) => {
-    const value = parseInt(e.target.value);
-    setFormData((prev) => ({
-      ...prev,
-      PureBreed: value,
-      Breed2: value === 1 ? 0 : prev.Breed2,
-    }));
-  };
-
   const handleSubmit = async () => {
+    // Vérification que tous les champs sont remplis
     for (let key in formData) {
-      if (formData[key] === "") {
+      if (
+        formData[key] === "" ||
+        formData[key] === null ||
+        formData[key] === undefined
+      ) {
         alert(`Le champ ${key} est vide, veuillez le remplir.`);
         return;
       }
@@ -1311,317 +1624,341 @@ const Formulaire = () => {
         body: JSON.stringify(formData),
       });
 
+      if (!response.ok) {
+        throw new Error("Erreur lors de la requête API");
+      }
+
       const data = await response.json();
       setApiResponse(data);
-      document.getElementById("my_modal_1").showModal();
+      console.log(data);
+
+      // Afficher la modale après la réponse
+      const modal = document.getElementById("my_modal_3").showModal();
     } catch (error) {
+      console.error(error);
       setApiResponse({ error: "Une erreur est survenue lors de l'envoi." });
     } finally {
       setLoading(false);
     }
   };
 
+  const breedOptions =
+    formData.Type === 1 ? race_dog : formData.Type === 2 ? cat : [];
+
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex flex-col w-5/6   p-6 rounded-3xl border border-primary">
-        <div className="flex w-full">
-          <div className="flex flex-col space-y-4 w-1/3">
-            <label className=" badge badge-soft badge-neutral">
-              Age de l'animal
-            </label>
-            <input
-              type="number"
-              name="Age"
-              placeholder="en mois"
-              className="input  input-primary input-bordered w-full"
-              onChange={handleChange}
-            />
-            <label className=" badge badge-soft badge-neutral">
-              Genre de lanimale
-            </label>
+    <div className="flex justify-center  h-screen w-full">
+      <div className="w-2/3 border border-primary rounded-3xl h-fit p-5">
+        <div className="gap-4 grid grid-cols-4 w-full ">
+          {/* Type */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Type </div>
             <select
-              name="Gender"
-              className="select select-primary select-bordered w-full"
+              className="select select-primary"
+              name="Type"
+              value={formData.Type}
               onChange={handleChange}
             >
-              <option value="">Sélectionner</option>
-              <option value="1">Male</option>
-              <option value="2">Female</option>
+              <option value="0">Sélectionner</option>
+              <option value="1">Chien</option>
+              <option value="2">Chat</option>
             </select>
-            <label className=" badge badge-soft badge-neutral">
-              Description de l'animal
-            </label>
+          </div>
+
+          {/* Age */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Age </div>
             <input
-              type="text"
-              name="description"
-              className="input  input-primary input-bordered w-full"
-              onChange={handleChange}
-            />
-            <label className=" badge badge-soft badge-neutral">
-              Nombre de photos
-            </label>
-            <input
+              className="input input-primary"
               type="number"
-              name="PhotoAmt"
-              className="input  input-primary input-bordered w-full"
+              name="Age"
+              value={formData.Age}
               onChange={handleChange}
-            />
-            <label className=" badge badge-soft badge-neutral">
-              Montant des frais d'adoption
-            </label>
-            <input
-              type="number"
-              name="Fee"
-              className="input  input-primary input-bordered w-full"
-              onChange={handleChange}
+              min="0"
             />
           </div>
 
-          <div className="flex  flex-col space-y-4 ml-4 w-2/3 ">
-            <label className=" badge badge-soft badge-neutral">
-              {" "}
-              est ce une pure race ?
-            </label>
+          {/* Health */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">État de santé </div>
             <select
-              name="PureBreed"
-              className="select select-primary select-bordered w-full"
-              onChange={handlePureBreedChange}
+              className="select select-primary"
+              name="Health"
+              value={formData.Health}
+              onChange={handleChange}
             >
-              <option value="">Sélectionner</option>
+              <option value="0">Non précisé</option>
+              <option value="1">En bonne santé</option>
+              <option value="2">Blessure légère</option>
+              <option value="3">Blessure grave</option>
+            </select>
+          </div>
+
+          {/* PureBreed */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Pure race ?</div>
+            <select
+              className="select select-primary"
+              name="PureBreed"
+              value={formData.PureBreed}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
               <option value="1">Oui</option>
               <option value="2">Non</option>
             </select>
+          </div>
 
-            <div className="flex space-x-4">
-              <div className="w-1/2">
-                <label className="mb-4 badge badge-soft badge-neutral">
-                  Première race
-                </label>
-                <select
-                  name="Breed1"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionnez une race</option>
-                  {breedOptions.map((breed) => (
-                    <option key={breed.BreedID} value={breed.BreedName}>
-                      {breed.BreedName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* Breed1 */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Race principale </div>
+            <select
+              className="select select-primary"
+              name="Breed1"
+              value={formData.Breed1}
+              onChange={handleChange}
+              disabled={formData.Type === 0}
+            >
+              <option value="0">Sélectionner</option>
+              {breedOptions.map((breed) => (
+                <option key={breed.id} value={breed.id}>
+                  {breed.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div className="w-1/2">
-                <label className="mb-4 badge badge-soft badge-neutral">
-                  Deuxième race
-                </label>
-                <select
-                  name="Breed2"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                  disabled={formData.PureBreed === 1}
-                  value={
-                    formData.PureBreed === 1
-                      ? ""
-                      : breedOptions.find(
-                          (b) => b.BreedID === formData.Breed2?.toString()
-                        )?.BreedName || ""
-                  }
-                >
-                  <option value="">Sélectionnez une race</option>
-                  {breedOptions.map((breed) => (
-                    <option key={breed.BreedID} value={breed.BreedName}>
-                      {breed.BreedName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          {/* Breed2 */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Race secondaire </div>
+            <select
+              className="select select-primary"
+              name="Breed2"
+              value={formData.Breed2}
+              onChange={handleChange}
+              disabled={formData.Type === 0 || formData.PureBreed === 1}
+            >
+              <option value="0">Sélectionner</option>
+              {breedOptions
+                .filter((breed) => breed.id !== formData.Breed1)
+                .map((breed) => (
+                  <option key={breed.id} value={breed.id}>
+                    {breed.name}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-            <div className="flex space-x-4">
-              <div className="w-1/3">
-                <label className=" mb-4 badge badge-soft badge-neutral">
-                  Vacciné
-                </label>
-                <select
-                  name="Vaccinated"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="1">Oui</option>
-                  <option value="2">Non</option>
-                </select>
-              </div>
+          {/* Color1 */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Couleur principale </div>
+            <select
+              className="select select-primary"
+              name="Color1"
+              value={formData.Color1}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              {colors.map((color) => (
+                <option key={color.id} value={color.id}>
+                  {color.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div className="w-1/3">
-                <label className="mb-4 badge badge-soft badge-neutral">
-                  Déparasité
-                </label>
-                <select
-                  name="Dewormed"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="1">Oui</option>
-                  <option value="2">Non</option>
-                </select>
-              </div>
+          {/* Color2 */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Couleur secondaire </div>
+            <select
+              className="select select-primary"
+              name="Color2"
+              value={formData.Color2}
+              onChange={handleChange}
+            >
+              <option value="0">aucune couleur</option>
+              {colors
+                .filter(
+                  (color) => color.id !== 0 && color.id !== formData.Color1
+                )
+                .map((color) => (
+                  <option key={color.id} value={color.id}>
+                    {color.name}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-              <div className="w-1/3">
-                <label className=" mb-4 badge badge-soft badge-neutral">
-                  Stérilisé
-                </label>
-                <select
-                  name="Sterilized"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="1">Oui</option>
-                  <option value="2">Non</option>
-                </select>
-              </div>
-            </div>
+          {/* MaturitySize */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Taille adulte </div>
+            <select
+              className="select select-primary"
+              name="MaturitySize"
+              value={formData.MaturitySize}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              <option value="1">Small</option>
+              <option value="2">Medium</option>
+              <option value="3">Large</option>
+            </select>
+          </div>
 
-            <div className="flex space-x-4">
-              <div className=" w-1/2">
-                <label className="badge badge-soft badge-neutral mb-4">
-                  Couleur 1
-                </label>
-                <select
-                  name="Color1"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  {colors.map((color) => (
-                    <option key={color.id} value={color.id}>
-                      {color.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* FurLength */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Longueur des poils </div>
+            <select
+              className="select select-primary"
+              name="FurLength"
+              value={formData.FurLength}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              <option value="1">Short</option>
+              <option value="2">Medium</option>
+              <option value="3">Long</option>
+            </select>
+          </div>
 
-              <div className="w-1/2">
-                <label className="badge badge-soft badge-neutral mb-4">
-                  Couleur 2
-                </label>
-                <select
-                  name="Color2"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="0">Pas de deuxième couleur</option>
-                  {colors.map((color) => (
-                    <option key={color.id} value={color.id}>
-                      {color.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          {/* Vaccinated */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Vacciné </div>
+            <select
+              className="select select-primary"
+              name="Vaccinated"
+              value={formData.Vaccinated}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              <option value="1">Oui</option>
+              <option value="2">Non</option>
+            </select>
+          </div>
 
-            <div className="flex space-x-4">
-              <div className="w-1/2">
-                <label className="mb-4  badge badge-soft badge-neutral">
-                  Taille de maturité{" "}
-                </label>
-                <select
-                  name="MaturitySize"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="1">Small</option>
-                  <option value="2">Medium</option>
-                  <option value="3">Large</option>
-                </select>
-              </div>
+          {/* Dewormed */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Vermifugé </div>
+            <select
+              className="select select-primary"
+              name="Dewormed"
+              value={formData.Dewormed}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              <option value="1">Oui</option>
+              <option value="2">Non</option>
+            </select>
+          </div>
 
-              <div className="w-1/2">
-                <label className=" mb-4 badge badge-soft badge-neutral">
-                  Longueur de fourrure
-                </label>
-                <select
-                  name="FurLength"
-                  className="select select-primary select-bordered w-full"
-                  onChange={handleChange}
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="1">Short</option>
-                  <option value="2">Medium</option>
-                  <option value="3">Long</option>
-                </select>
-              </div>
-            </div>
+          {/* Sterilized */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Stérilisé </div>
+            <select
+              className="select select-primary"
+              name="Sterilized"
+              value={formData.Sterilized}
+              onChange={handleChange}
+            >
+              <option value="0">Sélectionner</option>
+              <option value="1">Oui</option>
+              <option value="2">Non</option>
+            </select>
+          </div>
+
+          {/* PhotoAmt */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Nombre de photos </div>
+            <input
+              className="input input-primary"
+              type="number"
+              name="PhotoAmt"
+              value={formData.PhotoAmt}
+              onChange={handleChange}
+              min="0"
+            />
+          </div>
+
+          {/* PhotoAmt */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Nombre de video </div>
+            <input
+              className="input input-primary"
+              type="number"
+              name="VideoAmt"
+              value={formData.VideoAmt}
+              onChange={handleChange}
+              min="0"
+            />
+          </div>
+          {/* Fee */}
+          <div className="flex flex-col space-y-2">
+            <div className="badge  badge-soft badge-primary ">Frais d'adoption </div>
+            <input
+              className="input input-primary"
+              type="number"
+              name="Fee"
+              value={formData.Fee}
+              onChange={handleChange}
+              min="0"
+            />
           </div>
         </div>
 
-        <button
-          type="button"
-          className="btn btn-primary w-fit mt-4"
-          onClick={handleSubmit}
-        >
-          <Sparkles className="w-4 h-4 " />
-          {loading ? "..." : " Prédire la vitesse d'adoption"}
+        {/* Submit */}
+        <button onClick={handleSubmit} className="btn btn-primary w-fit mt-4">
+          <Sparkles strokeWidth={1} className="w-4 h-4 " />
+          Prédire la vitesse d'adoption
         </button>
+      </div>
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          {apiResponse && (
+            <div className="mt-6 p-4  rounded-lg flex items-center flex-col">
+              <div className="wiggle-animation">
+                <Sparkles strokeWidth={1} className="w-30 h-30 text-primary" />
+              </div>
 
-        <dialog id="my_modal_1" className="modal">
-          <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                ✕
-              </button>
-            </form>
-            {apiResponse && (
-              <div className="mt-6 p-4  rounded-lg flex items-center flex-col">
-                <div className="wiggle-animation">
-                  <Sparkles
-                    strokeWidth={1}
-                    className="w-30 h-30 text-primary"
-                  />
-                </div>
+              <div className="flex flex-col ">
+                <p className="text-lg font-bold text-center mb-4">
+                  {apiResponse.prediction === 0
+                    ? "Adoption prévue entre 1 et 30 jours"
+                    : "Adoption prévue entre 31 et 100 jours"}
+                </p>
 
-                <div className="flex flex-col ">
-                  <p className="text-lg font-bold text-center mb-4">
-                    {apiResponse.prediction === 0
-                      ? "Adoption prévue entre 1 et 30 jours"
-                      : "Adoption prévue entre 31 et 100 jours"}
-                  </p>
-
-                  <div className="w-full flex space-x-4 items-center">
-                    <div className="w-1/2 flex-col bg-base-200 p-5 rounded-3xl">
-                      <span className="text-sm ">
-                        Probabilité d'adoption rapide
-                      </span>
-                      <div className="stat-value">
-                        {`${(apiResponse.proba_rapide_adoption * 100).toFixed(
-                          1
-                        )}%`}
-                      </div>
+                <div className="w-full flex space-x-4 items-center">
+                  <div className="w-1/2 flex-col bg-base-200 p-5 rounded-3xl">
+                    <span className="text-sm ">
+                      Probabilité d'adoption rapide
+                    </span>
+                    <div className="stat-value">
+                      {`${(apiResponse.proba_rapide_adoption * 100).toFixed(
+                        1
+                      )}%`}
                     </div>
+                  </div>
 
-                    <div className="w-1/2 flex-col ml-4  bg-base-200  p-5 rounded-3xl">
-                      <span className="text-sm ">
-                        Probabilité d'adoption lente
-                      </span>
-                      <div className="stat-value">
-                        {`${(apiResponse.proba_lente_adoption * 100).toFixed(
-                          1
-                        )}%`}
-                      </div>
+                  <div className="w-1/2 flex-col ml-4  bg-base-200  p-5 rounded-3xl">
+                    <span className="text-sm ">
+                      Probabilité d'adoption lente
+                    </span>
+                    <div className="stat-value">
+                      {`${(apiResponse.proba_lente_adoption * 100).toFixed(
+                        1
+                      )}%`}
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-        </dialog>
-      </div>
+            </div>
+          )}
+        </div>
+      </dialog>
     </div>
   );
 };

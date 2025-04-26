@@ -636,62 +636,55 @@ def get_furlength_dewormed():
 
 
 #IA
+import logging
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import nltk
 import pandas as pd
+import numpy as np
 import joblib
 import os
 
-
-
-# Télécharger le lexique de VADER (si non téléchargé)
-nltk.download('vader_lexicon')
+# Configuration du logging
+logging.basicConfig(level=logging.DEBUG)  # Définit le niveau de log sur DEBUG pour avoir plus de détails
+logger = logging.getLogger(__name__)
 
 # Charger le modèle et le scaler
-MODEL_PATH = os.path.join("data", "model.pkl")
-SCALER_PATH = os.path.join("data", "scaler.pkl")  # Facultatif si tu as un scaler
+MODEL_PATH = os.path.join("data", "model_v.pkl")
+SCALER_PATH = os.path.join("data", "scaler_v.pkl")
 
 model = joblib.load(MODEL_PATH)
-# scaler = joblib.load(SCALER_PATH)  # Décommente si tu utilises un scaler
-
-# Initialiser VADER
-analyzer = SentimentIntensityAnalyzer()
+scaler = joblib.load(SCALER_PATH)
 
 # Modèle de données en entrée
 class PetFeatures(BaseModel):
+    Type: int
     Age: int
     Breed1: int
     Breed2: int
     Color1: int
     Color2: int
-    Dewormed: int
-    Fee: int
-    FurLength: int
-    Gender: int
     MaturitySize: int
-    PhotoAmt: int
-    PureBreed: int
-    Sterilized: int
+    FurLength: int
     Vaccinated: int
-    description: str
+    Dewormed: int
+    Sterilized: int
+    PhotoAmt: int
+    Fee: int
+    PureBreed: int
+    Health: int
+    VideoAmt : int
 
-# Endpoint de prédiction
 @app.post("/predict")
 def predict_pet_adoption(pet: PetFeatures):
     try:
-        # Étape 1 : Analyse de sentiment
-        sentiment = analyzer.polarity_scores(pet.description)
-
-        # Étape 2 : Préparation des données
+        # Préparer les features
         input_data = pd.DataFrame([{
+            'Type': pet.Type,
             'Age': pet.Age,
-            'PureBreed': pet.PureBreed,
-            'State': 41401,  # Valeur fixe
-            'Gender': pet.Gender,
-            'Breed1': pet.Breed1,
-            'Breed2': pet.Breed2,
+            'breed1_chat': pet.Breed1 if pet.Type == 2 else -1000,
+            'breed1_chien': pet.Breed1 if pet.Type == 1 else -1000,
+            'breed2_chat': pet.Breed2 if pet.Type == 2 else -1000,
+            'breed2_chien': pet.Breed2 if pet.Type == 1 else -1000,
             'Color1': pet.Color1,
             'Color2': pet.Color2,
             'MaturitySize': pet.MaturitySize,
@@ -701,29 +694,32 @@ def predict_pet_adoption(pet: PetFeatures):
             'Sterilized': pet.Sterilized,
             'PhotoAmt': pet.PhotoAmt,
             'Fee': pet.Fee,
-            'pos': round(sentiment['pos'], 3),
-            'neg': round(sentiment['neg'], 3),
-            'neu': round(sentiment['neu'], 3)
+            'PureBreed': pet.PureBreed,
+            'Health': pet.Health,
+            'VideoAmt': pet.VideoAmt
         }])
+        
+        # Réorganiser les colonnes selon l'ordre utilisé pour l'entraînement
+        input_data = input_data[['Type', 'Age', 'breed1_chat', 'breed1_chien', 'breed2_chat', 'breed2_chien',
+                                'Color1', 'Color2', 'MaturitySize', 'FurLength', 'Vaccinated', 'Dewormed',
+                                'Sterilized', 'PhotoAmt', 'Fee', 'PureBreed', 'VideoAmt', 'Health']]
 
-        # Étape 3 : Transformation (si scaler utilisé)
-        # input_data = scaler.transform(input_data)
 
-        # Étape 4 : Prédiction
-        prediction = model.predict(input_data)[0]
-        probas = model.predict_proba(input_data)[0]
+        # Appliquer le scaler
+        input_scaled = scaler.transform(input_data)
+        
 
-        # Étape 5 : Réponse
+
+        # Prédiction
+        prediction = model.predict(input_scaled)[0]
+        probas = model.predict_proba(input_scaled)[0]
+
         return {
             "prediction": int(prediction),
             "proba_rapide_adoption": round(probas[0], 3),
             "proba_lente_adoption": round(probas[1], 3),
-            "sentiment": {
-                "pos": round(sentiment['pos'], 3),
-                "neg": round(sentiment['neg'], 3),
-                "neu": round(sentiment['neu'], 3)
-            }
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Erreur lors de la prédiction: {str(e)}")  # Log l'erreur
+        raise HTTPException(status_code=500, detail="Une erreur est survenue lors de la prédiction.")
