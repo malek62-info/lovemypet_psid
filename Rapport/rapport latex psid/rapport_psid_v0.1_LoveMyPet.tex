@@ -476,157 +476,345 @@ Cette analyse a permis de confirmer la cohérence globale des données après ne
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{boxplot_age_outliers.png}
-    \caption{Boxplot illustrant les valeurs aberrantes de la variable Age}
+    \caption{Boxplot illustrant les valeurs aberrantes}
     \label{fig:outliers_age}
 \end{figure}
 
-
-
-
-
-
 \subsection{Premier test : Régression logistique multiclasse}
 
-Nous avons testé notre modèle à l’aide d’une régression logistique multiclasse afin de vérifier la cohérence des données et d’évaluer les performances de base. L’objectif était notamment de comparer les résultats obtenus à ceux du concours Kaggle, où une précision de 0{,}45 avait été atteinte.
+Pour évaluer la cohérence de nos données et obtenir une première estimation des performances, nous avons entraîné un modèle de \textbf{régression logistique multiclasse}. Cette étape visait également à situer nos résultats par rapport au concours Kaggle, où une précision de \textbf{0{,}45} avait été atteinte.
 
-Pour l’entraînement, nous avons utilisé les variables suivantes comme descripteurs : \texttt{Type}, \texttt{Age}, \texttt{Breed1}, \texttt{Breed2}, \texttt{Gender}, \texttt{Color1}, \texttt{Color2}, \texttt{Color3}, \texttt{MaturitySize}, \texttt{FurLength}, \texttt{Vaccinated}, \texttt{Dewormed}, \texttt{Sterilized}, \texttt{Health}, \texttt{Fee}, \texttt{VideoAmt} et \texttt{PhotoAmt}. La variable cible que nous cherchons à prédire est \texttt{AdoptionSpeed}, qui prend des valeurs entières de 0 à 4.
+L'entraînement a été réalisé en utilisant les variables suivantes comme descripteurs : \texttt{Type}, \texttt{Age}, \texttt{Breed1}, \texttt{Breed2}, \texttt{Gender}, \texttt{Color1}, \texttt{Color2}, \texttt{Color3}, \texttt{MaturitySize}, \texttt{FurLength}, \texttt{Vaccinated}, \texttt{Dewormed}, \texttt{Sterilized}, \texttt{Health}, \texttt{Fee}, \texttt{VideoAmt} et \texttt{PhotoAmt}. La variable cible à prédire est \texttt{AdoptionSpeed}, prenant des valeurs entières de 0 à 4.
 
-Le modèle a généré un \textbf{MSE de 2{,}2317}, avec un \textbf{biais de 1{,}9788} et une \textbf{variance de 0{,}2529}. La précision moyenne est d’environ \textbf{0{,}2699}. Ces résultats indiquent clairement un problème de \textbf{sous-apprentissage} : le biais est très élevé, ce qui suggère que le modèle n’arrive pas à capter la structure des données, et la précision est globalement très faible.
+\begin{table}[ht]
+
+    \centering
+
+    \begin{tabular}{|c|c|}
+
+        \hline
+
+        \textbf{Métrique}        & \textbf{Valeur}                   \\ \hline
+
+        MSE (Mean Squared Error) & 2,2317                            \\ \hline
+
+        Biais                    & 1,9788                            \\ \hline
+
+        Variance                 & 0,2529                            \\ \hline
+
+        Précision moyenne        & 0,2699                            \\ \hline
+
+        Problème identifié       & Sous-apprentissage (Underfitting) \\ \hline
+    \end{tabular}
+
+    \caption{Résumé des performances du modèle de régression logistique}
+
+\end{table}
+
+Le modèle présente un \textbf{MSE de 2{,}2317}, un \textbf{biais élevé de 1{,}9788} et une \textbf{variance relativement faible de 0{,}2529}, indiquant un problème de \textbf{sous-apprentissage} (\textit{underfitting}). La précision moyenne s'élève à environ \textbf{26{,}99\%}, soulignant la difficulté du modèle à capturer les relations présentes dans les données.
 
 \begin{figure}[H]
+
     \centering
+
     \includegraphics[width=0.75\textwidth]{matrice_confusion_logreg.png}
+
     \caption{Matrice de confusion obtenue avec la régression logistique}
+
     \label{fig:confusion_logreg}
+
 \end{figure}
 
-\begin{figure}[H]
+Le rapport de classification obtenu est présenté dans le tableau suivant :
+
+\begin{table}[h]
+
     \centering
-    \includegraphics[width=0.75\textwidth]{classification_report_logreg.png}
-    \caption{Rapport de classification - Régression logistique multiclasse}
-    \label{fig:classification_logreg}
-\end{figure}
 
-L’analyse du rapport de classification et de la matrice de confusion confirme ces observations. On remarque notamment que la classe \textbf{0 n’est jamais prédite}, avec une précision et un rappel de \texttt{0.00}. Les autres classes sont également mal identifiées, avec des \textit{f1-scores} faibles et déséquilibrés. L’exactitude globale du modèle est d’environ \textbf{35 \%}, ce qui reste bien en dessous des attentes.
+    \begin{tabular}{|c|c|c|c|c|}
 
-Un autre point préoccupant est le fort \textbf{déséquilibre dans la distribution des classes} au sein de la variable cible. La classe 0, par exemple, compte environ \textbf{six fois moins d’occurrences} que les autres, ce qui impacte fortement sa prédiction. Ce déséquilibre rend l’apprentissage difficile pour le modèle, qui a tendance à ignorer les classes minoritaires.
+        \hline
 
-\subsection{Déséquilibre des classes}
+        \textbf{Classe} & \textbf{Précision}       & \textbf{Rappel} & \textbf{F1-score} & \textbf{Support} \\ \hline
 
-La figure ci-dessous présente la répartition des animaux selon la variable \textit{AdoptionSpeed}, qui représente le délai d’adoption d’un animal. On observe une forte disparité entre les différentes classes. Plus de 4 000 animaux appartiennent à la classe 4 (non adoptés après plus de 100 jours), tandis que seulement 410 animaux relèvent de la classe 0 (adoptés le jour même).
+        0               & 0,00                     & 0,00            & 0,00              & 141              \\ \hline
 
-Ce déséquilibre marqué peut poser un problème lors de l'entraînement de modèles de classification. En effet, un modèle pourrait être biaisé en faveur des classes majoritaires, au détriment des classes minoritaires qui sont pourtant d’un grand intérêt dans le contexte de prédiction. Par exemple, la classe 0, bien que peu représentée, fournit des informations précieuses sur les profils d’animaux très rapidement adoptés.
+        1               & 0,30                     & 0,21            & 0,25              & 928              \\ \hline
 
-Ce constat justifie l’exploration de différentes stratégies de regroupement des classes ou de transformation de la cible, dans le but de construire un modèle plus robuste et plus pertinent.
+        2               & 0,30                     & 0,36            & 0,33              & 1177             \\ \hline
+
+        3               & 0,35                     & 0,14            & 0,20              & 984              \\ \hline
+
+        4               & 0,39                     & 0,64            & 0,48              & 1268             \\ \hline
+
+        \textbf{Total}  & \textbf{Accuracy = 0,35} &                 &                   & \textbf{4498}    \\ \hline
+    \end{tabular}
+
+    \caption{Rapport de classification après entraînement du modèle}
+
+\end{table}
+
+\vspace{0.5cm}
+
+\noindent
+
+Moyennes globales :
+
+\begin{itemize}
+
+    \item Macro moyenne : précision = 0,27 ; rappel = 0,27 ; F1-score = 0,25
+
+    \item Moyenne pondérée : précision = 0,33 ; rappel = 0,35 ; F1-score = 0,32
+
+\end{itemize}
+
+L'analyse du rapport de classification et de la matrice de confusion confirme le faible pouvoir prédictif du modèle. La classe \textbf{0} n'est \textbf{jamais prédite}, avec une précision et un rappel nuls. Les autres classes présentent également des résultats faibles, comme l'illustrent des \textit{f1-scores} bas et déséquilibrés. L'exactitude globale du modèle est d’environ \textbf{35\%}, bien en deçà des attentes.
+
+Par ailleurs, la distribution des classes montre un important déséquilibre :
 
 \begin{figure}[H]
+
     \centering
+
     \includegraphics[width=0.7\textwidth]{adoption_speed_distribution.png}
+
     \caption{Répartition des animaux selon la vitesse d’adoption (AdoptionSpeed)}
+
     \label{fig:adoption_speed}
+
 \end{figure}
 
-\subsection{Utilisation de SMOTE pour l'équilibrage des classes}
-
-Le dataset présente un déséquilibre marqué entre les classes de la variable \textit{AdoptionSpeed}, avec certaines classes nettement surreprésentées. Par exemple, la classe 0 comporte très peu d'échantillons par rapport aux classes 2 et 4. Ce déséquilibre a un impact négatif sur l’apprentissage du modèle, qui a tendance à privilégier les classes majoritaires au détriment des classes minoritaires.
-
-Pour corriger cela, nous avons utilisé la technique SMOTE (\textit{Synthetic Minority Over-sampling Technique}), qui consiste à générer artificiellement de nouveaux exemples pour les classes minoritaires en interpolant les instances existantes.
-
-\vspace{0.5em}
-\noindent\textbf{Distribution des classes avant et après SMOTE}
-
-La figure suivante illustre clairement l'effet de SMOTE. Avant son application, les classes sont inégalement réparties, avec une dominance des classes 2 et 4. Après SMOTE, toutes les classes comptent environ 2900 exemples, assurant un apprentissage plus équilibré du modèle.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{distribution_smote.png}
-    \caption{Distribution des classes avant (gauche) et après (droite) SMOTE}
-    \label{fig:smote_distribution}
-\end{figure}
-
-\vspace{0.5em}
-\noindent\textbf{Comparaison des performances avant et après SMOTE}
-
-Les deux matrices de confusion ci-dessous comparent les performances du modèle avant et après l’équilibrage des classes. Sur le jeu de test original (non équilibré), le modèle montre un fort biais vers les classes fréquentes, comme 2 et 4. Après application de SMOTE, la répartition des prédictions devient plus homogène, traduisant une amélioration sur les classes minoritaires.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.45\textwidth]{matrice_confusion_avant_smote.png}
-    \hfill
-    \includegraphics[width=0.45\textwidth]{matrice_confusion_apres_smote.png}
-    \caption{Matrice de confusion avant (gauche) et après (droite) SMOTE}
-    \label{fig:smote_matrices}
-\end{figure}
-
-\vspace{0.5em}
-\noindent\textbf{Évolution des métriques globales}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{resultats_smote_tableau.png}
-    \caption{Résumé des performances avant et après SMOTE}
-    \label{fig:smote_tableau}
-\end{figure}
-
-Les résultats montrent une amélioration modeste mais notable :
-\begin{itemize}
-    \item \textbf{Avant SMOTE} : précision = 0.3637, rappel = 0.3482, F1-score = 0.3461
-    \item \textbf{Après SMOTE} : précision = 0.3762, rappel = 0.3902, F1-score = 0.3759
-\end{itemize}
-
-Bien que l'utilisation de SMOTE ait permis une légère amélioration des performances du modèle — en augmentant la précision, le rappel et le F1-score — les résultats globaux restent relativement faibles. Cela suggère que le déséquilibre des classes n'était pas le seul facteur limitant la performance. Le modèle semble toujours souffrir d’un sous-apprentissage, ce qui indique qu’il n’est pas capable de capturer suffisamment de complexité dans les données pour bien différencier les classes. 
-
-\subsection{Amélioration par duplication de la classe 0}
-
-Vérifions maintenant si l’absence de prédiction pour la classe \texttt{0} est due à son extrême rareté par rapport aux autres classes. Pour cela, nous avons artificiellement augmenté les occurrences de cette classe en multipliant ses \textbf{410 lignes par 7}, afin d’obtenir environ \textbf{3090 lignes}, ce qui permet d’équilibrer un peu plus les proportions avec les autres classes.
-
-Nous avons ensuite réentraîné notre modèle de régression logistique multiclasse avec ce nouvel ensemble de données. Les résultats obtenus sont les suivants :
-\begin{itemize}
-    \item \textbf{MSE :} 3.6941
-    \item \textbf{Biais :} 3.3316
-    \item \textbf{Variance :} 0.3626
-    \item \textbf{Précision globale :} 0.2893
-\end{itemize}
-
-La précision a donc légèrement augmenté (\textbf{+2 points}), mais cela ne s’est pas traduit par une réelle amélioration du modèle. En réalité, le nombre d’erreurs a augmenté, ce qui montre que le modèle reste peu performant.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{confusion_logreg_multiplication_classe0.png}
-    \caption{Matrice de confusion après duplication de la classe 0}
-    \label{fig:confusion_logreg_duplicated}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{classification_report_logreg_multiplication.png}
-    \caption{Rapport de classification après duplication de la classe 0}
-    \label{fig:report_logreg_duplicated}
-\end{figure}
-
-Malgré tout, on observe une \textbf{amélioration de la précision pour la classe 0}, qui est désormais mieux prise en compte. Cependant, cette classe est \textbf{souvent confondue avec la classe 4}, ainsi qu’avec d’autres classes, ce qui limite l’efficacité de la prédiction.
-
-\medskip
-
-En conclusion, le modèle est toujours en situation de \textbf{sous-apprentissage}. Il souffrait clairement du manque d’occurrences pour la classe 0, mais il est aussi handicapé par une forte similarité entre les variables descriptives. Cette proximité rend difficile la discrimination entre les différentes classes. Pour améliorer cela, il serait nécessaire d’ajouter de nouvelles variables plus discriminantes, que nous ne possédons pas actuellement.
+On observe notamment que la classe \textbf{4} (animaux non adoptés après 100 jours) est majoritaire avec plus de 4 000 individus, alors que la classe \textbf{0} (adoption immédiate) compte  de 450 exemples. Ce déséquilibre important complique la tâche du modèle, en particulier pour la prédiction des classes minoritaires.
 
 
+
+\subsection{Analyse après duplication de la classe 0}
+ 
+Après avoir multiplié les occurrences de la classe 0 par 7 pour atteindre environ 3 090 exemples, nous avons réentraîné le modèle de régression logistique. Voici les résultats obtenus.
+ 
+\begin{table}[h]
+
+\centering
+
+\begin{tabular}{|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{Valeur} \\ \hline
+
+MSE & 3,6941 \\ \hline
+
+Biais & 3,3316 \\ \hline
+
+Variance & 0,3626 \\ \hline
+
+Précision moyenne (validation croisée) & 0,2945 \\ \hline
+
+\end{tabular}
+
+\caption{Résultats globaux du modèle après duplication de la classe 0}
+
+\end{table}
+ 
+La duplication de la classe 0 a permis une légère amélioration globale : la précision moyenne atteint 29,45\%, avec une erreur quadratique moyenne (MSE) de 3,6941. Le biais reste élevé (3,3316), traduisant toujours un problème de sous-apprentissage. La variance demeure faible (0,3626), indiquant un modèle stable sans surapprentissage.
+ 
 \bigskip
+ 
+Le rapport de classification par classe montre une amélioration ciblée sur la classe 0 :
+ 
+\begin{table}[h]
 
-Au-delà des performances quantitatives obtenues via les modèles supervisés, il est essentiel de mieux comprendre la structure intrinsèque des données. C’est dans cette optique que nous avons mené des analyses exploratoires complémentaires, telles que le clustering non supervisé et l’Analyse des Correspondances Multiples (ACM), afin d’identifier les tendances cachées dans la distribution des classes et de détecter d’éventuels regroupements naturels entre les observations.
+\centering
+
+\begin{tabular}{|c|c|c|c|}
+
+\hline
+
+\textbf{Classe} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} \\ \hline
+
+0 & 0,28 & 0,35 & 0,31 \\ \hline
+
+1 & 0,24 & 0,08 & 0,12 \\ \hline
+
+2 & 0,29 & 0,27 & 0,28 \\ \hline
+
+3 & 0,32 & 0,13 & 0,18 \\ \hline
+
+4 & 0,32 & 0,58 & 0,41 \\ \hline
+
+\end{tabular}
+
+\caption{Rapport de classification par classe}
+
+\end{table}
+ 
+\begin{itemize}
+
+    \item \textbf{Classe 0} : amélioration notable avec une précision de 28\% et un rappel de 35\%.
+
+    \item \textbf{Classe 4} : reste la mieux reconnue avec un rappel de 58\%.
+
+    \item \textbf{Classe 1} : performances faibles persistantes (24\% de précision, 8\% de rappel).
+
+\end{itemize}
+ 
+\bigskip
+ 
+La matrice de confusion révèle une meilleure détection de la classe 0, malgré une confusion encore importante avec la classe 4 :
+ 
+\begin{table}[h]
+
+\centering
+
+\begin{tabular}{|c|c|c|c|c|c|}
+
+\hline
+& \textbf{Prédit 0} & \textbf{Prédit 1} & \textbf{Prédit 2} & \textbf{Prédit 3} & \textbf{Prédit 4} \\ \hline
+
+\textbf{Réel 0} & 340 & 87 & 160 & 45 & 334 \\ \hline
+
+\textbf{Réel 1} & 254 & 75 & 241 & 49 & 289 \\ \hline
+
+\textbf{Réel 2} & 245 & 73 & 338 & 93 & 507 \\ \hline
+
+\textbf{Réel 3} & 152 & 31 & 248 & 122 & 405 \\ \hline
+
+\textbf{Réel 4} & 235 & 52 & 183 & 70 & 731 \\ \hline
+
+\end{tabular}
+
+\caption{Matrice de confusion après duplication de la classe 0}
+
+\end{table}
+ 
+\bigskip
+ 
+Enfin, après duplication, la répartition des classes est devenue beaucoup plus équilibrée :
+ 
+\begin{table}[h]
+
+\centering
+
+\begin{tabular}{|c|c|}
+
+\hline
+
+\textbf{Classe} & \textbf{Occurrences} \\ \hline
+
+0 & 3280 \\ \hline
+
+1 & 3090 \\ \hline
+
+2 & 4037 \\ \hline
+
+3 & 3259 \\ \hline
+
+4 & 4197 \\ \hline
+
+\end{tabular}
+
+\caption{Répartition des classes après duplication}
+
+\end{table}
+ 
+\bigskip
+ 
+\textbf{Conclusion} :  
+
+La duplication a permis une meilleure reconnaissance de la classe 0 sans provoquer de surapprentissage. Cependant, le modèle souffrait clairement du fait que la classe 0 était minoritaire, mais pas uniquement : un sous-apprentissage (\textit{underfitting}) persistant reste observable.
+ 
+\subsection{Utilisation de SMOTE pour l'équilibrage des classes}
+ 
+Le dataset présente un déséquilibre marqué entre les classes de la variable \textit{AdoptionSpeed}, avec certaines classes nettement surreprésentées. Par exemple, la classe 0 comporte très peu d'échantillons par rapport aux classes 2 et 4. Ce déséquilibre a un impact négatif sur l’apprentissage du modèle, qui a tendance à privilégier les classes majoritaires au détriment des classes minoritaires.
+ 
+Pour corriger cela, nous avons utilisé la technique SMOTE (\textit{Synthetic Minority Over-sampling Technique}), qui consiste à générer artificiellement de nouveaux exemples pour les classes minoritaires en interpolant les instances existantes.
+ 
+\vspace{0.5em}
+
+\noindent\textbf{Distribution des classes avant et après SMOTE}
+ 
+La figure suivante illustre clairement l'effet de SMOTE. Avant son application, les classes sont inégalement réparties, avec une dominance des classes 2 et 4. Après SMOTE, toutes les classes comptent environ 2900 exemples, assurant un apprentissage plus équilibré du modèle.
+ 
+\begin{figure}[H]
+
+    \centering
+
+    \includegraphics[width=0.8\textwidth]{distribution_smote.png}
+
+    \caption{Distribution des classes avant (gauche) et après (droite) SMOTE}
+
+    \label{fig:smote_distribution}
+
+\end{figure}
+ 
+\vspace{0.5em}
+
+\noindent\textbf{Comparaison des performances avant et après SMOTE}
+ 
+Les deux matrices de confusion ci-dessous comparent les performances du modèle avant et après l’équilibrage des classes. Sur le jeu de test original (non équilibré), le modèle montre un fort biais vers les classes fréquentes, comme 2 et 4. Après application de SMOTE, la répartition des prédictions devient plus homogène, traduisant une amélioration sur les classes minoritaires.
+ 
+\begin{figure}[H]
+
+    \centering
+
+    \includegraphics[width=0.45\textwidth]{matrice_confusion_avant_smote.png}
+
+    \hfill
+
+    \includegraphics[width=0.45\textwidth]{matrice_confusion_apres_smote.png}
+
+    \caption{Matrice de confusion avant (gauche) et après (droite) SMOTE}
+
+    \label{fig:smote_matrices}
+
+\end{figure}
+ 
+ 
+\begin{table}[H]
+
+\centering
+ 
+\begin{tabular}{|l|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{Avant SMOTE} & \textbf{Après SMOTE} \\
+
+\hline
+
+Précision (Precision) & 0.3679 & 0.3847 \\
+
+Rappel (Recall)       & 0.3505 & 0.3969 \\
+
+F1-score              & 0.3487 & 0.3835 \\
+
+\hline
+
+\end{tabular}
+
+\caption{Comparaison des performances avant et après application de SMOTE}
+
+\end{table}
+ 
+ 
+Malgré une légère amélioration des performances suite à l'application de la technique de suréchantillonnage SMOTE, les résultats globaux restent faibles, ce qui indique que le modèle est encore en situation de sous-apprentissage (underfitting). Avant l’utilisation de SMOTE, les métriques de performance sur l’ensemble de test étaient les suivantes : précision de 0.3679, rappel de 0.3505, et F1-score de 0.3487. Après SMOTE, ces valeurs ont légèrement progressé pour atteindre respectivement 0.3847, 0.3969 et 0.3835. Cette amélioration reste toutefois modeste et montre que, bien que le modèle prenne un peu mieux en compte les classes minoritaires, il ne parvient toujours pas à bien apprendre les relations complexes présentes dans les données.
+ 
+Ce constat est appuyé par l’analyse biais-variance, effectuée: le biais observé est élevé (1.9731), tandis que la variance reste relativement faible (0.4588), pour une erreur quadratique moyenne (MSE) totale de 2.4320. Cela confirme que le modèle est trop simple pour la tâche, ce qui se traduit par des prédictions approximatives.
+ 
+Ce comportement illustre parfaitement le compromis biais-variance, un principe fondamental en Machine Learning. Ce compromis vise à équilibrer la complexité du modèle et la qualité des prédictions. Un modèle avec un biais élevé, comme c’est le cas ici, est trop simpliste et ne parvient pas à capturer les structures sous-jacentes dans les données. À l’inverse, un modèle avec une variance trop élevée serait trop sensible aux fluctuations de l’échantillon d’apprentissage, ce qui mène à du sur-apprentissage. L’objectif est donc de trouver un modèle capable d’ajuster sa complexité pour obtenir un bon compromis entre biais et variance, permettant ainsi des prédictions fiables et généralisables. Dans notre cas, les résultats indiquent clairement qu’il faut envisager des modèles plus complexes ou enrichir les données d’entrée (feature engineering) pour sortir de cet état de sous-apprentissage.
+ 
 
 \subsection{Analyse des tendances globales des variables catégorielles}
 
-Les histogrammes ci-dessous illustrent la répartition des variables catégoriques \texttt{Type}, \texttt{Gender}, \texttt{MaturitySize}, \texttt{FurLength}, \texttt{Vaccinated}, \texttt{Dewormed} et \texttt{Sterilized} selon les différentes classes de la variable \texttt{AdoptionSpeed}.
-
-On observe une tendance générale similaire entre les classes pour toutes ces variables. Pour \texttt{Type}, les catégories \textit{Cat} (bleu) et \textit{Dog} (orange) sont globalement équilibrées dans chaque classe (de 0 à 4). En ce qui concerne \texttt{Gender}, les animaux de genre \textit{Male} (bleu) et \textit{Female} (orange) sont majoritaires, tandis que la catégorie \textit{Not Specified} (vert) reste marginale.
-
-Pour la variable \texttt{MaturitySize}, la taille \textit{Medium} (bleu) domine largement, suivie de \textit{Small} (orange), tandis que les tailles \textit{Large} (vert) et \textit{Extra Large} (rouge) sont peu représentées. Une tendance similaire est observée pour \texttt{FurLength}, où les longueurs \textit{Short} (orange) et \textit{Medium} (bleu) prédominent, avec une faible occurrence de \textit{Long} (vert).
-
-Enfin, pour les variables \texttt{Vaccinated}, \texttt{Dewormed} et \texttt{Sterilized}, les réponses \textit{No} (orange) et \textit{Yes} (vert) sont les plus représentées, tandis que \textit{Not Sure} (bleu) est moins fréquente.
-
-Cette homogénéité des répartitions rend difficile l’identification de variables discriminantes permettant de bien séparer les classes de \texttt{AdoptionSpeed}. Aucune des variables observées ne présente une tendance distincte ou marquée entre les classes, ce qui peut expliquer la difficulté rencontrée par les modèles pour prédire efficacement la vitesse d’adoption.
-
+Les histogrammes ci-dessous présentent la distribution des variables catégoriques \texttt{Type}, \texttt{Gender}, \texttt{MaturitySize}, \texttt{FurLength}, \texttt{Vaccinated}, \texttt{Dewormed} et \texttt{Sterilized} selon les différentes classes de la variable \texttt{AdoptionSpeed}.
+ 
+De manière générale, on remarque une \textbf{homogénéité marquée} des tendances pour la plupart des variables : les répartitions sont très proches d’une classe à l’autre. Par exemple, pour la variable \texttt{Gender}, les catégories \textit{Male} et \textit{Female} dominent, tandis que \textit{Not Specified} reste marginale. Pour \texttt{MaturitySize}, la catégorie \textit{Medium} est largement majoritaire, suivie de \textit{Small}, alors que \textit{Large} et \textit{Extra Large} sont très peu représentées. La variable \texttt{FurLength} suit une tendance similaire, avec une prédominance des longueurs \textit{Short} et \textit{Medium}, et très peu d’animaux à \textit{Long} pelage.
+ 
+Quant aux variables \texttt{Vaccinated}, \texttt{Dewormed} et \texttt{Sterilized}, les réponses \textit{Yes} et \textit{No} représentent l'essentiel des cas, la modalité \textit{Not Sure} étant beaucoup plus rare.
+ 
+Cependant, on note une \textbf{différence légèrement plus marquée} pour deux variables en particulier : \texttt{Type} et \texttt{Vaccinated}. Pour la variable \texttt{Type}, on observe une proportion légèrement plus élevée de chats (\texttt{Type = 2}) dans les classes d’adoption rapide (classes 0, 1, 2), tandis que les chiens (\texttt{Type = 1}) semblent plus représentés dans les classes d’adoption plus lente (classes 3 et 4). En ce qui concerne la variable \texttt{Vaccinated}, les animaux \textbf{non vaccinés sont majoritaires dans les classes 0, 1 et 2}, tandis que les \textbf{animaux vaccinés sont plus nombreux dans les classes 3 et 4}.
+ 
+Ces observations suggèrent que \textbf{les variables \texttt{Type} et \texttt{Vaccinated} pourraient avoir un potentiel discriminant intéressant}, contrairement aux autres variables catégoriques qui montrent une distribution similaire quel que soit le niveau de \texttt{AdoptionSpeed}. Cela pourrait en faire des \textbf{leviers importants dans la modélisation prédictive}, en aidant à mieux séparer les différentes classes d’adoption dans les futures approches de classification.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{type_adoption_trend.png}
@@ -685,36 +873,61 @@ Cette homogénéité des répartitions rend difficile l’identification de vari
 
 \subsection{Analyse en Composantes Multiples (ACM)}
 
+\subsubsection{Qu’est-ce que l’Analyse des Correspondances Multiples ?}
+ 
+L’\textbf{Analyse des Correspondances Multiples (ACM)} est une méthode d’analyse statistique exploratoire particulièrement adaptée à l’étude de variables qualitatives. Comparable à l’Analyse en Composantes Principales (ACP) qui s’applique aux variables quantitatives, l’ACM permet de représenter visuellement les relations entre les modalités de plusieurs variables catégorielles. Elle projette les données sur un espace à faible dimension — généralement deux ou trois axes — afin de mettre en évidence des proximités, oppositions ou regroupements entre modalités. Cette représentation graphique facilite l’identification de structures sous-jacentes dans les données, telles que des associations typiques entre certaines modalités ou la présence de profils d’observations similaires. L’ACM est ainsi un outil précieux pour simplifier et interpréter des jeux de données complexes, tout en servant souvent de prélude à des analyses plus avancées comme la classification ou la modélisation.
+ 
 Afin de mieux comprendre les relations entre les variables qualitatives du jeu de données, une Analyse en Composantes Multiples (ACM) a été réalisée. Cette méthode permet de visualiser la structure des données catégorielles et d’identifier d’éventuelles associations entre les modalités des différentes variables.
-
 \begin{figure}[H]
+
     \centering
+
     \includegraphics[width=0.7\textwidth]{acm_variance.png}
+
     \caption{Répartition de la variance expliquée par chaque axe de l'ACM (Scree plot)}
+
     \label{fig:acm_scree}
+
 \end{figure}
-
-Le premier graphe (Figure~\ref{fig:acm_scree}) montre la répartition de la variance expliquée par chaque axe. On observe que la première dimension (Dim 1) explique 14,8\% de la variance totale, et la deuxième (Dim 2) 13,35\%. Ensemble, ces deux axes capturent environ 28\% de l'information globale, ce qui est suffisant pour une visualisation initiale. La décroissance progressive de la variance suggère que les premières dimensions concentrent l’essentiel des variations dans les données.
-
+ 
+Le  graphe \ref{fig:acm_scree} montre la répartition de la variance expliquée par chaque axe. On observe que la première dimension (Dim 1) explique 14,8\% de la variance totale, et la deuxième (Dim 2) 13,35\%. Ensemble, ces deux axes capturent environ 28\% de l'information globale, ce qui est suffisant pour une visualisation initiale. La décroissance progressive de la variance suggère que les premières dimensions concentrent l’essentiel des variations dans les données.
+ 
 \begin{figure}[H]
+
     \centering
+
     \includegraphics[width=0.8\textwidth]{acm_factor_map.png}
+
     \caption{Carte factorielle des modalités (ACM)}
+
     \label{fig:acm_modalites}
+
 \end{figure}
-
+ 
 La carte factorielle des modalités (Figure~\ref{fig:acm_modalites}) illustre les liens entre les modalités des variables catégorielles. Certaines associations apparaissent clairement :
-
+ 
 \begin{itemize}
+
     \item Les modalités \textit{vaccinated YES}, \textit{dewormed YES}, et \textit{sterilized YES} sont regroupées dans le quadrant inférieur gauche, montrant une forte corrélation entre ces traitements sanitaires.
+
     \item Les modalités opposées \textit{vaccinated NO}, \textit{dewormed NO}, et \textit{sterilized NO} apparaissent ensemble dans le quadrant supérieur gauche.
+
     \item Un groupe particulier est formé par les modalités \textit{vaccinated NOT SURE}, \textit{dewormed NOT SURE}, et \textit{sterilized NOT SURE}, dans le quadrant supérieur droit.
+
     \item Les modalités liées au genre (\textit{Male} et \textit{Female}) et à la taille (\textit{Medium}, \textit{Small}, \textit{Large}, \textit{Extra Large}) sont proches de l’origine. Cela indique une faible contribution discriminante sur les deux premiers axes.
+
 \end{itemize}
-
+ 
 Ces observations confirment les résultats des histogrammes présentés précédemment : les tendances sont globalement homogènes entre les classes d’\textit{AdoptionSpeed}, et aucune variable catégorielle n’émerge clairement comme discriminante. Cela illustre la complexité du problème de classification et justifie le recours à des regroupements de classes pour faciliter l’apprentissage.
+ 
+ 
+\subsection{selection des variables :}
+ 
+Dans le cadre de notre étude, l'\textbf{Analyse des Correspondances Multiples (ACM)} a permis d’identifier plusieurs variables présentant une dispersion notable sur le plan factoriel. Cela indique qu’elles contribuent significativement à la structuration des individus et pourraient jouer un rôle central dans un futur modèle prédictif. Parmi les variables les plus influentes figurent le \texttt{Type} d’animal, qui distingue entre chiens et chats et peut impacter les comportements d’adoption, ainsi que le statut \texttt{Vaccinated} et \texttt{Dewormed}, qui sont des indicateurs de santé susceptibles d’influencer la perception des adoptants. De même, la variable \texttt{Sterilized} --- critère souvent pris en compte lors d’une adoption --- ressort comme déterminante, tout comme la \texttt{MaturitySize} (taille à maturité) et le niveau de \texttt{Health} (santé), deux éléments particulièrement importants pour les futurs propriétaires.
+ 
+La disposition de ces variables dans le graphe factoriel de l’ACM souligne leur contribution à la variabilité observée entre individus, justifiant leur intégration dans les étapes ultérieures de modélisation. Afin d’enrichir davantage notre approche, nous avons également introduit des variables dérivées comme \texttt{PureBreed}, une variable binaire indiquant si l’animal est de race pure (valeur 1) ou non. Cette distinction peut être déterminante dans la décision d’adoption, certaines races étant perçues comme plus attrayantes ou prestigieuses. Ces ajouts visent à affiner la compréhension des préférences des adoptants tout en améliorant la performance des modèles prédictifs.
 
-
+ 
 
 \subsection{Analyse des clusters : vers une réduction du nombre de classes}
 
@@ -753,6 +966,88 @@ On constate que toutes les classes d’\textit{AdoptionSpeed} sont représentée
 
 Cette homogénéité suggère que les variables utilisées pour le clustering (âge, race, couleur, stérilisation, etc.) ne suffisent pas à segmenter efficacement les animaux selon leur rapidité d’adoption. Autrement dit, les regroupements trouvés par K-Means ne révèlent pas de profils très distincts en termes de vitesse d’adoption. Cela renforce la pertinence d’une transformation binaire du problème de classification (par exemple en regroupant certaines classes), comme exploré dans les étapes suivantes de notre analyse.
 
+Afin d'explorer davantage la structure des données, une classification non supervisée en deux clusters a été réalisée.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{repartition_adoptionspeed_2clusters.png}
+    \caption{Répartition de l'AdoptionSpeed dans les deux clusters}
+    \label{fig:repartition_adoptionspeed_2clusters}
+\end{figure}
+
+Cependant, l'analyse de la répartition d'\textit{AdoptionSpeed} au sein de ces deux clusters montre que les proportions des différentes classes restent relativement proches d'un cluster à l'autre.
+
+En effet :
+\begin{itemize}
+    \item Les classes 1, 2, 3 et 4 sont présentes de manière assez homogène dans les deux groupes.
+    \item Le cluster 1 présente une légère surreprésentation des animaux non adoptés (classe 4), mais la différence est faible.
+\end{itemize}
+
+\textbf{Conclusion :} Ce regroupement en deux clusters n'apporte pas une séparation marquée entre les profils d'animaux rapidement adoptés et ceux non adoptés. Il ne permet donc pas d'améliorer significativement la compréhension ou la prédiction du comportement d'adoption dans ce cas.
+
+
+
+\subsection{Traitement des variables \textit{Breed1} et \textit{Type}}
+ 
+Dans notre analyse, nous avons d'abord utilisé un \textbf{arbre de décision simple} pour \textbf{visualiser les décisions prises par le modèle} avant d'envisager des modèles plus avancés tels que le \textbf{Gradient Boosting} ou \textbf{CatBoost}, qui s'appuient également sur des arbres.
+ 
+L'arbre a montré que les \textbf{premiers nœuds} reposaient principalement sur la variable \textit{Breed1} (race de l'animal), avec par exemple des conditions du type \textit{Breed1} $\leq$ 306.5, tandis que la variable \textit{Type} (1 = chien, 2 = chat) n'apparaissait qu'à des niveaux inférieurs de l'arbre.
+ 
+\begin{figure}[H]
+
+    \centering
+
+    \includegraphics[width=0.65\textwidth]{3_premier_noeud_adéciciosn.png}
+
+    \caption{Visualisation des trois premiers nœuds de l'arbre de décision}
+
+    \label{fig:catboost12_conf}
+
+\end{figure}
+ 
+\begin{figure}[H]
+
+    \centering
+
+    \includegraphics[width=0.65\textwidth]{plus bas dans arbre de decision.png}
+
+    \caption{Structure détaillée des niveaux inférieurs de l'arbre de décision}
+
+    \label{fig:catboost12_conf}
+
+\end{figure}
+ 
+ 
+Cela soulève plusieurs problèmes :
+ 
+\begin{itemize}
+
+    \item \textbf{Corrélation entre \textit{Breed1} et \textit{Type}} : certaines races sont spécifiques aux chiens, d'autres aux chats. Le modèle peut donc déduire le type d'animal uniquement à partir de la race, sans utiliser explicitement la variable \textit{Type}.
+
+    \item \textbf{\textit{Breed1} est un identifiant arbitraire} : les valeurs numériques associées aux races n'ont pas de signification ordinale. Utiliser cet identifiant brut introduit donc un biais artificiel dans l'apprentissage du modèle.
+
+    \item \textbf{Mauvaise hiérarchisation des décisions} : la variable \textit{Type}, qui est une information binaire essentielle, aurait dû être utilisée dès les premiers niveaux de l'arbre pour séparer clairement les chiens et les chats, facilitant ainsi l'apprentissage de règles plus pertinentes par la suite.
+
+\end{itemize}
+ 
+\bigskip
+ 
+\textbf{Solution proposée :} Pour corriger ce problème, nous avons :
+ 
+\begin{itemize}
+
+    \item Créé des colonnes spécifiques selon le type d'animal : \textit{breed1\_chien}, \textit{breed1\_chat}, \textit{breed2\_chien}, \textit{breed2\_chat}. 
+
+    \item Lorsqu'une colonne ne correspond pas au type de l'animal (par exemple, \textit{breed1\_chat} pour un chien), nous attribuons une valeur fortement pénalisante (par exemple, $-1000$) pour éviter toute confusion lors de l'apprentissage.
+
+    \item Supprimé les variables originales \textit{Breed1} et \textit{Breed2} afin d'éviter que le modèle n'apprenne à partir d'un encodage arbitraire.
+
+\end{itemize}
+ 
+\bigskip
+ 
+\textbf{Avantages attendus :} Cette transformation explicite oblige le modèle à utiliser d'abord la variable \textit{Type}, rendant les règles d'apprentissage plus logiques et réduisant le biais lié à l'ordre arbitraire des races.
+ 
 
 \subsection{Comparaison de regroupements de classes avec Random Forest}
 
@@ -790,16 +1085,16 @@ Avec cette configuration, le modèle obtient une \textbf{accuracy de 60.86\%}, u
     \centering
     \begin{tabular}{|l|c|c|}
         \hline
-        \textbf{Critères} & \textbf{(0,1,2) vs (3,4)} & \textbf{(1,2) vs (3,4)} \\
+        \textbf{Critères}    & \textbf{(0,1,2) vs (3,4)} & \textbf{(1,2) vs (3,4)} \\
         \hline
-        Accuracy & 61.27\% & 60.86\% \\
-        Précision (pondérée) & 0.6128 & 0.6085 \\
-        Rappel (pondéré) & 0.6128 & 0.6086 \\
-        F1-score (pondéré) & 0.6127 & 0.6085 \\
-        MSE & 0.3857 & 0.394 \\
-        Biais & 0.2829 & 0.2912 \\
-        Variance & 0.1028 & 0.1028 \\
-        Moyenne CV & 0.6255 & 0.6257 \\
+        Accuracy             & 61.27\%                   & 60.86\%                 \\
+        Précision (pondérée) & 0.6128                    & 0.6085                  \\
+        Rappel (pondéré)     & 0.6128                    & 0.6086                  \\
+        F1-score (pondéré)   & 0.6127                    & 0.6085                  \\
+        MSE                  & 0.3857                    & 0.394                   \\
+        Biais                & 0.2829                    & 0.2912                  \\
+        Variance             & 0.1028                    & 0.1028                  \\
+        Moyenne CV           & 0.6255                    & 0.6257                  \\
         \hline
     \end{tabular}
     \caption{Comparaison des performances selon deux regroupements de classes}
@@ -810,143 +1105,261 @@ Les deux stratégies donnent des résultats très similaires. Le regroupement (0
 
 
 
-\subsection{Comparaison des résultats avec CatBoost sur différents regroupements de classes}
-
-Pour approfondir l’analyse des regroupements de classes, nous avons évalué les performances du modèle \textbf{CatBoost} sur deux combinaisons binaires : 
-\begin{itemize}
-    \item Regroupement des classes \textbf{(0+1+2)} contre \textbf{(3+4)}.
-    \item Regroupement des classes \textbf{(1+2)} contre \textbf{(3+4)}.
-\end{itemize}
-
-\paragraph{1. Regroupement (0+1+2) vs (3+4) :}
-
-Dans cette configuration, le modèle CatBoost a montré des résultats globalement satisfaisants.
- Le \textbf{MSE est de 0.3498}, accompagné d’un \textbf{biais de 0.2741} et d’une \textbf{variance de 0.0758}.
-  La précision globale atteint \textbf{66.16\%}, tout comme le rappel et le f1-score, ce qui montre une bonne
-   stabilité du modèle et une performance équilibrée entre les deux classes. La matrice de 
-   confusion indique que la majorité des exemples sont bien prédits, avec une légère confusion entre les classes en voie 
-   bien que le model detecte bien la class 0 mais il arrive pas bien a detecter la classe 1 ou il il a confu bien aven la claas 0 .
-
+\subsection{Comparaison des résultats avec XGBoost sur différents regroupements de classes}
+ 
+Le modèle \textbf{XGBoost}, optimisé pour prédire la vitesse d'adoption des animaux en deux classes (adoption lente et rapide), a été entraîné avec les hyperparamètres optimaux suivants : \texttt{\{colsample\_bytree: 0.7, learning\_rate: 0.005, max\_depth: 8, n\_estimators: 100, reg\_lambda: 3, subsample: 0.8\}}. Il a atteint un \textbf{accuracy moyen de 0.6411} en validation croisée (5-fold) et des performances robustes sur le jeu de test, avec une \textbf{précision de 0.6583}, un \textbf{rappel de 0.6569}, un \textbf{F1-score de 0.6559}, et une \textbf{accuracy d’environ 65.8\,\%}, indiquant une capacité équilibrée à identifier correctement les deux classes tout en limitant les erreurs.
+ 
+L'analyse biais-variance révèle une \textbf{erreur quadratique moyenne (MSE)} de \textbf{0.3541}, avec un \textbf{biais au carré} de \textbf{0.2941} et une \textbf{variance} de \textbf{0.0601}. Dans le cadre du compromis biais-variance, le \textbf{biais élevé (0.2941)} suggère que le modèle, bien qu’efficace, reste \textbf{trop simpliste pour capturer pleinement les relations complexes} des données, ce qui peut expliquer pourquoi l’\textbf{accuracy} et le \textbf{F1-score}, bien qu’améliorés, n’atteignent pas des valeurs plus élevées. La \textbf{faible variance (0.0601)} indique toutefois une excellente stabilité, le modèle généralisant bien sans surapprendre aux données d’entraînement.
+ 
+Pour améliorer l’\textbf{accuracy} et réduire le biais, tout en maintenant l’équité des prédictions afin d’éviter des biais discriminatoires dans l’adoption d’animaux, des stratégies telles que l’ajout de \textbf{caractéristiques pertinentes} ou un \textbf{réglage plus fin de la complexité du modèle} pourraient être envisagées.
+ 
+ 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{catboost_012_vs_34_confusion.png}
+    \includegraphics[width=0.8\textwidth]{xgboost0.png}
     \caption{Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}
     \label{fig:catboost012_conf}
 \end{figure}
-
+ 
+ 
+ 
 \begin{table}[h]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
-\textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
+\textbf{validation croisée} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
 \hline
-0.6616 & 0.6616 & 0.6615 & 0.3498 & 0.2741 & 0.0758 \\
+0.6411& 0.6582 & 0.6568 & 0.6559 & 0.3541&  0.2941 &  0.0601 \\
 \hline
 \end{tabular}
-\caption{Résultats du modèle CatBoost (regroupement 0+1+2 vs 3+4)}
+\caption{Résultats du modèle XGBoost (regroupement 0+1+2 vs 3+4)}
 \end{table}
+ 
+\paragraph{Analyse des performances du modèle XGBoost (Regroupement des classes 1+2 et 3+4)}
 
-    
+Après avoir regroupé les classes 1 et 2 (adoption rapide) ainsi que les classes 3 et 4 (adoption lente), tout en excluant les observations associées à la classe 0, le modèle \textbf{XGBoost} a été optimisé à l’aide des hyperparamètres suivants :
+ 
+\begin{center}
 
-\paragraph{2. Regroupement (1+2) vs (3+4) :}
+\texttt{\{'colsample\_bytree': 0.7, 'learning\_rate': 0.05, 'max\_depth': 6, 'n\_estimators': 200, 'reg\_lambda': 2, 'subsample': 1.0\}}
 
-Ce deuxième regroupement a également été testé afin de voir si l'exclusion de la classe 0 (rare) pouvait améliorer la performance. Le modèle atteint une \textbf{précision de 65.27\%}, un rappel et un f1-score identiques, ainsi qu’un \textbf{MSE de 0.3600}, un biais de 0.2843 et une variance de 0.0757. Les résultats sont légèrement inférieurs à ceux du regroupement précédent, ce qui indique que l'exclusion de la classe 0 n’a pas permis de gains significatifs.
+\end{center}
+ 
+Ce modèle a atteint une \textbf{précision macro moyenne de 0.6476} lors d'une validation croisée en 5 plis (5-fold), ce qui témoigne d'une performance globale équilibrée.
+ 
+\medskip
+ 
+Sur le jeu de test, les résultats sont les suivants :
 
+\begin{itemize}
+
+    \item \textbf{Précision (precision)} : 0.6425
+
+    \item \textbf{Rappel (recall)} : 0.6407
+
+    \item \textbf{F1-score} : 0.6404
+
+    \item \textbf{Accuracy} : environ 64.2 \%
+
+\end{itemize}
+ 
+Ces performances restent équilibrées, bien qu’un peu inférieures à celles observées dans la configuration précédente (regroupement des classes 0+1+2 et 3+4).
+ 
+\subsection*{Analyse biais-variance}
+ 
+L’analyse biais-variance apporte des informations complémentaires sur le comportement du modèle :
+ 
+\begin{itemize}
+
+    \item \textbf{Erreur quadratique moyenne (MSE)} : 0.3681
+
+    \item \textbf{Biais au carré (Bias$^2$)} : 0.3032
+
+    \item \textbf{Variance} : 0.0649
+
+\end{itemize}
+ 
+Le \textbf{biais élevé} ($0.3032$) indique que le modèle est encore trop simpliste pour représenter correctement les relations complexes présentes dans les données, ce qui freine l'amélioration des performances telles que l’accuracy et le F1-score.
+ 
+En revanche, la \textbf{variance modérée} ($0.0649$), bien que légèrement plus élevée que dans la configuration précédente, reste acceptable. Elle reflète une certaine sensibilité aux fluctuations des données d’apprentissage, mais sans provoquer de surapprentissage manifeste.
+ 
+\subsection*{Conclusion}
+ 
+Ce compromis biais-variance met en évidence une \textbf{stabilité raisonnable} du modèle, mais également une marge d’amélioration possible. Pour mieux capturer la complexité du phénomène d’adoption.
+ 
+ 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.65\textwidth]{catboost_12_vs_34_confusion.png}
-    \caption{Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}
-    \label{fig:catboost12_conf}
-\end{figure}
 
-\begin{table}[ht]
+    \centering
+
+    \includegraphics[width=0.8\textwidth]{xgboost1.png}
+
+    \caption{Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}
+
+    \label{fig:catboost012_conf}
+
+\end{figure}
+ 
+ 
+\begin{table}[h]
+
 \centering
+
 \begin{tabular}{|c|c|c|c|c|c|c|}
+
 \hline
-\textbf{Metric} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\ \hline
-\textbf{Résultats} & 0.6527 & 0.6527 & 0.6527 & 0.3600 & 0.2843 & 0.0757 \\ \hline
+
+\textbf{Validation croisée} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
+
+\hline
+
+0.6476 & 0.6425 & 0.6407 & 0.6404 & 0.3681 & 0.3032 & 0.0649 \\
+
+\hline
+
 \end{tabular}
-\caption{Résultats du modèle catBost (regroupement 1+2 vs 3+4)}
-\label{tab:resultats}
+
+\caption{Résultats du modèle XGBoost (regroupement 1+2 vs 3+4, classe 0 exclue)}
+
 \end{table}
 
-
-\paragraph{Conclusion :} Ces résultats montrent que CatBoost parvient à modéliser correctement les regroupements binaires, avec une stabilité des prédictions (variance faible) et un compromis intéressant entre biais et variance. Le regroupement \textbf{(0+1+2) vs (3+4)} donne des performances légèrement supérieures.
+ 
 
 \subsection{Comparaison des combinaisons avec Gradient Boosting}
-
-\subsubsection{Entraînement du modèle Gradient Boosting — combinaison (0,1,2) vs (3,4)}
-
-Pour améliorer la performance du modèle, nous avons fusionné les classes 0, 1 et 2 en une classe 0, et les classes 3 et 4 en une classe 1. Cette transformation vise à simplifier le problème en une tâche de classification binaire mieux équilibrée.
-
-Les résultats obtenus montrent un \textbf{MSE} de \textbf{0.3606}, un biais modéré de \textbf{0.2980}, et une variance faible de \textbf{0.0626}, indiquant une bonne stabilité des prédictions et une capacité de généralisation convenable. La précision moyenne en validation croisée (macro) atteint \textbf{64.83 \%} et l'\textbf{accuracy globale} est de \textbf{64.55 \%}, des valeurs satisfaisantes bien qu'améliorables.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{classification_report_gb_012_vs_34.png}
-    \caption{Rapport de classification — Gradient Boosting (0,1,2) vs (3,4)}
-    \label{fig:gb_report_012_34}
-\end{figure}
-
-Le rapport de classification révèle que pour la classe 0, la précision est de 0.64, le rappel de 0.69 et le f1-score de 0.66, tandis que pour la classe 1, la précision est légèrement meilleure à 0.65, mais avec un rappel plus faible de 0.60, donnant un f1-score de 0.63. Cela montre que la classe 0 est mieux reconnue, mais la classe 1 reste plus difficile à identifier correctement.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{confusion_matrix_gb_012_vs_34.png}
-    \caption{Matrice de confusion — Gradient Boosting (0,1,2) vs (3,4)}
-    \label{fig:gb_confusion_012_34}
-\end{figure}
-
-La matrice de confusion indique que \textbf{1505 exemples de la classe 0} et \textbf{1292 exemples de la classe 1} sont bien prédits, mais respectivement \textbf{685 exemples de la classe 0} et \textbf{851 de la classe 1} sont mal classés. Globalement, le \textbf{recall} est de \textbf{60.29 \%}, et la \textbf{précision globale} atteint \textbf{65.35 \%}, soulignant une confiance correcte dans les prédictions, bien qu'elle se fasse au détriment du rappel.
-
-\subsubsection{Entraînement du modèle Gradient Boosting — combinaison (1,2) vs (3,4)}
-
-Dans cette seconde approche, la classe 0, très minoritaire, a été supprimée pour réduire le déséquilibre. Les classes 1 et 2 ont été regroupées sous l’étiquette 0, et les classes 3 et 4 sous l’étiquette 1, transformant ainsi le problème en une classification binaire plus équilibrée.
-
-Cette approche a conduit à des résultats prometteurs : le \textbf{score de précision macro moyen} atteint \textbf{0.6516}, indiquant une nette amélioration par rapport aux modèles multiclasse précédents. Le \textbf{MSE}, à \textbf{0.3605}, montre une stabilité accrue des prédictions, tandis que le \textbf{biais} (\textbf{0.2994}) reste modéré et la \textbf{variance} faible (\textbf{0.0611}), signe d’une bonne généralisation sans surajustement.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{classification_report_gb_12_vs_34.png}
-    \caption{Rapport de classification — Gradient Boosting (1,2) vs (3,4)}
-    \label{fig:gb_report_12_34}
-\end{figure}
-
-Le rapport de classification reflète un bon équilibre entre les classes : la classe 0 atteint une précision de 0.63 et un rappel de 0.67, tandis que la classe 1 affiche une précision de 0.66 et un rappel de 0.63, avec des f1-scores similaires (\textbf{0.64}-\textbf{0.65}), prouvant l’absence de biais en faveur d’une classe.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{confusion_matrix_gb_12_vs_34.png}
-    \caption{Matrice de confusion — Gradient Boosting (1,2) vs (3,4)}
-    \label{fig:gb_confusion_12_34}
-\end{figure}
-
-La matrice de confusion montre une classification correcte pour la majorité des exemples : \textbf{1377 exemples sur 2060} pour la classe 0 et \textbf{1349 sur 2158} pour la classe 1. Enfin, le modèle atteint une \textbf{précision globale de 66.39 \%}, un \textbf{rappel global de 62.51 \%} et une \textbf{accuracy de 64.63 \%}.
-\subsubsection{Comparaison des deux combinaisons avec Gradient Boosting}
-
-Afin d’identifier la meilleure manière de regrouper les classes d’adoption, nous avons comparé deux approches de fusion :
+ 
+Nous avons testé plusieurs regroupements des classes afin d'évaluer leur impact sur les performances du modèle Gradient Boosting. Deux regroupements ont été analysés :
+ 
 \begin{itemize}
-    \item \textbf{Fusion (0,1,2)} contre \textbf{(3,4)}
-    \item \textbf{Fusion (1,2)} contre \textbf{(3,4)}
+
+    \item \textbf{Regroupement 1} : (0,1,2) vs (3,4)
+
+    \item \textbf{Regroupement 2} : (1,2) vs (3,4)
+
 \end{itemize}
+ 
+\bigskip
+ 
+Les performances obtenues pour chaque combinaison sont présentées dans le tableau suivant :
+ 
+\begin{table}[H]
 
-Les résultats obtenus à l’issue des expérimentations avec l’algorithme Gradient Boosting sont résumés dans le tableau ci-dessous :
+\centering
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.65\textwidth]{capture_fusion_gb_tableau.png}
-    \caption{Comparaison des performances entre les deux fusions de classes}
-    \label{fig:comparaison_fusion_gradient_boosting}
-\end{figure}
+\begin{tabular}{|c|c|c|}
 
-La \textbf{fusion (0,1,2) \& (3,4)} présente un biais légèrement inférieur (0.2980 contre 0.2994), ce qui pourrait indiquer un risque légèrement réduit de sous-apprentissage. Cependant, la variance est un peu plus élevée (0.0626 contre 0.0611), suggérant une stabilité des prédictions légèrement moindre et un risque un peu plus élevé de sur-apprentissage par rapport à l'approche \textbf{(1,2) \& (3,4)}.
+\hline
 
-En termes de prédictions, la \textbf{fusion (1,2) \& (3,4)} offre un équilibre supérieur entre précision et rappel pour les deux classes, avec des f1-scores légèrement meilleurs et une précision globale plus élevée (66.39 \% contre 65.35 \%), ce qui montre une performance générale légèrement meilleure.
+\textbf{Métrique} & \textbf{(0,1,2) vs (3,4)} & \textbf{(1,2) vs (3,4)} \\ \hline
 
-\textbf{Conclusion :} La fusion \textbf{(1,2) \& (3,4)} s’avère être la meilleure option, offrant une meilleure généralisation et un équilibre supérieur entre le sous-apprentissage et le sur-apprentissage.
+Précision globale & 0.6636 & 0.6637 \\ \hline
 
+F1-score (Classe 0) & 0.67 & 0.65 \\ \hline
+
+F1-score (Classe 1) & 0.62 & 0.63 \\ \hline
+
+Validation croisée & 0.6470 & 0.6452 \\ \hline
+
+\end{tabular}
+
+\caption{Comparaison des performances des regroupements}
+
+\end{table}
+ 
+\bigskip
+ 
+L'analyse des erreurs montre :
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{(0,1,2) vs (3,4)} & \textbf{(1,2) vs (3,4)} \\ \hline
+
+Biais & 0.2996 & 0.3050 \\ \hline
+
+Variance & 0.0553 & 0.0599 \\ \hline
+
+MSE & 0.3549 & 0.3649 \\ \hline
+
+\end{tabular}
+
+\caption{Analyse du biais, de la variance et de l'erreur}
+
+\end{table}
+ 
+\bigskip
+ 
+Les matrices de confusion permettent de mieux comprendre les erreurs du modèle :
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|}
+
+\hline
+
+\textbf{Vrai/Prédit} & 0 & 1 \\ \hline
+
+\textbf{Réel 0} & 1063 & 445 \\ \hline
+
+\textbf{Réel 1} & 613 & 878 \\ \hline
+
+\end{tabular}
+
+\caption{Matrice de confusion pour le regroupement (0,1,2) vs (3,4)}
+
+\end{table}
+ 
+\bigskip
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|}
+
+\hline
+
+\textbf{Vrai/Prédit} & 0 & 1 \\ \hline
+
+\textbf{Réel 0} & 969 & 457 \\ \hline
+
+\textbf{Réel 1} & 589 & 902 \\ \hline
+
+\end{tabular}
+
+\caption{Matrice de confusion pour le regroupement (1,2) vs (3,4)}
+
+\end{table}
+ 
+\bigskip
+ 
+ 
+L'analyse comparative met en évidence que \textbf{la combinaison (0,1,2) vs (3,4) est la meilleure}, car :
+ 
+\begin{itemize}
+
+    \item \textbf{Meilleur F1-score pour la classe 0} (0.67 vs 0.65), améliorant la capacité du modèle à identifier correctement les cas négatifs.
+
+    \item \textbf{Précision légèrement plus fiable en validation croisée} (0.6470 vs 0.6452).
+
+    \item \textbf{Biais et variance plus faibles}, assurant une meilleure stabilité du modèle.
+
+    \item \textbf{Moins d'erreurs sur la classe 0}, ce qui améliore la robustesse globale du modèle.
+
+\end{itemize}
+ 
+Ainsi, la combinaison \textbf{(0,1,2) vs (3,4)} est \textbf{recommandée} pour obtenir des performances plus équilibrées et une meilleure stabilité du modèle.
+ 
+ 
+ 
 \section{ Les descriptions positives accélèrent-elles l’adoption des animaux ?
-}
+ }
 
 Dans le cadre de notre projet, nous avons constaté que la variable "description" dans notre jeu de données pourrait avoir un impact sur nos résultats. Nous avons donc décidé d'analyser cette variable et d'examiner l'impact des sentiments exprimés dans les descriptions des animaux sur leur vitesse d'adoption. Pour ce faire, nous utilisons l'outil VADER, qui permet d'analyser automatiquement les descriptions rédigées par les anciens propriétaires. Cet outil génère plusieurs scores de sentiment : positif, négatif, neutre, ainsi qu'un score global composé. Ces scores sont ensuite enregistrés dans un fichier intitulé "sentiment.csv".
 
@@ -960,105 +1373,215 @@ L'objectif de cette expérimentation est d'explorer s'il existe une corrélation
     \label{fig:sentiment}
 \end{figure}
 
+ 
+ 
+ 
+ 
+ 
+ 
 \subsection{Ajout des sentiments textuels dans le Gradient Boosting}
+ 
+Après avoir fusionné les classes \textbf{0, 1 et 2} en une classe \textbf{0}, et les classes \textbf{3 et 4} en une classe \textbf{1}, nous avons enrichi notre modèle en y intégrant des variables dérivées de l’analyse textuelle des descriptions des animaux. Ces nouvelles variables correspondent aux scores de sentiment \textit{positif}, \textit{négatif} et \textit{neutre} extraits des textes descriptifs.
+ 
+\bigskip
+ 
+\subsubsection{Performances du Modèle avec Sentiment}
+ 
+\begin{table}[H]
 
-Après avoir fusionné les classes \textbf{1 et 2} en une classe \textbf{0}, et les classes \textbf{3 et 4} en une classe \textbf{1}, nous avons enrichi notre modèle en y intégrant des variables dérivées de l’analyse textuelle des descriptions des animaux. Ces nouvelles variables correspondent aux scores de sentiment \textit{positif}, \textit{négatif} et \textit{neutre} extraits des textes descriptifs.
+\centering
 
-Le modèle Gradient Boosting, réentraîné avec ces nouvelles variables, a obtenu les performances suivantes :
+\begin{tabular}{|c|c|}
+
+\hline
+
+\textbf{Hyperparamètre} & \textbf{Valeur} \\ \hline
+
+Learning Rate & 0.05 \\ \hline
+
+Max Depth & 4 \\ \hline
+
+N Estimators & 200 \\ \hline
+
+\end{tabular}
+
+\caption{Meilleurs hyperparamètres du modèle avec variables de sentiment}
+
+\end{table}
+ 
+\bigskip
+ 
+\textbf{Résultats en validation croisée} :
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{Valeur} \\ \hline
+
+Précision moyenne (macro) & 0.6461 \\ \hline
+
+\end{tabular}
+
+\caption{Précision moyenne en validation croisée}
+
+\end{table}
+ 
+\bigskip
+ 
+\textbf{Résultats globaux du modèle (Chiens + Chats)} :
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|c|c|}
+
+\hline
+
+\textbf{Classe} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{Support} \\ \hline
+
+0 & 0.63 & 0.67 & 0.65 & 1426 \\ \hline
+
+1 & 0.66 & 0.62 & 0.64 & 1491 \\ \hline
+
+\end{tabular}
+
+\caption{Performances du modèle avec variables de sentiment}
+
+\end{table}
+ 
+\bigskip
+ 
+\subsubsection{Analyse du biais, de la variance et de l'erreur}
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{Valeur} \\ \hline
+
+MSE & 0.3634 \\ \hline
+
+Biais & 0.2975 \\ \hline
+
+Variance & 0.0660 \\ \hline
+
+\end{tabular}
+
+\caption{Analyse du biais et de la variance du modèle avec variables de sentiment}
+
+\end{table}
+ 
+\bigskip
+ 
+\subsubsection{Matrice de confusion}
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|}
+
+\hline
+
+\textbf{Vrai/Prédit} & 0 & 1 \\ \hline
+
+\textbf{Réel 0} & 951 & 475 \\ \hline
+
+\textbf{Réel 1} & 567 & 924 \\ \hline
+
+\end{tabular}
+
+\caption{Matrice de confusion du modèle avec variables de sentiment}
+
+\end{table}
+ 
+\bigskip
+ 
+\subsection{Comparaison entre le modèle avec et sans variables de sentiment}
+ 
+\begin{table}[H]
+
+\centering
+
+\begin{tabular}{|c|c|c|}
+
+\hline
+
+\textbf{Métrique} & \textbf{Sans Sentiment} & \textbf{Avec Sentiment} \\ \hline
+
+Précision globale & 0.6637 & 0.6605 \\ \hline
+
+Précision moyenne (macro) & 0.6452 & 0.6461 \\ \hline
+
+F1-score (Classe 0) & 0.65 & 0.65 \\ \hline
+
+F1-score (Classe 1) & 0.63 & 0.64 \\ \hline
+
+Biais & 0.3050 & 0.2975 \\ \hline
+
+Variance & 0.0599 & 0.0660 \\ \hline
+
+MSE & 0.3649 & 0.3634 \\ \hline
+
+\end{tabular}
+
+\caption{Comparaison des performances du modèle avec et sans variables de sentiment}
+
+\end{table}
+ 
+\bigskip
+ 
+\subsection{Interprétation des résultats}
+ 
+Les résultats montrent que l'ajout des variables de sentiment dans le modèle n'améliore pas significativement les performances :
+ 
 \begin{itemize}
-    \item \textbf{Précision moyenne (macro)} en validation croisée : 64.71\,\%
-    \item \textbf{Accuracy globale} : 64.25\,\%
-    \item \textbf{MSE} : 0.3627
-    \item \textbf{Biais} : 0.2894
-    \item \textbf{Variance} : 0.0733
+
+    \item La \textbf{précision globale} diminue légèrement lorsque les variables de sentiment sont ajoutées (0.6605 vs 0.6637).
+
+    \item Le \textbf{F1-score} reste stable, sans amélioration majeure pour les classes 0 et 1.
+
+    \item La \textbf{variance augmente} légèrement (0.0660 vs 0.0599), ce qui indique une instabilité accrue du modèle.
+
+    \item La \textbf{matrice de confusion} montre plus d'erreurs avec le modèle incluant les sentiments, avec une augmentation des faux positifs et faux négatifs.
+
 \end{itemize}
+ 
+\bigskip
+ 
+L'ajout des variables de sentiment textuel ne permet pas d'améliorer les performances du modèle Gradient Boosting. Au contraire, il entraîne une légère dégradation en augmentant la variance et en réduisant la précision.
+ 
+\textbf{Par conséquent, le modèle sera conservé sans les variables de sentiment afin d'assurer une meilleure stabilité et des performances optimales.}
 
-Ces résultats témoignent d'une \textbf{stabilité générale du modèle}, avec une faible variance, signe d'un surapprentissage limité.
+\begin{thebibliography}{9}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{image-rapport-classification.png}
-    \caption{Rapport de classification avec ajout des variables de sentiment}
-    \label{fig:rapport_sentiment}
-\end{figure}
-
-Sur le plan des classes :
-\begin{itemize}
-    \item \textbf{Classe 0} : Précision = 0.61, Rappel = 0.67, F1-score = 0.64
-    \item \textbf{Classe 1} : Précision = 0.67, Rappel = 0.62, F1-score = 0.64
-\end{itemize}
-
-Ces scores sont relativement équilibrés, montrant une reconnaissance modérée mais stable des deux classes.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{image-matrice-confusion.png}
-    \caption{Matrice de confusion avec ajout des variables de sentiment}
-    \label{fig:matrice_sentiment}
-\end{figure}
-
-La matrice de confusion met en évidence des erreurs notables :
-\begin{itemize}
-    \item \textbf{688} exemples de la classe 0 sont prédit comme appartenant à la classe 1
-    \item \textbf{876} exemples de la classe 1 sont mal classés en classe 0
-\end{itemize}
-
-Malgré ces confusions importantes, la \textbf{précision globale augmente légèrement à 67.27\,\%}, ce qui suggère que les variables liées au \textit{sentiment} apportent un signal pertinent, bien que l'amélioration reste modeste.
-
-
-\subsection{Optimisation du Gradient Boosting avec les sentiments (GridSearchCV)}
-
-Après optimisation des hyperparamètres du modèle Gradient Boosting à l’aide de \texttt{GridSearchCV}, les meilleurs paramètres retenus sont :
-\begin{itemize}
-    \item \texttt{learning\_rate} = 0.01
-    \item \texttt{max\_depth} = 7
-    \item \texttt{n\_estimators} = 300
-    \item \texttt{subsample} = 0.8
-\end{itemize}
-
-L’objectif était d’améliorer les performances du modèle enrichi par les variables de sentiment, tout en conservant une bonne capacité de généralisation. 
-
-Les résultats obtenus après entraînement avec ces paramètres sont :
-\begin{itemize}
-    \item \textbf{Accuracy} : 64.00\,\%
-    \item \textbf{MSE} : 0.3607
-    \item \textbf{Biais} : 0.2875
-    \item \textbf{Variance} : 0.0732
-\end{itemize}
-
-Ces métriques traduisent un bon équilibre entre biais et variance, sans réel gain par rapport au modèle précédent sans optimisation.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{classification_sentiment_gridsearch.png}
-    \caption{Rapport de classification -- Gradient Boosting avec sentiments (optimisé)}
-    \label{fig:classification_sentiment_gridsearch}
-\end{figure}
-
-D’après le rapport de classification :
-\begin{itemize}
-    \item \textbf{Classe 0} : Précision = 0.61, Rappel = 0.69, F1-score = 0.65
-    \item \textbf{Classe 1} : Précision = 0.68, Rappel = 0.59, F1-score = 0.63
-\end{itemize}
-
-On observe une répartition relativement équilibrée entre les deux classes, bien que la classe 1 présente un rappel plus faible.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{matrice_confusion_sentiment_gridsearch.png}
-    \caption{Matrice de confusion -- Gradient Boosting avec sentiments (optimisé)}
-    \label{fig:matrice_confusion_sentiment_gridsearch}
-\end{figure}
-
-La matrice de confusion montre :
-\begin{itemize}
-    \item \textbf{Classe 0} : 1447 exemples bien classés, 638 confondus avec la classe 1
-    \item \textbf{Classe 1} : 1353 bien classés, 937 mal prédits
-\end{itemize}
-
-Globalement, la \textbf{précision atteint 67.96\,\%}, mais le \textbf{rappel global diminue à 59.08\,\%}, traduisant une meilleure confiance dans les prédictions, mais au prix d’un taux d’erreurs de rappel plus élevé.
-
-\vspace{0.5em}
-\textbf{Conclusion :} comparé au modèle sans GridSearchCV, on note une légère amélioration de la précision globale, mais une baisse du rappel, suggérant que le modèle devient plus conservateur dans ses prédictions.
-
+    \bibitem{bias_variance_innovatiana}
+    Innovatiana, 
+    \emph{Bias Estimation in Machine Learning}, 
+    [En ligne]. Disponible sur : \url{https://www.innovatiana.com/post/bias-estimation-in-machine-learning#:~:text=Ce%20biais%20survient%20lorsque%20l,pr%C3%A9cises%20pour%20les%20autres%20groupes}. 
+    
+    \bibitem{xlstat_acm}
+    XLSTAT,
+    \emph{Analyse des correspondances multiples (ACM ou AFCM)}, 
+    [En ligne]. Disponible sur : \url{https://www.xlstat.com/fr/solutions/fonctionnalites/analyse-des-correspondances-multiples-acm-ou-afcm}. 
+    
+    \bibitem{github_acm}
+    Le Coin Stat,
+    \emph{100 Jours de Machine Learning - Analyse des correspondances multiples (ACM)}, 
+    [GitHub Notebook]. Disponible sur : \url{https://github.com/LeCoinStat/100JoursDeML/blob/main/02_Statistiques_Pour_Le_Machine_Learning/03_ACM/acm.ipynb}. 
+    
+    \end{thebibliography}
+    
+    
+ 
 \end{document}
