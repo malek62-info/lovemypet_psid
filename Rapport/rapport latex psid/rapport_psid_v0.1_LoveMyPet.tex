@@ -33,9 +33,19 @@
 }
 \date{\today}
 
+
 \begin{document}
 
 \maketitle
+
+\vspace{1cm}  % espace entre le titre et les liens
+\begin{center}
+    \textbf{Liens utiles :}\\[0.5cm]
+    \href{https://youtu.be/XL3DGk36d_4}{Vidéo de présentation du projet}\\[0.3cm]
+    \href{https://github.com/malek62-info/lovemypet_psid/tree/PSID_ML}{Notebooks du projet sur GitHub}\\[0.3cm]
+    \href{https://github.com/malek62-info/lovemypet_psid/tree/formulaire-ai}{Formulaire de prédiction sur GitHub}
+\end{center}
+
 \thispagestyle{empty}
 \clearpage  % Sépare le titre et la table des matières
 
@@ -1107,33 +1117,49 @@ Les deux stratégies donnent des résultats très similaires. Le regroupement (0
 
 \subsection{Comparaison des résultats avec XGBoost sur différents regroupements de classes}
  
-Le modèle \textbf{XGBoost}, optimisé pour prédire la vitesse d'adoption des animaux en deux classes (adoption lente et rapide), a été entraîné avec les hyperparamètres optimaux suivants : \texttt{\{colsample\_bytree: 0.7, learning\_rate: 0.005, max\_depth: 8, n\_estimators: 100, reg\_lambda: 3, subsample: 0.8\}}. Il a atteint un \textbf{accuracy moyen de 0.6411} en validation croisée (5-fold) et des performances robustes sur le jeu de test, avec une \textbf{précision de 0.6583}, un \textbf{rappel de 0.6569}, un \textbf{F1-score de 0.6559}, et une \textbf{accuracy d’environ 65.8\,\%}, indiquant une capacité équilibrée à identifier correctement les deux classes tout en limitant les erreurs.
+Le modèle \textbf{XGBoost}, optimisé pour prédire la vitesse d'adoption des animaux en deux classes (adoption lente et rapide), a été entraîné avec les hyperparamètres optimaux suivants : \texttt{\{colsample\_bytree: 0.7, learning\_rate: 0.005, max\_depth: 8, n\_estimators: 100, reg\_lambda: 1, subsample: 0.8\}}. Il a atteint un \textbf{accuracy moyen de 0.6423} en validation croisée (5-fold) et des performances robustes sur le jeu de test, avec une \textbf{précision de 0.6489}, un \textbf{rappel de 0.6472}, un \textbf{F1-score de 0.6459}, , indiquant une capacité équilibrée à identifier correctement les deux classes tout en limitant les erreurs.
  
-L'analyse biais-variance révèle une \textbf{erreur quadratique moyenne (MSE)} de \textbf{0.3541}, avec un \textbf{biais au carré} de \textbf{0.2941} et une \textbf{variance} de \textbf{0.0601}. Dans le cadre du compromis biais-variance, le \textbf{biais élevé (0.2941)} suggère que le modèle, bien qu’efficace, reste \textbf{trop simpliste pour capturer pleinement les relations complexes} des données, ce qui peut expliquer pourquoi l’\textbf{accuracy} et le \textbf{F1-score}, bien qu’améliorés, n’atteignent pas des valeurs plus élevées. La \textbf{faible variance (0.0601)} indique toutefois une excellente stabilité, le modèle généralisant bien sans surapprendre aux données d’entraînement.
+L'analyse biais-variance révèle une \textbf{erreur quadratique moyenne (MSE)} de \textbf{0.3553}, avec un \textbf{biais} de \textbf{0.2941} et une \textbf{variance} de \textbf{0.0612}. Dans le cadre du compromis biais-variance, le \textbf{biais élevé (0.2941)} suggère que le modèle, bien qu’efficace, reste \textbf{trop simpliste pour capturer pleinement les relations complexes} des données, ce qui peut expliquer pourquoi l’\textbf{accuracy} et le \textbf{F1-score} bien qu’améliorés, n’atteignent pas des valeurs plus élevées. La \textbf{faible variance (0.0612)} indique toutefois une excellente stabilité, le modèle généralisant bien sans surapprendre aux données d’entraînement.
  
 Pour améliorer l’\textbf{accuracy} et réduire le biais, tout en maintenant l’équité des prédictions afin d’éviter des biais discriminatoires dans l’adoption d’animaux, des stratégies telles que l’ajout de \textbf{caractéristiques pertinentes} ou un \textbf{réglage plus fin de la complexité du modèle} pourraient être envisagées.
  
  
 \begin{figure}[H]
+
     \centering
-    \includegraphics[width=0.8\textwidth]{xgboost0.png}
-    \caption{Matrice de confusion - CatBoost (regroupement 0+1+2 vs 3+4)}
+
+    \includegraphics[width=0.8\textwidth]{XGBOST0.png}
+
+    \caption{Matrice de confusion - XGBoost (regroupement 0+1+2 vs 3+4)}
+
     \label{fig:catboost012_conf}
+
 \end{figure}
  
  
- 
 \begin{table}[h]
+
 \centering
+
 \begin{tabular}{|c|c|c|c|c|c|c|}
+
 \hline
+
 \textbf{validation croisée} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1-score} & \textbf{MSE} & \textbf{Biais} & \textbf{Variance} \\
+
 \hline
-0.6411& 0.6582 & 0.6568 & 0.6559 & 0.3541&  0.2941 &  0.0601 \\
+
+0.6423& 0.6489 & 0.6472 & 0.6459 & 0.3553 &  0.2941 &  0.0612 \\
+
 \hline
+
 \end{tabular}
+
 \caption{Résultats du modèle XGBoost (regroupement 0+1+2 vs 3+4)}
+
 \end{table}
+ 
+    
  
 \paragraph{Analyse des performances du modèle XGBoost (Regroupement des classes 1+2 et 3+4)}
 
@@ -1141,11 +1167,11 @@ Après avoir regroupé les classes 1 et 2 (adoption rapide) ainsi que les classe
  
 \begin{center}
 
-\texttt{\{'colsample\_bytree': 0.7, 'learning\_rate': 0.05, 'max\_depth': 6, 'n\_estimators': 200, 'reg\_lambda': 2, 'subsample': 1.0\}}
+\texttt{\{'colsample\_bytree': 0.7, 'learning\_rate': 0.05, 'max\_depth': 6, 'n\_estimators': 200, 'reg\_lambda': 3, 'subsample': 1.0\}}
 
 \end{center}
  
-Ce modèle a atteint une \textbf{précision macro moyenne de 0.6476} lors d'une validation croisée en 5 plis (5-fold), ce qui témoigne d'une performance globale équilibrée.
+Ce modèle a atteint une \textbf{précision macro moyenne de 0.6481} lors d'une validation croisée en 5 plis (5-fold), ce qui témoigne d'une performance globale équilibrée.
  
 \medskip
  
@@ -1153,13 +1179,11 @@ Sur le jeu de test, les résultats sont les suivants :
 
 \begin{itemize}
 
-    \item \textbf{Précision (precision)} : 0.6425
+    \item \textbf{Précision (precision)} : 0.6420
 
-    \item \textbf{Rappel (recall)} : 0.6407
+    \item \textbf{Rappel (recall)} : 0.6403
 
-    \item \textbf{F1-score} : 0.6404
-
-    \item \textbf{Accuracy} : environ 64.2 \%
+    \item \textbf{F1-score} : 0.6400
 
 \end{itemize}
  
@@ -1173,15 +1197,15 @@ L’analyse biais-variance apporte des informations complémentaires sur le comp
 
     \item \textbf{Erreur quadratique moyenne (MSE)} : 0.3681
 
-    \item \textbf{Biais au carré (Bias$^2$)} : 0.3032
+    \item \textbf{Biais au carré (Bias$^2$)} : 0.3038
 
-    \item \textbf{Variance} : 0.0649
+    \item \textbf{Variance} :  0.0643
 
 \end{itemize}
  
-Le \textbf{biais élevé} ($0.3032$) indique que le modèle est encore trop simpliste pour représenter correctement les relations complexes présentes dans les données, ce qui freine l'amélioration des performances telles que l’accuracy et le F1-score.
+Le \textbf{biais élevé} indique que le modèle est encore trop simpliste pour représenter correctement les relations complexes présentes dans les données, ce qui freine l'amélioration des performances telles que l’accuracy et le F1-score.
  
-En revanche, la \textbf{variance modérée} ($0.0649$), bien que légèrement plus élevée que dans la configuration précédente, reste acceptable. Elle reflète une certaine sensibilité aux fluctuations des données d’apprentissage, mais sans provoquer de surapprentissage manifeste.
+En revanche, la \textbf{variance modérée} , bien que légèrement plus élevée que dans la configuration précédente, reste acceptable. Elle reflète une certaine sensibilité aux fluctuations des données d’apprentissage, mais sans provoquer de surapprentissage manifeste.
  
 \subsection*{Conclusion}
  
@@ -1192,9 +1216,9 @@ Ce compromis biais-variance met en évidence une \textbf{stabilité raisonnable}
 
     \centering
 
-    \includegraphics[width=0.8\textwidth]{xgboost1.png}
+    \includegraphics[width=0.8\textwidth]{XGBOOST1.png}
 
-    \caption{Matrice de confusion - CatBoost (regroupement 1+2 vs 3+4)}
+    \caption{Matrice de confusion - XGBoost (regroupement 1+2 vs 3+4)}
 
     \label{fig:catboost012_conf}
 
@@ -1222,9 +1246,8 @@ Ce compromis biais-variance met en évidence une \textbf{stabilité raisonnable}
 \caption{Résultats du modèle XGBoost (regroupement 1+2 vs 3+4, classe 0 exclue)}
 
 \end{table}
-
  
-
+ 
 \subsection{Comparaison des combinaisons avec Gradient Boosting}
  
 Nous avons testé plusieurs regroupements des classes afin d'évaluer leur impact sur les performances du modèle Gradient Boosting. Deux regroupements ont été analysés :
